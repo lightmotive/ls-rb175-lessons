@@ -1,2 +1,1 @@
-# ls-rb175-lessons
-Launch School - RB175 Course - Lessons
+# Launch School - RB175 Course - Lessons
