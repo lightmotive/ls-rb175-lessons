@@ -17,7 +17,7 @@ def parse_params(uri_or_query_string)
   end
 end
 
-def empty_response(client, status: '200 OK')
+def respond_with_status_and_close(client, status: '200 OK')
   client.puts("HTTP/1.1 #{status}")
   client.close
 end
@@ -63,7 +63,7 @@ loop do
   client = server.accept
 
   request_start_line = client.gets
-  next empty_response(client) if !request_start_line || request_start_line =~ /favicon/
+  next respond_with_status_and_close(client) if !request_start_line || request_start_line =~ /favicon/
 
   puts request_start_line
   request_components = parse_request_start_line(request_start_line)
