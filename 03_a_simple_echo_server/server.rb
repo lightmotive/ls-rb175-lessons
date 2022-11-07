@@ -32,30 +32,38 @@ def parse_request_start_line(start_line)
     version: version }
 end
 
-def respond_to_path_roll(request_components, client)
-  request_params = request_components[:params]
+def respond_to_path_roll(request, client)
+  params = request[:params]
 
-  rolls = request_params['count']&.to_i || 1
-  sides = request_params['sides']&.to_i || 6
+  rolls = params['count']&.to_i || 1
+  sides = params['sides']&.to_i || 6
 
   client.puts 'HTTP/1.1 200 OK'
-  client.puts "Content-Type: text/plain\r\n\r\n"
-  rolls.times do
-    client.puts rand(1..sides)
+  client.puts "Content-Type: text/html\r\n\r\n"
+  client.puts '<html>'
+  client.puts '<body>'
+  client.puts '<h1>Rolls</h1>'
+  client.puts '<div>'
+  roll_results = rolls.times.map do
+    rand(1..sides)
   end
+  client.puts roll_results.join(', ')
+  client.puts '</div>'
+  client.puts '</body>'
+  client.puts '</html>'
 end
 
-def respond_to_path_unknown(request_components, client)
+def respond_to_path_unknown(request, client)
   client.puts('HTTP/1.1 404 Not Found')
   client.puts "Content-Type: text/plain\r\n\r\n"
-  client.puts "'#{request_components[:path]}' path not found."
+  client.puts "'#{request[:path]}' path not found."
 end
 
-def respond_to_path(request_components, client)
-  case request_components[:path]
-  when '/roll' then respond_to_path_roll(request_components, client)
+def respond_to_path(request, client)
+  case request[:path]
+  when '/roll' then respond_to_path_roll(request, client)
   else
-    respond_to_path_unknown(request_components, client)
+    respond_to_path_unknown(request, client)
   end
 end
 
@@ -66,8 +74,8 @@ loop do
   next respond_with_status_and_close(client) if !request_start_line || request_start_line =~ /favicon/
 
   puts request_start_line
-  request_components = parse_request_start_line(request_start_line)
-  respond_to_path(request_components, client)
+  request = parse_request_start_line(request_start_line)
+  respond_to_path(request, client)
 
   client.close
 end
