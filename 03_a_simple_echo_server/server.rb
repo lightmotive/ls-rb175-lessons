@@ -43,12 +43,30 @@ def respond_to_path_roll(request, client)
   client.puts '<html>'
   client.puts '<body>'
   client.puts '<h1>Rolls</h1>'
-  client.puts '<div>'
+  client.puts '<p>'
   roll_results = rolls.times.map do
     rand(1..sides)
   end
   client.puts roll_results.join(', ')
-  client.puts '</div>'
+  client.puts '</p>'
+  client.puts '</body>'
+  client.puts '</html>'
+end
+
+def respond_to_path_count(request, client)
+  params = request[:params]
+  number = params['number'].to_i
+
+  client.puts 'HTTP/1.1 200 OK'
+  client.puts "Content-Type: text/html\r\n\r\n"
+  client.puts '<html>'
+  client.puts '<body>'
+  client.puts '<h1>Counter</h1>'
+  client.puts '<p>'
+  a_decrement = "<a href='/count?number=#{number - 1}'>Decrement</a>"
+  a_increment = "<a href='/count?number=#{number + 1}'>Increment</a>"
+  client.puts "<p style='font-size: 1.5em'>#{number}</p>"
+  client.puts "<div style='font-size: 1.2em'>#{a_decrement} #{a_increment}</div>"
   client.puts '</body>'
   client.puts '</html>'
 end
@@ -62,6 +80,7 @@ end
 def respond_to_path(request, client)
   case request[:path]
   when '/roll' then respond_to_path_roll(request, client)
+  when '/count' then respond_to_path_count(request, client)
   else
     respond_to_path_unknown(request, client)
   end
