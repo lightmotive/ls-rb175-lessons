@@ -7,26 +7,22 @@ class HelloWorld
   def call(env)
     case env['REQUEST_PATH']
     when '/'
-      ['200', { 'Content-Type' => 'text/html' },
-       [erb_by_physical_path('views/index.erb').result]]
+      ['200', { 'Content-Type' => 'text/html' }, [erb(:index)]]
     when '/advice'
-      piece_of_advice = Advice.new.generate
       [
-        '200',
-        { 'Content-Type' => 'text/html' },
-        ["<html><body><b><em>#{piece_of_advice}</em></b></body></html>"]
+        '200', { 'Content-Type' => 'text/html' },
+        [erb(:advice, message: Advice.new.generate)]
       ]
     else
-      [
-        '404',
-        { 'Content-Type' => 'text/html', 'Content-Length' => '48' },
-        ['<html><body><h4>404 Not Found</h4></body></html>']
-      ]
+      ['404', { 'Content-Type' => 'text/html' }, [erb(:not_found)]]
     end
   end
 
-  def erb_by_physical_path(path)
-    template = File.read(path)
-    ERB.new(template)
+  private
+
+  def erb(route, local = {})
+    b = binding
+    template = File.read("views/#{route}.erb")
+    ERB.new(template).result(b)
   end
 end
