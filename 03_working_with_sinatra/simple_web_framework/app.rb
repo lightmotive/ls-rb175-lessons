@@ -7,14 +7,17 @@ class App
   def call(env)
     case env['REQUEST_PATH']
     when '/'
-      ['200', { 'Content-Type' => 'text/html' }, [erb(:index)]]
+      response('200', { 'Content-Type' => 'text/html' }) do
+        erb(:index)
+      end
     when '/advice'
-      [
-        '200', { 'Content-Type' => 'text/html' },
-        [erb(:advice, message: Advice.new.generate)]
-      ]
+      response('200', { 'Content-Type' => 'text/html' }) do
+        erb(:advice, message: Advice.new.generate)
+      end
     else
-      ['404', { 'Content-Type' => 'text/html' }, [erb(:not_found)]]
+      response('404', { 'Content-Type' => 'text/html' }) do
+        erb(:not_found)
+      end
     end
   end
 
@@ -24,5 +27,10 @@ class App
     b = binding
     template = File.read("views/#{route}.erb")
     ERB.new(template).result(b)
+  end
+
+  def response(status, headers, body = '')
+    body = yield if block_given?
+    [status, headers, [body]]
   end
 end
