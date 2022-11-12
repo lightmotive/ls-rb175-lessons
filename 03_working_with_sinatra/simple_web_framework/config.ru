@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-require './hello_world'
+require './app'
 
-run HelloWorld.new
+run App.new
