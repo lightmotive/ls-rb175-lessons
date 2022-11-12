@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'erb'
-require_relative 'advice' # loads advice.rb
+require './monroe'
+require './advice'
 
-class App
+class App < Monroe
   def call(env)
     case env['REQUEST_PATH']
     when '/'
@@ -19,18 +19,5 @@ class App
         erb(:not_found)
       end
     end
-  end
-
-  private
-
-  def erb(route, local = {})
-    b = binding
-    template = File.read("views/#{route}.erb")
-    ERB.new(template).result(b)
-  end
-
-  def response(status, headers, body = '')
-    body = yield if block_given?
-    [status, headers, [body]]
   end
 end
