@@ -9,6 +9,10 @@ get '/' do
 
     @filenames << name
   end
+  @filenames.sort
+
+  @sort_order = params['sort'] || 'asc'
+  @filenames.reverse! if @sort_order == 'desc'
 
   erb :home
 end

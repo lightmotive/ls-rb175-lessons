@@ -9,6 +9,13 @@
 
 <body>
   <h1>Files</h1>
+  <div>
+    <% if @sort_order == 'desc' %>
+      <a href='/'>Sort ascending</a>
+    <% else %>  
+      <a href='/?sort=desc'>Sort descending</a>
+    <% end %>
+  </div>
 
   <div>
     <ul style="list-style-type: none">
