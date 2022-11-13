@@ -15,6 +15,10 @@ before do
   @toc_strings = File.read('data/toc.txt').each_line(chomp: true).to_a
 end
 
+not_found do
+  redirect '/'
+end
+
 get '/' do
   @content_subhead = 'Table of Contents'
 
