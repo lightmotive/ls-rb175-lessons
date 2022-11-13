@@ -5,7 +5,7 @@ require 'sinatra/reloader'
 require 'tilt/erubis'
 
 helpers do
-  def chapter_paragraph_enum(data_string)
+  def plain_text_paragraph_enum(data_string)
     data_string.each_line('', chomp: true)
   end
 end
