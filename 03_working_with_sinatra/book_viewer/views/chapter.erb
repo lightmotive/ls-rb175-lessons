@@ -23,9 +23,9 @@
               <a class="pure-menu-heading" href="/">Table of Contents</a>
 
               <ul class="pure-menu-list">
-                <% TOC.each_with_index do |chapter, idx| %>
-                <li class="pure-menu-item">
-                  <a href='/chapter/<%= idx + 1 %>' class='pure-menu-link'><%= chapter %></a>
+                <% TOC.each_with_index do |chapter, chapter_idx| %>
+                <li class="pure-menu-item<%= chapter_idx + 1 == @chapter_num ? " pure-menu-selected" : "" %>">
+                  <a href='/chapter/<%= chapter_idx + 1 %>' class='pure-menu-link'><%= chapter %></a>
                 </li>
                 <% end %>
               </ul>
