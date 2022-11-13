@@ -4,17 +4,24 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'tilt/erubis'
 
-TOC = File.read('data/toc.txt').each_line(chomp: true).to_a
+def toc_strings
+  File.read('data/toc.txt').each_line(chomp: true).to_a
+end
 
 get '/' do
+  @toc_strings = toc_strings
+
   @title = 'The Adventures of Sherlock Holmes'
   @content_subhead = 'Table of Contents'
+
   erb :home
 end
 
 get '/chapter/:number' do |number|
-  @chapter_num = number.to_i.clamp(1, TOC.size)
-  @chapter_name = "Chapter #{@chapter_num} - #{TOC[@chapter_num - 1]}"
+  @toc_strings = toc_strings
+
+  @chapter_num = number.to_i.clamp(1, @toc_strings.size)
+  @chapter_name = "Chapter #{@chapter_num} - #{@toc_strings[@chapter_num - 1]}"
   @chapter_paragraphs = File.read("data/chp#{@chapter_num}.txt")
                             .each_line('', chomp: true)
 
