@@ -26,7 +26,9 @@ get '/' do
 end
 
 get '/chapter/:number' do |number|
-  @chapter_num = number.to_i.clamp(1, @toc_strings.size)
+  @chapter_num = number.to_i
+  redirect '/' unless (1..@toc_strings.size).cover?(@chapter_num)
+
   @chapter_name = "Chapter #{@chapter_num} - #{@toc_strings[@chapter_num - 1]}"
   @chapter_data_string = File.read("data/chp#{@chapter_num}.txt")
 
