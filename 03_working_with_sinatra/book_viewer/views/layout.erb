@@ -19,17 +19,18 @@
       </a>
 
       <div id="menu">
-          <div class="pure-menu">
-              <a class="pure-menu-heading" href="/">Table of Contents</a>
+        <div class="pure-menu">
+          <a href="/search">Search</a>
+          <a class="pure-menu-heading" href="/">Table of Contents</a>
 
-              <ul class="pure-menu-list">
-                <% @toc_strings.each_with_index do |chapter, chapter_idx| %>
-                <li class="pure-menu-item<%= chapter_idx + 1 == @chapter_num ? " pure-menu-selected" : "" %>">
-                  <a href='/chapter/<%= chapter_idx + 1 %>' class='pure-menu-link'><%= chapter %></a>
-                </li>
-                <% end %>
-              </ul>
-          </div>
+          <ul class="pure-menu-list">
+            <% @toc_strings.each_with_index do |chapter, chapter_idx| %>
+            <li class="pure-menu-item<%= chapter_idx + 1 == @chapter_num ? " pure-menu-selected" : "" %>">
+              <a href='/chapter/<%= chapter_idx + 1 %>' class='pure-menu-link'><%= chapter %></a>
+            </li>
+            <% end %>
+          </ul>
+        </div>
       </div>
 
       <div id="main">

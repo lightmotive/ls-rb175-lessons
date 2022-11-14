@@ -4,6 +4,15 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'tilt/erubis'
 
+def chapter_paths_containing_search_query(query)
+  return [] if query.strip.empty?
+
+  Dir.enum_for(:glob, 'data/chp*.txt').select do |name|
+    content = File.read(name)
+    content.include?(query)
+  end
+end
+
 helpers do
   def plain_text_paragraph_enum(data_string)
     data_string.each_line('', chomp: true)
@@ -36,4 +45,17 @@ get '/chapter/:number' do |number|
   @content_subhead = @chapter_name
 
   erb :chapter
+end
+
+get '/search' do
+  @query = params[:query] || ''
+
+  paths = chapter_paths_containing_search_query(@query)
+  chapter_numbers = paths.map { |path| path[/chp(\d+)\.txt\z/, 1].to_i }
+
+  @results = chapter_numbers.sort.map do |number|
+    [number, @toc_strings[number - 1]]
+  end
+
+  erb :search
 end
