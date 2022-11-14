@@ -4,20 +4,12 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'tilt/erubis'
 
-def chapter_number_by_path(path)
-  path[/chp(\d+)\.txt\z/, 1].to_i
-end
-
 def each_chapter
   return enum_for(:each_chapter) unless block_given?
 
-  paths = Dir.glob('data/chp*.txt')
-  paths.sort_by!(&method(:chapter_number_by_path))
-
-  paths.each do |path|
-    number = chapter_number_by_path(path)
-    name = @toc_strings[number - 1]
-    content = File.read(path)
+  @toc_strings.each_with_index do |name, idx|
+    number = idx + 1
+    content = File.read("data/chp#{number}.txt")
     yield number, name, content
   end
 end
