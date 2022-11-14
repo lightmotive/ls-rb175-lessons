@@ -1,13 +1,11 @@
-<div class="content">
-  <h2 class="content-subhead"><%= @content_subhead %></h2>
+<h2 class="content-subhead"><%= @content_subhead %></h2>
 
-  <div class="pure-menu">
-    <ul class="pure-menu-list">
-      <% @toc_strings.each_with_index do |chapter, chapter_idx| %>
-      <li class="pure-menu-item">
-        <a href='/chapter/<%= chapter_idx + 1 %>' class='pure-menu-link'><%= chapter %></a>
-      </li>
-      <% end %>
-    </ul>
-  </div>
+<div class="pure-menu">
+  <ul class="pure-menu-list">
+    <% @toc_strings.each_with_index do |chapter, chapter_idx| %>
+    <li class="pure-menu-item">
+      <a href='/chapter/<%= chapter_idx + 1 %>' class='pure-menu-link'><%= chapter %></a>
+    </li>
+    <% end %>
+  </ul>
 </div>

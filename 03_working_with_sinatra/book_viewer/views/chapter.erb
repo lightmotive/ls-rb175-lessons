@@ -1,9 +1,5 @@
-<div class="content">
-  <h2 class="content-subhead"><%= @content_subhead %></h2>
+<h2 class="content-subhead"><%= @content_subhead %></h2>
 
-  <div>
-    <% plain_text_paragraph_enum(@chapter_data_string).each do |paragraph| %>
-    <p><%= paragraph %></p>
-    <% end %>
-  </div>
-</div>
+<% plain_text_paragraph_enum(@chapter_data_string).each do |paragraph| %>
+<p><%= paragraph %></p>
+<% end %>
