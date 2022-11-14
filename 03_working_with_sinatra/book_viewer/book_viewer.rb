@@ -4,6 +4,20 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'tilt/erubis'
 
+helpers do
+  def plain_text_paragraph_enum(data_string)
+    data_string.each_line('', chomp: true)
+  end
+
+  def highlight_query(content, query, prefix: '<strong>', suffix: '</strong>')
+    return content if query.nil? || query.empty?
+
+    content.gsub(query, "#{prefix}#{query}#{suffix}")
+  end
+end
+
+# ** Private helpers **
+
 def each_chapter
   return enum_for(:each_chapter) unless block_given?
 
@@ -39,17 +53,7 @@ def chapters_matching(query)
   results
 end
 
-helpers do
-  def plain_text_paragraph_enum(data_string)
-    data_string.each_line('', chomp: true)
-  end
-
-  def highlight_query(content, query, prefix: '<strong>', suffix: '</strong>')
-    return content if query.nil? || query.empty?
-
-    content.gsub(query, "#{prefix}#{query}#{suffix}")
-  end
-end
+# ** Routes **
 
 before do
   @title = 'The Adventures of Sherlock Holmes'
