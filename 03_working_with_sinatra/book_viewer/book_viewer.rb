@@ -14,7 +14,7 @@ def each_chapter
   end
 end
 
-def chapter_content_search_results(query)
+def chapters_matching(query)
   results = []
   return results if query.nil? || query.strip.empty?
 
@@ -61,6 +61,6 @@ end
 
 get '/search' do
   @query = params[:query] || ''
-  @results = chapter_content_search_results(@query)
+  @results = chapters_matching(@query)
   erb :search
 end
