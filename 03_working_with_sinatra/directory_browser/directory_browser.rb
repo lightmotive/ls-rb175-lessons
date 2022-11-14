@@ -4,7 +4,7 @@ require 'tilt/erubis'
 
 get '/' do
   @filenames = []
-  Dir.foreach('public').map do |name|
+  Dir.foreach('public') do |name|
     next if ['.', '..'].include?(name) || File.directory?(name)
 
     @filenames << name
