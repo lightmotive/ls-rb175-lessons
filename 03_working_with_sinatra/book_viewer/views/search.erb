@@ -9,9 +9,10 @@
     <% if @results.empty? %>
     Sorry, no matches were found.
     <% else %>
+      <h2 class="content-subhead">Results for <%= @query %></h2>
       <ul>
-      <% @results.each do |(number, name)| %>
-        <li><a href="/chapter/<%= number %>">Ch. <%= number %> - <%= name %></a></li>
+      <% @results.each do |result| %>
+        <li><a href="/chapter/<%= result[:number] %>"><%= result[:name] %></a></li>
       <% end %>
       </ul>
     <% end %>

@@ -4,13 +4,33 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'tilt/erubis'
 
-def chapter_paths_containing_search_query(query)
-  return [] if query.strip.empty?
+def chapter_number_by_path(path)
+  path[/chp(\d+)\.txt\z/, 1].to_i
+end
 
-  Dir.enum_for(:glob, 'data/chp*.txt').select do |name|
-    content = File.read(name)
-    content.include?(query)
+def each_chapter
+  return enum_for(:each_chapter) unless block_given?
+
+  paths = Dir.glob('data/chp*.txt')
+  paths.sort_by!(&method(:chapter_number_by_path))
+
+  paths.each do |path|
+    number = chapter_number_by_path(path)
+    name = @toc_strings[number - 1]
+    content = File.read(path)
+    yield number, name, content
   end
+end
+
+def chapter_content_search_results(query)
+  results = []
+  return results if query.nil? || query.strip.empty?
+
+  each_chapter do |number, name, content|
+    results << { number: number, name: name } if content.include?(query)
+  end
+
+  results
 end
 
 helpers do
@@ -49,13 +69,6 @@ end
 
 get '/search' do
   @query = params[:query] || ''
-
-  paths = chapter_paths_containing_search_query(@query)
-  chapter_numbers = paths.map { |path| path[/chp(\d+)\.txt\z/, 1].to_i }
-
-  @results = chapter_numbers.sort.map do |number|
-    [number, @toc_strings[number - 1]]
-  end
-
+  @results = chapter_content_search_results(@query)
   erb :search
 end
