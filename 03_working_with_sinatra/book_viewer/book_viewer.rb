@@ -14,12 +14,26 @@ def each_chapter
   end
 end
 
+def paragraphs_matching(content, query)
+  matches = []
+  plain_text_paragraph_enum(content).each_with_index do |paragraph, idx|
+    next unless paragraph.include?(query)
+
+    matches << { number: idx + 1, content: paragraph }
+  end
+
+  matches
+end
+
 def chapters_matching(query)
   results = []
   return results if query.nil? || query.strip.empty?
 
   each_chapter do |number, name, content|
-    results << { number: number, name: name } if content.include?(query)
+    paragraph_matches = paragraphs_matching(content, query)
+    next if paragraph_matches.empty?
+
+    results << { number: number, name: name, paragraphs: paragraph_matches }
   end
 
   results
@@ -28,6 +42,12 @@ end
 helpers do
   def plain_text_paragraph_enum(data_string)
     data_string.each_line('', chomp: true)
+  end
+
+  def highlight_query(content, query, prefix: '<strong>', suffix: '</strong>')
+    return content if query.nil? || query.empty?
+
+    content.gsub(query, "#{prefix}#{query}#{suffix}")
   end
 end
 
@@ -50,6 +70,7 @@ get '/chapter/:number' do |number|
   @chapter_num = number.to_i
   redirect '/' unless (1..@toc_strings.size).cover?(@chapter_num)
 
+  @query = params['query']
   @chapter_name = "Chapter #{@chapter_num} - #{@toc_strings[@chapter_num - 1]}"
   @chapter_data_string = File.read("data/chp#{@chapter_num}.txt")
 

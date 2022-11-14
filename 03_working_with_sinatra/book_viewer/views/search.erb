@@ -12,7 +12,14 @@
       <h2 class="content-subhead">Results for <%= @query %></h2>
       <ul>
       <% @results.each do |result| %>
-        <li><a href="/chapter/<%= result[:number] %>"><%= result[:name] %></a></li>
+        <li>
+          <%= result[:name] %>
+          <ul>
+            <% result[:paragraphs].each do |paragraph| %>
+            <li><a href="/chapter/<%= result[:number] %>?query=<%= @query %>#paragraph<%= paragraph[:number] %>"><%= highlight_query(paragraph[:content], @query) %></a></li>
+            <% end %>
+          </ul>
+        </li>
       <% end %>
       </ul>
     <% end %>
