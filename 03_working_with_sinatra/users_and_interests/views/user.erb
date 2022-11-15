@@ -1,0 +1,7 @@
+<div>
+  <h1><%= params['id'] %></h1>
+  <ul>
+    <li>Email: <%= @user[:email] %></li>
+    <li>Interests: <%= @user[:interests].join(', ') %></li>
+  </ul>
+</div>

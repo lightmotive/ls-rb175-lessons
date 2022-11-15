@@ -1,0 +1,34 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    erubis (2.7.0)
+    multi_json (1.15.0)
+    mustermann (3.0.0)
+      ruby2_keywords (~> 0.0.1)
+    rack (2.2.4)
+    rack-protection (3.0.3)
+      rack
+    ruby2_keywords (0.0.5)
+    sinatra (3.0.3)
+      mustermann (~> 3.0)
+      rack (~> 2.2, >= 2.2.4)
+      rack-protection (= 3.0.3)
+      tilt (~> 2.0)
+    sinatra-contrib (3.0.3)
+      multi_json
+      mustermann (~> 3.0)
+      rack-protection (= 3.0.3)
+      sinatra (= 3.0.3)
+      tilt (~> 2.0)
+    tilt (2.0.11)
+
+PLATFORMS
+  aarch64-linux
+
+DEPENDENCIES
+  erubis
+  sinatra (~> 3.0.3)
+  sinatra-contrib
+
+BUNDLED WITH
+   2.3.7
