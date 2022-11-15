@@ -1,7 +1,5 @@
-<div>
-  <ul>
-  <% @users.each_key do |key| %>
-    <li><a href="/user/<%= key %>"><%= key %></a></li>
-  <% end %>
-  </ul>
-</div>
+<h1>All Users</h1>
+<% @users.each_key do |key| %>
+  <%# Would like a "view component" for the following to reuse in user layout... %>
+  <li><a href="/user/<%= key %>"><%= key %></a></li>
+<% end %>
