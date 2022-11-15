@@ -15,13 +15,7 @@ end
 before do
   @title = '* Users *'
   @users = YAML.load_file('data/users.yaml')
-end
-
-helpers do
-  def user_stats
-    calculate_user_stats
-    "There are #{@user_stats[:count]} users with a total of #{@user_stats[:interest_count]} interests."
-  end
+  calculate_user_stats
 end
 
 get '/' do
