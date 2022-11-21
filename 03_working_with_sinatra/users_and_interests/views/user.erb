@@ -10,6 +10,6 @@
 <ul>
 <% @users.each_key do |key| %>
   <% next if key == params['id'].to_sym %>
-  <li><a href="/user/<%= key %>"><%= key %></a></li>
+  <li><%= user_anchor(key) %></li>
 <% end %>
 </ul>

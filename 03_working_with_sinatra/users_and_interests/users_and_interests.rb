@@ -18,6 +18,13 @@ before do
   calculate_user_stats
 end
 
+helpers do
+  def user_anchor(key)
+    @user_anchor_key = key
+    erb :user_anchor
+  end
+end
+
 get '/' do
   erb :home
 end
