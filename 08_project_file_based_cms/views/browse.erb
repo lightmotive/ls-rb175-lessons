@@ -1,0 +1,6 @@
+<h2><%= @browse_path %></h2>
+<% @entries.each do |entry| %>
+<ul>
+  <li><%= entry[:name] %></li>
+</ul>
+<% end %>

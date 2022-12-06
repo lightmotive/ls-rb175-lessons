@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <title>Public CMS</title>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+    <header>
+      <h1>CMS</h1>
+    </header>
+    <% if session[:error] %>
+    <div class="flash error">
+      <%== session_flash_messages(session.delete(:error)) %>
+    </div>
+    <% elsif session[:success] %>
+    <div class="flash success">
+      <%== session_flash_messages(session.delete(:success)) %>
+    </div>
+    <% end %>
+    <main>
+      <%== yield %>
+    </main>
+  </body>
+</html>
