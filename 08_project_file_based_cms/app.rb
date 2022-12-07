@@ -69,8 +69,8 @@ get '/' do
 end
 
 namespace '/browse' do
-  # Build complete `/view/` route `href` attribute value
   helpers do
+    # Build complete `/view/` route `href` attribute value
     def browse_entry_href(entry)
       entry_path = File.join(entry[:directory], entry[:name])
 
@@ -85,33 +85,37 @@ namespace '/browse' do
     end
   end
 
+  # get '/browse'
   get do
+    p session[:error]
     @browse_path = '/'
     @entries = content_entries
 
     erb :browse
   end
 
+  # get '/browse/*'
+  # Get public content entries starting at browse_path and render :browse if
+  # :directory or redirect to view file if :file
   get '/*' do
-    browse_path = params['splat'].first
-    redirect '/browse' if browse_path.include?('..')
-    redirect '/browse' if content_entry_type(browse_path) == :unknown
-
-    @browse_path = browse_path
+    @browse_path = params['splat'].first
+    redirect '/browse' if @browse_path.include?('..')
 
     case content_entry_type(@browse_path)
     when :directory
-      # Get public content entries starting at browse_path and render :browse
       @entries = content_entries(@browse_path)
       erb :browse
     when :file
       redirect File.join('/', 'view', @browse_path)
     else
-      raise 'Unknown file type'
+      p 'content not found...'
+      session[:error] = 'The content was not found.'
+      redirect '/browse'
     end
   end
 end
 
+# View files (`send_file`)
 get '/view/*' do
   view_path = params['splat'].first
   redirect '/browse' unless content_entry_type(view_path) == :file
