@@ -29,7 +29,7 @@ helpers do
 end
 
 def content_base_path
-  './content'
+  "#{File.expand_path(__dir__)}/content"
 end
 
 def content_entry_type(path)
