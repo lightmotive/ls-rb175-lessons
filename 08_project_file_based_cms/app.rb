@@ -36,26 +36,31 @@ def root_path
   # rubocop:enable Style/ExpandPathArguments
 end
 
-def content_path
-  "#{root_path}/content"
+def content_path(entry_path = '')
+  File.join(root_path, 'content', entry_path)
 end
 
 def content_entry_type(path)
-  return 'directory' if FileTest.directory?("#{content_path}#{path}")
-
-  'file'
+  path = content_path(path)
+  if FileTest.directory?(path)
+    :directory
+  elsif FileTest.file?(path)
+    :file
+  else
+    :unknown
+  end
 end
 
-def content_entries(path_start = '/')
+def content_entries(path_start = '')
   entries = []
 
-  Dir.each_child("#{content_path}#{path_start}") do |entry_path|
+  Dir.each_child(content_path(path_start)) do |entry_path|
     next if path_start == content_path && ['.', '..'].include?(entry_path)
 
     entries << {
-      directory: path_start,
+      directory: path_start.empty? ? '/' : path_start,
       name: entry_path,
-      type: content_entry_type("#{content_path}#{path_start}#{entry_path}")
+      type: content_entry_type(File.join(path_start, entry_path))
     }
   end
 
@@ -66,30 +71,54 @@ get '/' do
   redirect '/browse'
 end
 
-get '/browse' do
-  @browse_path = '/'
-  @entries = content_entries
+namespace '/browse' do
+  # Build complete `/view/` route `href` attribute value
+  helpers do
+    def browse_entry_href(entry)
+      entry_path = File.join(entry[:directory], entry[:name])
 
-  erb :browse
+      case entry[:type]
+      when :directory
+        File.join('/', 'browse', entry_path)
+      when :file
+        File.join('/', 'view', entry_path)
+      else
+        '/browse'
+      end
+    end
+  end
+
+  get do
+    @browse_path = '/'
+    @entries = content_entries
+
+    erb :browse
+  end
+
+  get '/*' do
+    browse_path = params['splat'].first
+    redirect '/browse' if browse_path.include?('..')
+    redirect '/browse' if content_entry_type(browse_path) == :unknown
+
+    @browse_path = browse_path
+
+    case content_entry_type(@browse_path)
+    when :directory
+      # Get public content entries starting at browse_path and render :browse
+      @entries = content_entries(@browse_path)
+      erb :browse
+    when :file
+      redirect File.join('/', 'view', @browse_path)
+    else
+      raise 'Unknown file type'
+    end
+  end
 end
 
-get '/browse/*' do
-  browse_path = params['splat']
-  redirect '/browse' if browse_path.include?('..')
-  path_local = "#{content_path}/#{browse_path}"
-  redirect '/browse' unless FileTest.exists?(path_local)
+get '/view/*' do
+  view_path = params['splat'].first
+  redirect '/browse' unless content_entry_type(view_path) == :file
+  path_local = content_path(view_path)
 
-  @browse_path = "/#{browse_path}"
-
-  case content_entry_type(@browse_path)
-  when 'directory'
-    # Get public content entries starting at browse_path and render :browse
-    @entries = content_entries(@browse_path)
-    erb :browse
-  when 'file'
-    # Render file
-    'File to be rendered...'
-  else
-    raise 'Unknown file type'
-  end
+  send_file path_local
 end

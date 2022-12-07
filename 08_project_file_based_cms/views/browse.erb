@@ -1,6 +1,8 @@
-<h2><%= @browse_path %></h2>
+<h2><%= @browse_path == '/' ? '' : @browse_path %></h2>
 <% @entries.each do |entry| %>
 <ul>
-  <li><%= entry[:name] %></li>
+  <li>
+    <a href="<%= browse_entry_href(entry) %>"><%= entry[:name] %></a>
+  </li>
 </ul>
 <% end %>
