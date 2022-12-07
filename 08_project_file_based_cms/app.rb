@@ -36,19 +36,16 @@ def root_path
   # rubocop:enable Style/ExpandPathArguments
 end
 
-def content_path(entry_path = '')
-  File.join(root_path, 'content', entry_path)
+def content_path(child_path = '')
+  File.join(root_path, 'content', child_path)
 end
 
 def content_entry_type(path)
   path = content_path(path)
-  if FileTest.directory?(path)
-    :directory
-  elsif FileTest.file?(path)
-    :file
-  else
-    :unknown
-  end
+  return :directory if FileTest.directory?(path)
+  return :file if FileTest.file?(path)
+
+  :unknown
 end
 
 def content_entries(path_start = '')
