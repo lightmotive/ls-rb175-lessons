@@ -73,8 +73,8 @@ get '/browse' do
   erb :browse
 end
 
-get %r{/browse/(?<browse_path>.+)} do
-  browse_path = params[:browse_path]
+get '/browse/*' do
+  browse_path = params['splat']
   redirect '/browse' if browse_path.include?('..')
   path_local = "#{content_path}/#{browse_path}"
   redirect '/browse' unless FileTest.exists?(path_local)
