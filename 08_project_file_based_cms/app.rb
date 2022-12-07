@@ -28,12 +28,20 @@ helpers do
   end
 end
 
-def content_base_path
-  "#{File.expand_path(__dir__)}/content"
+def root_path
+  # rubocop:disable Style/ExpandPathArguments
+  # - Reason: `File.expand_path(__dir__)` translates symbolic links to real
+  #   paths, which we don't want in this program.
+  File.expand_path('..', __FILE__)
+  # rubocop:enable Style/ExpandPathArguments
+end
+
+def content_path
+  "#{root_path}/content"
 end
 
 def content_entry_type(path)
-  return 'directory' if FileTest.directory?("#{content_base_path}#{path}")
+  return 'directory' if FileTest.directory?("#{content_path}#{path}")
 
   'file'
 end
@@ -41,13 +49,13 @@ end
 def content_entries(path_start = '/')
   entries = []
 
-  Dir.each_child("#{content_base_path}#{path_start}") do |entry_path|
-    next if path_start == content_base_path && ['.', '..'].include?(entry_path)
+  Dir.each_child("#{content_path}#{path_start}") do |entry_path|
+    next if path_start == content_path && ['.', '..'].include?(entry_path)
 
     entries << {
       directory: path_start,
       name: entry_path,
-      type: content_entry_type("#{content_base_path}#{path_start}#{entry_path}")
+      type: content_entry_type("#{content_path}#{path_start}#{entry_path}")
     }
   end
 
@@ -68,7 +76,7 @@ end
 get %r{/browse/(?<browse_path>.+)} do
   browse_path = params[:browse_path]
   redirect '/browse' if browse_path.include?('..')
-  path_local = "#{content_base_path}/#{browse_path}"
+  path_local = "#{content_path}/#{browse_path}"
   redirect '/browse' unless FileTest.exists?(path_local)
 
   @browse_path = "/#{browse_path}"
