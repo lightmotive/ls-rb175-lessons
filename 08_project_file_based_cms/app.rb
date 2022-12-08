@@ -58,6 +58,11 @@ def content_entries(path_start = '')
   end
 end
 
+def content_missing
+  session[:error] = "That item wasn't found."
+  redirect '/browse'
+end
+
 get '/' do
   redirect '/browse'
 end
@@ -102,9 +107,7 @@ namespace '/browse' do
     when :file
       redirect File.join('/', 'view', @browse_path)
     else
-      p 'content not found...'
-      session[:error] = 'The content was not found.'
-      redirect '/browse'
+      content_missing
     end
   end
 end
@@ -112,8 +115,13 @@ end
 # View files (`send_file`)
 get '/view/*' do
   view_path = params['splat'].first
-  redirect '/browse' unless content_entry_type(view_path) == :file
-  path_local = content_path(view_path)
 
-  send_file path_local
+  case content_entry_type(view_path)
+  when :file
+    path_local = content_path(view_path)
+    send_file path_local
+  when :directory then redirect File.join('/', 'browse', view_path)
+  else
+    missing_content
+  end
 end
