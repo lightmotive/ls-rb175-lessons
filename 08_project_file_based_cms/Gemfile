@@ -8,3 +8,14 @@ gem 'erubis'
 gem 'puma'
 gem 'sinatra', '~> 3.0.3'
 gem 'sinatra-contrib'
+
+group :development do
+  gem 'rake', '~> 13.0'
+end
+
+group :test do
+  gem 'minitest', '~> 5.16'
+  gem 'minitest-reporters', '~> 1.5'
+  gem 'rack-test'
+  gem 'simplecov'
+end

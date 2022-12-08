@@ -86,7 +86,6 @@ namespace '/browse' do
 
   # get '/browse'
   get do
-    p session[:error]
     @browse_path = '/'
     @entries = content_entries
 
