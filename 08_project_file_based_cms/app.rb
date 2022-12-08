@@ -49,19 +49,13 @@ def content_entry_type(path)
 end
 
 def content_entries(path_start = '')
-  entries = []
-
-  Dir.each_child(content_path(path_start)) do |entry_path|
-    next if path_start == content_path && ['.', '..'].include?(entry_path)
-
-    entries << {
+  Dir.each_child(content_path(path_start)).map do |entry_path|
+    {
       directory: path_start.empty? ? '/' : path_start,
       name: entry_path,
       type: content_entry_type(File.join(path_start, entry_path))
     }
   end
-
-  entries
 end
 
 get '/' do
