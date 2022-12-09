@@ -117,8 +117,8 @@ get '/view/*' do
 
   case content_entry_type(view_path)
   when :file
-    path_local = content_path(view_path)
-    send_file path_local
+    local_file_path = content_path(view_path)
+    send_file local_file_path
   when :directory then redirect File.join('/', 'browse', view_path)
   else
     missing_content
