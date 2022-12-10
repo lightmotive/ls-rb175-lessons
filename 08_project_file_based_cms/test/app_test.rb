@@ -27,7 +27,6 @@ class AppTest < Minitest::Test
     get '/browse'
     assert_equal 200, last_response.status
     assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
-    assert_equal '631', last_response['Content-Length']
     expected_body = <<~BODY
       <!doctype html>
       <html lang="en-US">
@@ -42,6 +41,11 @@ class AppTest < Minitest::Test
           </header>
           <main>
             <h2></h2>
+      <ul>
+        <li>
+          <a href="/view/about.md">about.md</a>
+        </li>
+      </ul>
       <ul>
         <li>
           <a href="/view/about.txt">about.txt</a>
@@ -137,5 +141,17 @@ class AppTest < Minitest::Test
     assert_equal 302, last_response.status
     assert_equal 'http://example.org/browse', last_response['Location']
     assert_empty last_response.body
+  end
+
+  def test_view_markdown_as_html
+    get '/view/about.md'
+    assert_equal 200, last_response.status
+    assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
+    expected_body = <<~BODY
+      <h2>Ruby is...</h2>
+
+      <p>A dynamic, open-source programming language with a focus on simplicity and productivity. It has an elegant syntax that is natural to read and easy to write.</p>
+    BODY
+    assert_equal expected_body, last_response.body
   end
 end

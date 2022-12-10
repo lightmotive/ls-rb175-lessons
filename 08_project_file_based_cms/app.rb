@@ -5,6 +5,7 @@ require 'sinatra/namespace'
 require 'sinatra/reloader'
 require 'sinatra/content_for'
 require 'tilt/erubis'
+require 'redcarpet'
 
 configure do
   enable :sessions
@@ -16,14 +17,18 @@ helpers do
   def session_flash_messages(content)
     case
     when content.is_a?(Array)
+      # :nocov:
       return "<p>#{content.join('</p><p>')}</p>" if content.size <= 1
 
       '<ul>' \
       "<li>#{content.join('</li><li>')}</li>" \
       '</ul>'
+      # :nocov:
     when content.is_a?(String) then "<p>#{content}</p>"
     else
+      # :nocov:
       raise 'Flash message content must be an array of strings or a string.'
+      # :nocov:
     end
   end
 end
@@ -79,7 +84,9 @@ namespace '/browse' do
       when :file
         File.join('/', 'view', entry_path)
       else
+        # :nocov:
         ''
+        # :nocov:
       end
     end
   end
@@ -112,7 +119,19 @@ namespace '/browse' do
   end
 end
 
-# View files (`send_file`)
+def view_file_response(view_path)
+  local_file_path = content_path(view_path)
+
+  case File.extname(local_file_path)
+  when '.md'
+    markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
+    markdown.render(File.read(local_file_path))
+  else
+    send_file local_file_path
+  end
+end
+
+# View files (`send_file` or custom processing)
 get '/view/*' do
   view_path = params['splat'].first
   # The web or app server handles this scenario automatically; just in case:
@@ -120,8 +139,7 @@ get '/view/*' do
 
   case content_entry_type(view_path)
   when :file
-    local_file_path = content_path(view_path)
-    send_file local_file_path
+    view_file_response(view_path)
   when :directory then redirect File.join('/', 'browse', view_path)
   else
     content_missing(view_path)
