@@ -168,6 +168,17 @@ class AppTest < Minitest::Test
     assert_equal expected_body, last_response.body
   end
 
+  def test_view_dir2_dir21_f3_txt
+    get '/view/dir2/dir2.1/f3.txt'
+    assert_equal 200, last_response.status
+    assert_equal 'text/plain;charset=utf-8', last_response['Content-Type']
+    assert_equal '20', last_response['Content-Length']
+    expected_body = <<~BODY.strip
+      Test file in dir2.1.
+    BODY
+    assert_equal expected_body, last_response.body
+  end
+
   def test_browse_missing_content
     get '/browse/missing_xyz'
     assert_equal 302, last_response.status
