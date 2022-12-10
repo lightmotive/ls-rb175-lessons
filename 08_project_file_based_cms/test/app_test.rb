@@ -125,6 +125,10 @@ class AppTest < Minitest::Test
     get '/browse'
     assert_equal 200, last_response.status
     assert_includes last_response.body, "<p>/missing_xyz wasn't found.</p>"
+    # Assert flash error message disappears on reload
+    get '/browse'
+    assert_equal 200, last_response.status
+    refute_includes last_response.body, "<p>/missing_xyz wasn't found.</p>"
   end
 
   def test_view_missing_content
