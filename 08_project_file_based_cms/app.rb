@@ -119,13 +119,25 @@ namespace '/browse' do
   end
 end
 
+# TODO: Refactor to class with separate classes mapped for each file type.
+def custom_file_renderers
+  {
+    '.md' => { response_content_type: :html,
+               render: lambda do |local_file_path|
+                 markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
+                 markdown.render(File.read(local_file_path))
+               end }
+  }
+end
+
 def view_file_response(view_path)
   local_file_path = content_path(view_path)
+  file_extension = File.extname(local_file_path)
 
-  case File.extname(local_file_path)
-  when '.md'
-    markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
-    markdown.render(File.read(local_file_path))
+  custom_renderer = custom_file_renderers[file_extension]
+  if custom_renderer
+    content_type custom_renderer[:response_content_type]
+    custom_renderer[:render].call(local_file_path)
   else
     send_file local_file_path
   end
