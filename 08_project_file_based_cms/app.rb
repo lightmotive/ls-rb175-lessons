@@ -97,7 +97,8 @@ namespace '/browse' do
   # :directory or redirect to view file if :file
   get '/*' do
     @browse_path = params['splat'].first
-    redirect '/browse' if @browse_path.include?('..')
+    # The web or app server handles this scenario automatically; just in case:
+    halt 404 if @browse_path.include?('..')
 
     case content_entry_type(@browse_path)
     when :directory
@@ -114,6 +115,8 @@ end
 # View files (`send_file`)
 get '/view/*' do
   view_path = params['splat'].first
+  # The web or app server handles this scenario automatically; just in case:
+  halt 404 if view_path.include?('..')
 
   case content_entry_type(view_path)
   when :file
