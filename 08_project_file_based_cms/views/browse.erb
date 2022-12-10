@@ -2,7 +2,7 @@
 <% @entries.each do |entry| %>
 <ul>
   <li>
-    <a href="<%= browse_entry_href(entry) %>"><%= entry[:name] %></a>
+    <a href="<%= entry[:href] %>"><%= entry[:name] %></a>
   </li>
 </ul>
 <% end %>

@@ -53,13 +53,30 @@ def content_entry_type(path)
   :unknown
 end
 
+# Build `href` attribute value based on entry type:
+# - Use `/browse` route for directories.
+# - Use `/view` route for files.
+def content_entry_set_href!(entry)
+  entry_path = File.join(entry[:directory], entry[:name])
+  entry[:href] = case entry[:type]
+                 when :directory then File.join('/', 'browse', entry_path)
+                 when :file then File.join('/', 'view', entry_path)
+                 else
+                   # :nocov:
+                   ''
+                   # :nocov:
+                 end
+  entry
+end
+
 def content_entries(path_start = '')
   Dir.each_child(content_path(path_start)).map do |entry_path|
-    {
+    entry = {
       directory: path_start.empty? ? '/' : path_start,
       name: entry_path,
       type: content_entry_type(File.join(path_start, entry_path))
     }
+    content_entry_set_href!(entry)
   end
 end
 
@@ -73,24 +90,6 @@ get '/' do
 end
 
 namespace '/browse' do
-  helpers do
-    # Build complete `/view/` route `href` attribute value
-    def browse_entry_href(entry)
-      entry_path = File.join(entry[:directory], entry[:name])
-
-      case entry[:type]
-      when :directory
-        File.join('/', 'browse', entry_path)
-      when :file
-        File.join('/', 'view', entry_path)
-      else
-        # :nocov:
-        ''
-        # :nocov:
-      end
-    end
-  end
-
   # get '/browse'
   get do
     @browse_path = '/'
