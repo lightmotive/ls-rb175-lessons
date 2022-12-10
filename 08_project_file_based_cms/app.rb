@@ -58,8 +58,8 @@ def content_entries(path_start = '')
   end
 end
 
-def content_missing
-  session[:error] = "That item wasn't found."
+def content_missing(missing_path)
+  session[:error] = "#{File.join('/', missing_path)} wasn't found."
   redirect '/browse'
 end
 
@@ -79,7 +79,7 @@ namespace '/browse' do
       when :file
         File.join('/', 'view', entry_path)
       else
-        '/browse'
+        ''
       end
     end
   end
@@ -106,7 +106,7 @@ namespace '/browse' do
     when :file
       redirect File.join('/', 'view', @browse_path)
     else
-      content_missing
+      content_missing(@browse_path)
     end
   end
 end
@@ -121,6 +121,6 @@ get '/view/*' do
     send_file local_file_path
   when :directory then redirect File.join('/', 'browse', view_path)
   else
-    missing_content
+    content_missing(view_path)
   end
 end
