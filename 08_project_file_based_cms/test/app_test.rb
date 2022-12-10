@@ -119,14 +119,15 @@ class AppTest < Minitest::Test
     assert_equal 302, last_response.status
     assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
     assert_equal '0', last_response['Content-Length']
-    assert_equal 'http://example.org/browse', last_response['Location']
+    first_response_location = last_response['Location']
+    assert_equal 'http://example.org/browse', first_response_location
     assert_empty last_response.body
     # Assert flash error message
-    get '/browse'
+    get first_response_location
     assert_equal 200, last_response.status
     assert_includes last_response.body, "<p>/missing_xyz wasn't found.</p>"
     # Assert flash error message disappears on reload
-    get '/browse'
+    get first_response_location
     assert_equal 200, last_response.status
     refute_includes last_response.body, "<p>/missing_xyz wasn't found.</p>"
   end
