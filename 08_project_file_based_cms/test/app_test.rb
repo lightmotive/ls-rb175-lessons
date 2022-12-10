@@ -88,7 +88,8 @@ class AppTest < Minitest::Test
   def test_browse_dir2_dir21
     get '/browse/dir2/dir2.1'
     assert_equal 200, last_response.status
-    assert_includes last_response.body, '<h2>dir2/dir2.1</h2>'
+    assert_includes last_response.body,
+                    '<h2><a href="/browse">home</a>/<a href="/browse/dir2">dir2</a>/dir2.1</h2>'
     assert_includes last_response.body, '<a href="/view/dir2/dir2.1/f3.txt">f3.txt</a>'
   end
 

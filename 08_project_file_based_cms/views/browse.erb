@@ -1,4 +1,4 @@
-<h2><%= @browse_path == '/' ? '' : @browse_path %></h2>
+<h2><%== navigation_path(@browse_path) %></h2>
 <% @entries.each do |entry| %>
 <ul>
   <li>

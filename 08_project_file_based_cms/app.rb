@@ -90,6 +90,24 @@ get '/' do
 end
 
 namespace '/browse' do
+  helpers do
+    def navigation_path(browse_path)
+      return '' if browse_path == '/'
+
+      href = '/browse'
+      nav_path = "<a href=\"#{href}\">home</a>"
+
+      dir_names = browse_path.split('/')
+      dir_names[0..-2].each do |name|
+        href += "/#{name}"
+        nav_path += "/<a href=\"#{href}\">#{name}</a>"
+      end
+
+      nav_path += "/#{dir_names.last}"
+      nav_path
+    end
+  end
+
   # get '/browse'
   get do
     @browse_path = '/'
