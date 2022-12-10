@@ -1,1 +1,1 @@
-Test file in folder 2.
+Test file in dir2.
