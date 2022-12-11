@@ -2,7 +2,7 @@
 <% @entries.each do |entry| %>
 <ul>
   <li>
-    <a href="<%= entry[:href] %>"><%= entry[:name] %></a>
+    <a href="<%= entry[:view_href] %>"><%= entry[:name] %></a><% if entry[:edit_href] %> [ <a href="<%= entry[:edit_href] %>">Edit</a> ]<% end %>
   </li>
 </ul>
 <% end %>

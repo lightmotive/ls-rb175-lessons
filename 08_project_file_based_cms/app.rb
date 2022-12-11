@@ -53,19 +53,27 @@ def content_entry_type(path)
   :unknown
 end
 
-# Build `href` attribute value based on entry type:
+# Build "view" `href` attribute value based on entry type:
 # - Use `/browse` route for directories.
 # - Use `/view` route for files.
-def content_entry_set_href!(entry)
+def content_entry_set_view_href!(entry)
   entry_path = File.join(entry[:directory], entry[:name])
-  entry[:href] = case entry[:type]
-                 when :directory then File.join('/', 'browse', entry_path)
-                 when :file then File.join('/', 'view', entry_path)
-                 else
-                   # :nocov:
-                   ''
-                   # :nocov:
-                 end
+  entry[:view_href] = case entry[:type]
+                      when :directory then File.join('/', 'browse', entry_path)
+                      when :file then File.join('/', 'view', entry_path)
+                      end
+  entry
+end
+
+# Build "edit" `href` attribute value based on entry type:
+# - Use `/edit` route for files.
+# - Disable for directories (assign `nil`).
+def content_entry_set_edit_href!(entry)
+  entry_path = File.join(entry[:directory], entry[:name])
+  entry[:edit_href] = case entry[:type]
+                      when :directory then nil
+                      when :file then File.join('/', 'edit', entry_path)
+                      end
   entry
 end
 
@@ -76,8 +84,15 @@ def content_entries(path_start = '')
       name: entry_path,
       type: content_entry_type(File.join(path_start, entry_path))
     }
-    content_entry_set_href!(entry)
+    content_entry_set_view_href!(entry)
+    content_entry_set_edit_href!(entry)
   end
+end
+
+def validate_request_entry_path(path)
+  # The web or app server handles this scenario automatically;
+  # just in case (need to learn more):
+  halt 404 if path.include?('..')
 end
 
 def content_missing(missing_path)
@@ -121,8 +136,7 @@ namespace '/browse' do
   # :directory or redirect to view file if :file
   get '/*' do
     @browse_path = params['splat'].first
-    # The web or app server handles this scenario automatically; just in case:
-    halt 404 if @browse_path.include?('..')
+    validate_request_entry_path(@browse_path)
 
     case content_entry_type(@browse_path)
     when :directory
@@ -163,8 +177,7 @@ end
 # View files (`send_file` or custom processing)
 get '/view/*' do
   view_path = params['splat'].first
-  # The web or app server handles this scenario automatically; just in case:
-  halt 404 if view_path.include?('..')
+  validate_request_entry_path(view_path)
 
   case content_entry_type(view_path)
   when :file
@@ -172,5 +185,48 @@ get '/view/*' do
   when :directory then redirect File.join('/', 'browse', view_path)
   else
     content_missing(view_path)
+  end
+end
+
+def validate_edit_path(path)
+  validate_request_entry_path(path)
+
+  case content_entry_type(path)
+  when :file
+    path
+  when :directory
+    session[:error] = 'Editing not allowed.'
+    redirect File.join('/browse', path)
+  else
+    # :nocov:
+    redirect '/browse'
+    # :nocov:
+  end
+end
+
+namespace '/edit' do
+  # before '/edit/*'
+  before '/*' do
+    @edit_path = params['splat'].first
+    validate_edit_path(@edit_path)
+  end
+
+  # Edit files
+  # get '/edit/*'
+  get '/*' do
+    local_file_path = content_path(@edit_path)
+    @file_content = File.read(local_file_path)
+    erb :edit
+  end
+
+  # Save submitted content to file, then redirect to file's directory.
+  # post '/edit/*'
+  post '/*' do
+    file_content = params[:file_content]
+    local_file_path = content_path(@edit_path)
+    File.write(local_file_path, file_content)
+
+    session[:success] = "#{File.basename(@edit_path)} has been updated."
+    redirect to(File.join('/browse', File.dirname(@edit_path))), 303
   end
 end
