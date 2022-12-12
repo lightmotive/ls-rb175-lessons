@@ -4,20 +4,20 @@ module ViewHelpers
   # Global app helpers
   module ApplicationHelper
     def session_flash_messages(content)
+      return '' if content.nil?
+
       case
       when content.is_a?(Array)
-        # :nocov:
-        return "<p>#{content.join('</p><p>')}</p>" if content.size <= 1
+        return "<p>#{content.first}</p>" if content.size == 1
 
-        '<ul>' \
-        "<li>#{content.join('</li><li>')}</li>" \
-        '</ul>'
-        # :nocov:
-      when content.is_a?(String) then "<p>#{content}</p>"
+        <<~CONTENT
+          <ul>
+          <li>#{content.join("</li>\n<li>")}</li>
+          </ul>
+        CONTENT
+      when content.is_a?(String) then content.empty? ? '' : "<p>#{content}</p>"
       else
-        # :nocov:
-        raise 'Flash message content must be an array of strings or a string.'
-        # :nocov:
+        raise 'Flash message content must be an array or a string.'
       end
     end
   end
