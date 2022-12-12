@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'test_helper'
+require_relative 'rack_test_helper'
 require './controllers/application_controller'
 
 # Test main app controller, including '/' route.

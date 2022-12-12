@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'test_helper'
+require_relative 'rack_test_helper'
 require './controllers/edit_controller'
 
 DEMO_CONTENT_ROOT = './content'
@@ -15,10 +15,12 @@ def before_demo_content_modification
 end
 
 def after_demo_content_modification
+  # :nocov:
   # Restore demo files modified during testing
   DEMO_CONTENT_PATHS.each do |path|
     File.write("#{DEMO_CONTENT_ROOT}/#{path}", DEMO_CONTENT_BACKUP[path])
   end
+  # :nocov:
 end
 
 before_demo_content_modification
