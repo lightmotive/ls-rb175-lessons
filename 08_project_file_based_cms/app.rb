@@ -1,232 +1,26 @@
 # frozen_string_literal: true
 
-require 'sinatra'
-require 'sinatra/namespace'
-require 'sinatra/reloader'
+require 'sinatra/base'
 require 'sinatra/content_for'
 require 'tilt/erubis'
-require 'redcarpet'
 
-configure do
-  enable :sessions
-  set :session_secret, 'd81b5e7a139eb9711a15d27c642ebe38e5457d86ad2d4d9c9f5df240e4d3ede8'
-  set :erb, escape_html: true
-end
+require_app_paths = Dir.glob('./controllers/*.rb')
+require_app_paths.sort.each { |file| require file }
 
-helpers do
-  def session_flash_messages(content)
-    case
-    when content.is_a?(Array)
-      # :nocov:
-      return "<p>#{content.join('</p><p>')}</p>" if content.size <= 1
+# Rack app.
+class App
+  attr_reader :app
 
-      '<ul>' \
-      "<li>#{content.join('</li><li>')}</li>" \
-      '</ul>'
-      # :nocov:
-    when content.is_a?(String) then "<p>#{content}</p>"
-    else
-      # :nocov:
-      raise 'Flash message content must be an array of strings or a string.'
-      # :nocov:
-    end
-  end
-end
-
-def root_path
-  # rubocop:disable Style/ExpandPathArguments
-  # - Reason: `File.expand_path(__dir__)` translates symbolic links to real
-  #   paths, which we don't want in this program.
-  File.expand_path('..', __FILE__)
-  # rubocop:enable Style/ExpandPathArguments
-end
-
-def content_path(child_path = '')
-  File.join(root_path, 'content', child_path)
-end
-
-def content_entry_type(path)
-  path = content_path(path)
-  return :directory if FileTest.directory?(path)
-  return :file if FileTest.file?(path)
-
-  :unknown
-end
-
-# Build "view" `href` attribute value based on entry type:
-# - Use `/browse` route for directories.
-# - Use `/view` route for files.
-def content_entry_set_view_href!(entry)
-  entry_path = File.join(entry[:directory], entry[:name])
-  entry[:view_href] = case entry[:type]
-                      when :directory then File.join('/', 'browse', entry_path)
-                      when :file then File.join('/', 'view', entry_path)
-                      end
-  entry
-end
-
-# Build "edit" `href` attribute value based on entry type:
-# - Use `/edit` route for files.
-# - Disable for directories (assign `nil`).
-def content_entry_set_edit_href!(entry)
-  entry_path = File.join(entry[:directory], entry[:name])
-  entry[:edit_href] = case entry[:type]
-                      when :directory then nil
-                      when :file then File.join('/', 'edit', entry_path)
-                      end
-  entry
-end
-
-def content_entries(path_start = '')
-  Dir.each_child(content_path(path_start)).map do |entry_path|
-    entry = {
-      directory: path_start.empty? ? '/' : path_start,
-      name: entry_path,
-      type: content_entry_type(File.join(path_start, entry_path))
-    }
-    content_entry_set_view_href!(entry)
-    content_entry_set_edit_href!(entry)
-  end
-end
-
-def validate_request_entry_path(path)
-  # The web or app server handles this scenario automatically;
-  # just in case (need to learn more):
-  halt 404 if path.include?('..')
-end
-
-def content_missing(missing_path)
-  session[:error] = "#{File.join('/', missing_path)} wasn't found."
-  redirect '/browse'
-end
-
-get '/' do
-  redirect '/browse'
-end
-
-namespace '/browse' do
-  helpers do
-    def navigation_path(browse_path)
-      return '' if browse_path == '/'
-
-      href = '/browse'
-      nav_path = "<a href=\"#{href}\">home</a>"
-
-      dir_names = browse_path.split('/')
-      dir_names[0..-2].each do |name|
-        href += "/#{name}"
-        nav_path += "/<a href=\"#{href}\">#{name}</a>"
-      end
-
-      nav_path += "/#{dir_names.last}"
-      nav_path
+  def initialize
+    @app = Rack::Builder.app do
+      map('/edit') { run Controllers::EditController.new }
+      map('/view') { run Controllers::ViewController.new }
+      map('/browse') { run Controllers::BrowseController.new }
+      map('/') { run Controllers::ApplicationController.new }
     end
   end
 
-  # get '/browse'
-  get do
-    @browse_path = '/'
-    @entries = content_entries
-
-    erb :browse
-  end
-
-  # get '/browse/*'
-  # Get public content entries starting at browse_path and render :browse if
-  # :directory or redirect to view file if :file
-  get '/*' do
-    @browse_path = params['splat'].first
-    validate_request_entry_path(@browse_path)
-
-    case content_entry_type(@browse_path)
-    when :directory
-      @entries = content_entries(@browse_path)
-      erb :browse
-    when :file
-      redirect File.join('/', 'view', @browse_path)
-    else
-      content_missing(@browse_path)
-    end
-  end
-end
-
-# TODO: Refactor to class with separate classes mapped for each file type.
-def custom_file_renderers
-  {
-    '.md' => { response_content_type: :html,
-               render: lambda do |local_file_path|
-                 markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
-                 markdown.render(File.read(local_file_path))
-               end }
-  }
-end
-
-def view_file_response(view_path)
-  local_file_path = content_path(view_path)
-  file_extension = File.extname(local_file_path)
-
-  custom_renderer = custom_file_renderers[file_extension]
-  if custom_renderer
-    content_type custom_renderer[:response_content_type]
-    custom_renderer[:render].call(local_file_path)
-  else
-    send_file local_file_path
-  end
-end
-
-# View files (`send_file` or custom processing)
-get '/view/*' do
-  view_path = params['splat'].first
-  validate_request_entry_path(view_path)
-
-  case content_entry_type(view_path)
-  when :file
-    view_file_response(view_path)
-  when :directory then redirect File.join('/', 'browse', view_path)
-  else
-    content_missing(view_path)
-  end
-end
-
-def validate_edit_path(path)
-  validate_request_entry_path(path)
-
-  case content_entry_type(path)
-  when :file
-    path
-  when :directory
-    session[:error] = 'Editing not allowed.'
-    redirect File.join('/browse', path)
-  else
-    # :nocov:
-    redirect '/browse'
-    # :nocov:
-  end
-end
-
-namespace '/edit' do
-  # before '/edit/*'
-  before '/*' do
-    @edit_path = params['splat'].first
-    validate_edit_path(@edit_path)
-  end
-
-  # Edit files
-  # get '/edit/*'
-  get '/*' do
-    local_file_path = content_path(@edit_path)
-    @file_content = File.read(local_file_path)
-    erb :edit
-  end
-
-  # Save submitted content to file, then redirect to file's directory.
-  # post '/edit/*'
-  post '/*' do
-    file_content = params[:file_content]
-    local_file_path = content_path(@edit_path)
-    File.write(local_file_path, file_content)
-
-    session[:success] = "#{File.basename(@edit_path)} has been updated."
-    redirect to(File.join('/browse', File.dirname(@edit_path))), 303
+  def call(env)
+    app.call(env)
   end
 end
