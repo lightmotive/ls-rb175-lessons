@@ -19,4 +19,10 @@ class ApplicationControllerTest < Minitest::Test
     assert_equal 'http://example.org/browse', last_response['Location']
     assert_empty last_response.body
   end
+
+  def test_invalid_route
+    get '/nothing_here'
+    assert_equal 302, last_response.status
+    assert_equal 'http://example.org/browse', last_response['Location']
+  end
 end
