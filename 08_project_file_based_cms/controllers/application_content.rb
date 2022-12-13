@@ -28,10 +28,24 @@ module Controllers
       :unknown
     end
 
+    def content_entries(path_start = '')
+      Dir.each_child(content_path(path_start)).map do |entry_path|
+        entry = {
+          directory: path_start.empty? ? '/' : path_start,
+          name: entry_path,
+          type: content_entry_type(File.join(path_start, entry_path))
+        }
+        content_entry_set_view_href(entry)
+        content_entry_set_edit_href(entry)
+      end
+    end
+
+    private
+
     # Build "view" `href` attribute value based on entry type:
     # - Use `/browse` route for directories.
     # - Use `/view` route for files.
-    def content_entry_set_view_href!(entry)
+    def content_entry_set_view_href(entry)
       entry_path = File.join(entry[:directory], entry[:name])
       entry[:view_href] = case entry[:type]
                           when :directory then File.join('/', 'browse', entry_path)
@@ -43,25 +57,13 @@ module Controllers
     # Build "edit" `href` attribute value based on entry type:
     # - Use `/edit` route for files.
     # - Disable for directories (assign `nil`).
-    def content_entry_set_edit_href!(entry)
+    def content_entry_set_edit_href(entry)
       entry_path = File.join(entry[:directory], entry[:name])
       entry[:edit_href] = case entry[:type]
                           when :directory then nil
                           when :file then File.join('/', 'edit', entry_path)
                           end
       entry
-    end
-
-    def content_entries(path_start = '')
-      Dir.each_child(content_path(path_start)).map do |entry_path|
-        entry = {
-          directory: path_start.empty? ? '/' : path_start,
-          name: entry_path,
-          type: content_entry_type(File.join(path_start, entry_path))
-        }
-        content_entry_set_view_href!(entry)
-        content_entry_set_edit_href!(entry)
-      end
     end
   end
 end

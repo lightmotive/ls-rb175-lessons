@@ -15,7 +15,6 @@ module Controllers
     end
 
     def_delegators :@app_content, :content_path, :content_entry_type,
-                   :content_entry_set_view_href!, :content_entry_set_edit_href!,
                    :content_entries
 
     helpers ViewHelpers::ApplicationHelper
