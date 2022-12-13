@@ -2,15 +2,14 @@
 
 # require 'fileutils'
 require_relative 'rack_test_helper'
-require './controllers/application_content'
 
 # All Controller tests should inherit this.
 class ControllerTestBase < Minitest::Test
   include Rack::Test::Methods
 
   def setup
-    app_content = Controllers::ApplicationContent.new
-    @test_content_path = app_content.content_path
+    content = Models::Content.new
+    @test_content_path = content.content_path
     FileUtils.mkdir_p(@test_content_path)
   end
 

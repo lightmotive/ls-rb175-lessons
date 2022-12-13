@@ -4,10 +4,10 @@ require 'sinatra/base'
 require 'sinatra/content_for'
 require 'tilt/erubis'
 
-require_app_paths = Dir.glob('./controllers/*.rb')
-require_app_paths.sort.each { |file| require file }
+Dir.glob('./models/*.rb').sort.each { |file| require file }
+Dir.glob('./controllers/*.rb').sort.each { |file| require file }
 
-# Rack app.
+# Rack-compliant app
 class App
   attr_reader :app
 

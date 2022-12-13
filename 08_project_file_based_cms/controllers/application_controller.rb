@@ -11,10 +11,10 @@ module Controllers
 
     def initialize
       super
-      @app_content = ApplicationContent.new
+      @content = Models::Content.new
     end
 
-    def_delegators :@app_content, :content_path, :content_entry_type,
+    def_delegators :@content, :content_path, :content_entry_type,
                    :content_entries
 
     helpers ViewHelpers::ApplicationHelper
@@ -23,9 +23,9 @@ module Controllers
       enable :sessions
       set :session_secret, 'd81b5e7a139eb9711a15d27c642ebe38e5457d86ad2d4d9c9f5df240e4d3ede8'
       set :erb, escape_html: true
-      app_content = Controllers::ApplicationContent.new
-      set :public_folder, File.join(app_content.app_root_path, 'public')
-      set :views, File.join(app_content.app_root_path, 'views')
+      content = Models::Content.new
+      set :public_folder, File.join(content.app_root_path, 'public')
+      set :views, File.join(content.app_root_path, 'views')
     end
 
     get '/' do

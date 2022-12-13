@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module Controllers
+module Models
   # Core content behaviors.
-  class ApplicationContent
+  class Content
     attr_reader :app_root_path
 
     def initialize
