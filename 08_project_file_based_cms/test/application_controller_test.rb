@@ -14,13 +14,13 @@ class ApplicationControllerTest < ControllerTestBase
     assert_equal 302, last_response.status
     assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
     assert_equal '0', last_response['Content-Length']
-    assert_equal 'http://example.org/browse', last_response['Location']
+    assert_equal "http://example.org#{APP_ROUTES[:browse]}", last_response['Location']
     assert_empty last_response.body
   end
 
   def test_invalid_route
     get '/nothing_here'
     assert_equal 302, last_response.status
-    assert_equal 'http://example.org/browse', last_response['Location']
+    assert_equal "http://example.org#{APP_ROUTES[:browse]}", last_response['Location']
   end
 end

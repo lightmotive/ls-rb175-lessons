@@ -5,7 +5,7 @@ require './controllers/browse_controller'
 
 require 'pry'
 
-# Test '/browse' routes.
+# Test APP_ROUTES[:browse] routes.
 class BrowseControllerTest < ControllerTestBase
   def app
     OUTER_APP
@@ -16,7 +16,7 @@ class BrowseControllerTest < ControllerTestBase
     create_file('changes.txt')
     create_directory('dir1')
 
-    get '/browse'
+    get APP_ROUTES[:browse]
     assert_equal 200, last_response.status
     assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
     expected_body = File.read('./test/expected_body/browse.html')
@@ -26,36 +26,38 @@ class BrowseControllerTest < ControllerTestBase
   def test_browse_dir1
     create_file('dir1/f1.txt')
 
-    get '/browse/dir1'
+    get "#{APP_ROUTES[:browse]}/dir1"
     assert_equal 200, last_response.status
-    assert_includes last_response.body, '<a href="/view/dir1/f1.txt">f1.txt</a>'
+    assert_includes last_response.body,
+                    %(<a href="#{APP_ROUTES[:view]}/dir1/f1.txt">f1.txt</a>)
   end
 
   def test_browse_dir2_dir21
     create_file('dir2/dir2.1/f3.txt')
 
-    get '/browse/dir2/dir2.1'
+    get "#{APP_ROUTES[:browse]}/dir2/dir2.1"
     assert_equal 200, last_response.status
     assert_includes last_response.body,
-                    '<h2><a href="/browse">home</a>/<a href="/browse/dir2">dir2</a>/dir2.1</h2>'
-    assert_includes last_response.body, '<a href="/view/dir2/dir2.1/f3.txt">f3.txt</a>'
+                    %(<h2><a href="#{APP_ROUTES[:browse]}">home</a>/<a href="#{APP_ROUTES[:browse]}/dir2">dir2</a>/dir2.1</h2>)
+    assert_includes last_response.body,
+                    %(<a href="#{APP_ROUTES[:view]}/dir2/dir2.1/f3.txt">f3.txt</a>)
   end
 
   def test_browse_changes_txt
     create_file('changes.txt')
 
-    get '/browse/changes.txt'
+    get "#{APP_ROUTES[:browse]}/changes.txt"
     assert_equal 302, last_response.status
-    assert_equal 'http://example.org/view/changes.txt', last_response['Location']
+    assert_equal "http://example.org#{APP_ROUTES[:view]}/changes.txt", last_response['Location']
   end
 
   def test_browse_missing_content
-    get '/browse/missing_xyz'
+    get "#{APP_ROUTES[:browse]}/missing_xyz"
     assert_equal 302, last_response.status
     assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
     assert_equal '0', last_response['Content-Length']
     first_response_location = last_response['Location']
-    assert_equal 'http://example.org/browse', first_response_location
+    assert_equal "http://example.org#{APP_ROUTES[:browse]}", first_response_location
     assert_empty last_response.body
     # Assert flash error message
     get first_response_location

@@ -30,16 +30,16 @@ module Controllers
     end
 
     get '/' do
-      redirect '/browse'
+      redirect APP_ROUTES[:browse]
     end
 
     not_found do
-      redirect '/browse'
+      redirect APP_ROUTES[:browse]
     end
 
     def content_missing(missing_path)
       session[:error] = "#{File.join('/', missing_path)} wasn't found."
-      redirect '/browse'
+      redirect APP_ROUTES[:browse]
     end
 
     def validate_request_entry_path(path)

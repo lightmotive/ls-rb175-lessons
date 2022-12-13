@@ -3,13 +3,13 @@
 require_relative 'application_controller'
 
 module Controllers
-  # Handle '/browse' routes
+  # Handle browse routes
   class BrowseController < ApplicationController
     helpers do
       def navigation_path(browse_path)
         return '' if browse_path == '/'
 
-        href = '/browse'
+        href = APP_ROUTES[:browse]
         nav_path = "<a href=\"#{href}\">home</a>"
 
         dir_names = browse_path.split('/')
@@ -23,7 +23,7 @@ module Controllers
       end
     end
 
-    # get '/browse'
+    # get 'APP_ROUTES[:browse]'
     get '/' do
       @browse_path = '/'
       @entries = content_entries
@@ -31,7 +31,7 @@ module Controllers
       erb :browse
     end
 
-    # get '/browse/*'
+    # get 'APP_ROUTES[:browse]/*'
     # Get public content entries starting at browse_path and render :browse if
     # :directory or redirect to view file if :file
     get '/*' do
@@ -43,7 +43,7 @@ module Controllers
         @entries = content_entries(@browse_path)
         erb :browse
       when :file
-        redirect File.join('/', 'view', @browse_path)
+        redirect File.join(APP_ROUTES[:view], @browse_path)
       else
         content_missing(@browse_path)
       end
