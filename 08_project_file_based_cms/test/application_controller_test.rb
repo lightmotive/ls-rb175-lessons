@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
-require_relative 'rack_test_helper'
+require_relative 'controller_test_base'
 require './controllers/application_controller'
 
 # Test main app controller, including '/' route.
-class ApplicationControllerTest < Minitest::Test
-  include Rack::Test::Methods
-
+class ApplicationControllerTest < ControllerTestBase
   def app
     OUTER_APP
   end

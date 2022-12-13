@@ -1,23 +1,25 @@
 # frozen_string_literal: true
 
-require_relative 'rack_test_helper'
+require_relative 'controller_test_base'
 require './controllers/view_controller'
 
 # Test '/view' routes.
-class ViewControllerTest < Minitest::Test
-  include Rack::Test::Methods
-
+class ViewControllerTest < ControllerTestBase
   def app
     OUTER_APP
   end
 
   def test_view_dir1
+    create_directory('dir1')
+
     get '/view/dir1'
     assert_equal 302, last_response.status
     assert_equal 'http://example.org/browse/dir1', last_response['Location']
   end
 
   def test_view_changes_txt
+    create_file('changes.txt', 'Coming soon...')
+
     get '/view/changes.txt'
     assert_equal 200, last_response.status
     assert_equal 'text/plain;charset=utf-8', last_response['Content-Type']
@@ -25,6 +27,8 @@ class ViewControllerTest < Minitest::Test
   end
 
   def test_view_dir2_dir21_f3_txt
+    create_file('dir2/dir2.1/f3.txt', 'Test file in dir2.1.')
+
     get '/view/dir2/dir2.1/f3.txt'
     assert_equal 200, last_response.status
     assert_equal 'text/plain;charset=utf-8', last_response['Content-Type']
@@ -39,14 +43,11 @@ class ViewControllerTest < Minitest::Test
   end
 
   def test_view_markdown_as_html
+    create_file('about.md', "## Ruby is...\n")
+
     get '/view/about.md'
     assert_equal 200, last_response.status
     assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
-    expected_body = <<~BODY
-      <h2>Ruby is...</h2>
-
-      <p>A dynamic, open-source programming language with a focus on simplicity and productivity. It has an elegant syntax that is natural to read and easy to write.</p>
-    BODY
-    assert_equal expected_body, last_response.body
+    assert_equal "<h2>Ruby is...</h2>\n", last_response.body
   end
 end

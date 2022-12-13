@@ -1,17 +1,21 @@
 # frozen_string_literal: true
 
-require_relative 'rack_test_helper'
+require_relative 'controller_test_base'
 require './controllers/browse_controller'
 
-# Test '/browse' routes.
-class BrowseControllerTest < Minitest::Test
-  include Rack::Test::Methods
+require 'pry'
 
+# Test '/browse' routes.
+class BrowseControllerTest < ControllerTestBase
   def app
     OUTER_APP
   end
 
   def test_browse
+    create_file('about.md')
+    create_file('changes.txt')
+    create_directory('dir1')
+
     get '/browse'
     assert_equal 200, last_response.status
     assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
@@ -20,12 +24,16 @@ class BrowseControllerTest < Minitest::Test
   end
 
   def test_browse_dir1
+    create_file('dir1/f1.txt')
+
     get '/browse/dir1'
     assert_equal 200, last_response.status
     assert_includes last_response.body, '<a href="/view/dir1/f1.txt">f1.txt</a>'
   end
 
   def test_browse_dir2_dir21
+    create_file('dir2/dir2.1/f3.txt')
+
     get '/browse/dir2/dir2.1'
     assert_equal 200, last_response.status
     assert_includes last_response.body,
@@ -34,6 +42,8 @@ class BrowseControllerTest < Minitest::Test
   end
 
   def test_browse_changes_txt
+    create_file('changes.txt')
+
     get '/browse/changes.txt'
     assert_equal 302, last_response.status
     assert_equal 'http://example.org/view/changes.txt', last_response['Location']
