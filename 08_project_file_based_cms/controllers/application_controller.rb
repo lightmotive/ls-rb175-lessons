@@ -14,8 +14,9 @@ module Controllers
       @content = Models::Content.new
     end
 
-    def_delegators :@content, :content_path, :content_entry_type,
-                   :content_entries
+    def_delegator :@content, :path, :content_path
+    def_delegator :@content, :entry_type, :content_entry_type
+    def_delegator :@content, :entries, :content_entries
 
     helpers ViewHelpers::ApplicationHelper
 

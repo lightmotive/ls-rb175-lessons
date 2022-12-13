@@ -8,8 +8,7 @@ class ControllerTestBase < Minitest::Test
   include Rack::Test::Methods
 
   def setup
-    content = Models::Content.new
-    @test_content_path = content.content_path
+    @test_content_path = Models::Content.new.path
     FileUtils.mkdir_p(@test_content_path)
   end
 
