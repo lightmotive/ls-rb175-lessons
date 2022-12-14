@@ -2,7 +2,6 @@
 
 require 'sinatra/base'
 require 'forwardable'
-require './view_helpers/application_helper'
 
 module Controllers
   # Handle '/' route. All other controllers inherit this.

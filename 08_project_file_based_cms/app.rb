@@ -10,6 +10,7 @@ APP_ROUTES = { browse: '/browse',
 
 require './url_utils'
 Dir.glob('./models/*.rb').sort.each { |file| require file }
+Dir.glob('./view_helpers/*.rb').sort.each { |file| require file }
 Dir.glob('./controllers/*.rb').sort.each { |file| require file }
 
 # Rack-compliant app
