@@ -39,7 +39,7 @@ module Controllers
       case content_entry_type(view_path)
       when :file
         view_file_response(view_path)
-      when :directory then redirect File.join(APP_ROUTES[:browse], view_path)
+      when :directory then redirect URLUtils.join_components(APP_ROUTES[:browse], view_path)
       else
         content_missing(view_path)
       end

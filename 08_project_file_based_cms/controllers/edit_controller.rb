@@ -13,7 +13,7 @@ module Controllers
         path
       when :directory
         session[:error] = 'Editing not allowed.'
-        redirect File.join(APP_ROUTES[:browse], path)
+        redirect URLUtils.join_components(APP_ROUTES[:browse], path)
       else
         # :nocov:
         redirect APP_ROUTES[:browse]
@@ -43,7 +43,9 @@ module Controllers
       File.write(file_path, file_content)
 
       session[:success] = "#{File.basename(@edit_path)} has been updated."
-      redirect File.join(APP_ROUTES[:browse], File.dirname(@edit_path)), 303
+      redirect URLUtils.join_components(
+        APP_ROUTES[:browse], File.dirname(@edit_path)
+      ), 303
     end
   end
 end

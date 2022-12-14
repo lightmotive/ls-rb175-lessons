@@ -38,7 +38,7 @@ module Controllers
     end
 
     def content_missing(missing_path)
-      session[:error] = "#{File.join('/', missing_path)} wasn't found."
+      session[:error] = "#{URLUtils.join_components('/', missing_path)} wasn't found."
       redirect APP_ROUTES[:browse]
     end
 

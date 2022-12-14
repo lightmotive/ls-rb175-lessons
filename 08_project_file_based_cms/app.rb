@@ -8,6 +8,7 @@ APP_ROUTES = { browse: '/browse',
                view: '/view',
                edit: '/edit' }.freeze
 
+require './url_utils'
 Dir.glob('./models/*.rb').sort.each { |file| require file }
 Dir.glob('./controllers/*.rb').sort.each { |file| require file }
 

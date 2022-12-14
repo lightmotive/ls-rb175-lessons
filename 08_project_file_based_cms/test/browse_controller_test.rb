@@ -52,7 +52,7 @@ class BrowseControllerTest < ControllerTestBase
   end
 
   def test_browse_missing_content
-    get "#{APP_ROUTES[:browse]}/missing_xyz"
+    get "#{APP_ROUTES[:browse]}/missing_abc/xyz"
     assert_equal 302, last_response.status
     assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
     assert_equal '0', last_response['Content-Length']
@@ -63,10 +63,10 @@ class BrowseControllerTest < ControllerTestBase
     get first_response_location
     assert_equal 200, last_response.status
     assert_includes last_response.body, '<div class="flash error">'
-    assert_includes last_response.body, "<p>/missing_xyz wasn't found.</p>"
+    assert_includes last_response.body, "<p>/missing_abc/xyz wasn't found.</p>"
     # Assert flash error message disappears on reload
     get first_response_location
     assert_equal 200, last_response.status
-    refute_includes last_response.body, "<p>/missing_xyz wasn't found.</p>"
+    refute_includes last_response.body, "<p>/missing_abc/xyz wasn't found.</p>"
   end
 end

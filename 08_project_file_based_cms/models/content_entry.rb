@@ -29,8 +29,8 @@ module Models
     def apply_view_href
       path_relative = File.join(directory, name)
       @view_href = case type
-                   when :directory then File.join(APP_ROUTES[:browse], path_relative)
-                   when :file then File.join(APP_ROUTES[:view], path_relative)
+                   when :directory then URLUtils.join_components(APP_ROUTES[:browse], path_relative)
+                   when :file then URLUtils.join_components(APP_ROUTES[:view], path_relative)
                    end
     end
 
@@ -41,7 +41,7 @@ module Models
       path_relative = File.join(directory, name)
       @edit_href = case type
                    when :directory then nil
-                   when :file then File.join(APP_ROUTES[:edit], path_relative)
+                   when :file then URLUtils.join_components(APP_ROUTES[:edit], path_relative)
                    end
     end
   end

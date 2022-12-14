@@ -43,7 +43,7 @@ module Controllers
         @entries = content_entries(@browse_path)
         erb :browse
       when :file
-        redirect File.join(APP_ROUTES[:view], @browse_path)
+        redirect URLUtils.join_components(APP_ROUTES[:view], @browse_path)
       else
         content_missing(@browse_path)
       end
