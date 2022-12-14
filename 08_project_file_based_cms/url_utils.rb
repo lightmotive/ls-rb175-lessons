@@ -77,7 +77,7 @@ module URLUtils
 
     # Remove leading and trailing separators
     def normalize_middle_components(components)
-      components.map do |component, _idx|
+      components.map do |component|
         component = trim_leading_separators(component)
         trim_trailing_separators(component)
       end
