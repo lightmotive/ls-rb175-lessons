@@ -11,7 +11,10 @@ module Controllers
     def initialize
       super
       @content = Models::Content.new
+      @title = 'Neato CMS'
     end
+
+    attr_accessor :title
 
     def_delegator :@content, :path, :content_path
     def_delegator :@content, :entry_type, :content_entry_type

@@ -48,6 +48,6 @@ class ViewControllerTest < ControllerTestBase
     get "#{APP_ROUTES[:view]}/about.md"
     assert_equal 200, last_response.status
     assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
-    assert_equal "<h2>Ruby is...</h2>\n", last_response.body
+    assert_includes last_response.body, "<h2>Ruby is...</h2>\n"
   end
 end

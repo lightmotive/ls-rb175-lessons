@@ -1,3 +1,7 @@
+html {
+  font-family: sans-serif;
+}
+
 .flash {
   max-width: 625px;
   padding: 10px 20px;

@@ -6,22 +6,31 @@ require 'redcarpet'
 module Controllers
   # Handle 'APP_ROUTES[:view]' routes.
   class ViewController < ApplicationController
+    def initialize
+      super
+
+      @custom_file_content = nil
+    end
+
+    attr_accessor :custom_file_content
+
     # TODO: Refactor to class with separate classes mapped for each file type.
     def custom_file_renderers
       {
         '.md' => { response_content_type: :html,
                    render: lambda do |file_path_absolute|
                      markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
-                     markdown.render(File.read(file_path_absolute))
+                     self.custom_file_content = markdown.render(File.read(file_path_absolute))
+                     erb :file_html, layout: :layout_file_html
                    end }
       }
     end
 
     def view_file_response(view_path)
       file_path = content_path(view_path)
-      file_extension = File.extname(file_path)
+      self.title = "#{view_path} - #{@title}"
 
-      custom_renderer = custom_file_renderers[file_extension]
+      custom_renderer = custom_file_renderers[File.extname(file_path)]
       if custom_renderer
         content_type custom_renderer[:response_content_type]
         custom_renderer[:render].call(file_path)

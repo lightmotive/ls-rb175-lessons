@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en-US">
   <head>
-    <title>Public CMS</title>
+    <title><%= @title %></title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/stylesheets/application.css">
   </head>
   <body>
     <header>
-      <h1>CMS</h1>
+      <h1>Neato CMS</h1>
     </header>
     <% if session[:error] %>
     <div class="flash error">
