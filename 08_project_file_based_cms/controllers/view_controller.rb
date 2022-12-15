@@ -26,9 +26,9 @@ module Controllers
       }
     end
 
-    def view_file_response(view_path)
-      file_path = content_path(view_path)
-      self.title = "#{view_path} - #{@title}"
+    def view_file_response(file_path_relative)
+      file_path = content_path(file_path_relative)
+      self.title = "#{file_path_relative} - #{@title}"
 
       custom_renderer = custom_file_renderers[File.extname(file_path)]
       if custom_renderer
@@ -42,15 +42,12 @@ module Controllers
     # View files (`send_file` or custom processing)
     # get 'APP_ROUTES[:view]/*'
     get '/*' do
-      view_path = params['splat'].first
-      validate_request_entry_path(view_path)
-
-      case content_entry_type(view_path)
+      case content_entry_type(current_location)
       when :file
-        view_file_response(view_path)
-      when :directory then redirect URLUtils.join_components(APP_ROUTES[:browse], view_path)
+        view_file_response(current_location)
+      when :directory then redirect URLUtils.join_components(APP_ROUTES[:browse], current_location)
       else
-        content_missing(view_path)
+        content_missing(current_location)
       end
     end
   end

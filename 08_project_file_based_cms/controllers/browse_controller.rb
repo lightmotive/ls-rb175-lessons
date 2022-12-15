@@ -6,13 +6,13 @@ module Controllers
   # Handle browse routes
   class BrowseController < ApplicationController
     helpers do
-      def navigation_path(browse_path)
-        return '' if browse_path == '/'
+      def navigation_path(current_location = '/')
+        return '' if current_location == '/'
 
         href = APP_ROUTES[:browse]
         nav_path = "<a href=\"#{href}\">home</a>"
 
-        dir_names = browse_path.split('/')
+        dir_names = current_location[1..].split('/')
         dir_names[0..-2].each do |name|
           href += "/#{name}"
           nav_path += "/<a href=\"#{href}\">#{name}</a>"
@@ -23,29 +23,18 @@ module Controllers
       end
     end
 
-    # get 'APP_ROUTES[:browse]'
-    get '/' do
-      @browse_path = '/'
-      @entries = content_entries
-
-      erb :browse
-    end
-
     # get 'APP_ROUTES[:browse]/*'
-    # Get public content entries starting at browse_path and render :browse if
+    # Get public content entries starting at current_location and render :browse if
     # :directory or redirect to view file if :file
     get '/*' do
-      @browse_path = params['splat'].first
-      validate_request_entry_path(@browse_path)
-
-      case content_entry_type(@browse_path)
+      case content_entry_type(current_location)
       when :directory
-        @entries = content_entries(@browse_path)
+        @entries = content_entries(current_location)
         erb :browse
       when :file
-        redirect URLUtils.join_components(APP_ROUTES[:view], @browse_path)
+        redirect URLUtils.join_components(APP_ROUTES[:view], current_location)
       else
-        content_missing(@browse_path)
+        content_missing(current_location)
       end
     end
   end

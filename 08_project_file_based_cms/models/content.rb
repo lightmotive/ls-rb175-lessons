@@ -16,8 +16,8 @@ module Models
     end
 
     # => Absolute path
-    def path(path_relative = '')
-      path = String.new('content')
+    def path(path_relative = '/')
+      path = 'content'
       path = File.join('test', path) if ENV['RACK_ENV'] == 'test'
 
       File.join(app_root_path, path, path_relative)
@@ -27,7 +27,7 @@ module Models
       ContentEntry.type(path(path_relative))
     end
 
-    def entries(dir_relative = '')
+    def entries(dir_relative = '/')
       Dir.each_child(path(dir_relative)).map do |entry_name|
         ContentEntry.new(
           dir_relative: dir_relative,

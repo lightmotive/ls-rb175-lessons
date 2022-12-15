@@ -6,8 +6,6 @@ module Controllers
   # Handle 'APP_ROUTES[:edit]' routes.
   class EditController < ApplicationController
     def validate_edit_path(path)
-      validate_request_entry_path(path)
-
       case content_entry_type(path)
       when :file
         path
@@ -23,14 +21,13 @@ module Controllers
 
     # before 'APP_ROUTES[:edit]/*'
     before '/*' do
-      @edit_path = params['splat'].first
-      validate_edit_path(@edit_path)
+      validate_edit_path(current_location)
     end
 
     # Edit files
     # get 'APP_ROUTES[:edit]/*'
     get '/*' do
-      file_path = content_path(@edit_path)
+      file_path = content_path(current_location)
       @file_content = File.read(file_path)
       erb :edit
     end
@@ -39,12 +36,12 @@ module Controllers
     # post 'APP_ROUTES[:edit]/*'
     post '/*' do
       file_content = params[:file_content]
-      file_path = content_path(@edit_path)
+      file_path = content_path(current_location)
       File.write(file_path, file_content)
 
-      session[:success] = "#{File.basename(@edit_path)} has been updated."
+      session[:success] = "#{File.basename(current_location)} has been updated."
       redirect URLUtils.join_components(
-        APP_ROUTES[:browse], File.dirname(@edit_path)
+        APP_ROUTES[:browse], File.dirname(current_location)
       ), 303
     end
   end

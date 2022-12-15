@@ -12,9 +12,11 @@ module Controllers
       super
       @content = Models::Content.new
       @title = 'Neato CMS'
+      @current_location = nil
     end
 
     attr_accessor :title
+    attr_reader :current_location
 
     def_delegator :@content, :path, :content_path
     def_delegator :@content, :entry_type, :content_entry_type
@@ -44,10 +46,16 @@ module Controllers
       redirect APP_ROUTES[:browse]
     end
 
-    def validate_request_entry_path(path)
+    def validate_content_location(location)
       # The web or app server handles this scenario automatically;
       # just in case (need to learn more):
-      halt 404 if path.include?('..')
+      halt 404 if location.include?('..')
+    end
+
+    # before 'APP_ROUTES[:*]/[*: current_location]'
+    before '/*' do
+      @current_location = "/#{params['splat'].first}"
+      validate_content_location(current_location)
     end
   end
 end
