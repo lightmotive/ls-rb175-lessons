@@ -9,7 +9,7 @@ class ViewControllerTest < ControllerTestBase
     OUTER_APP
   end
 
-  def test_view_dir1
+  def test_get_subdirectory
     create_directory('dir1')
 
     get "#{APP_ROUTES[:view]}/dir1"
@@ -17,7 +17,7 @@ class ViewControllerTest < ControllerTestBase
     assert_equal "http://example.org#{APP_ROUTES[:browse]}/dir1", last_response['Location']
   end
 
-  def test_view_changes_txt
+  def test_get_file
     create_file('changes.txt', 'Coming soon...')
 
     get "#{APP_ROUTES[:view]}/changes.txt"
@@ -26,7 +26,7 @@ class ViewControllerTest < ControllerTestBase
     assert_equal 'Coming soon...', last_response.body
   end
 
-  def test_view_dir2_dir21_f3_txt
+  def test_get_file_in_subdirectory
     create_file('dir2/dir2.1/f3.txt', 'Test file in dir2.1.')
 
     get "#{APP_ROUTES[:view]}/dir2/dir2.1/f3.txt"
@@ -35,14 +35,14 @@ class ViewControllerTest < ControllerTestBase
     assert_equal 'Test file in dir2.1.', last_response.body
   end
 
-  def test_view_missing_content
+  def test_get_missing_content
     get "#{APP_ROUTES[:view]}/nada"
     assert_equal 302, last_response.status
     assert_equal "http://example.org#{APP_ROUTES[:browse]}", last_response['Location']
     assert_empty last_response.body
   end
 
-  def test_view_markdown_as_html
+  def test_get_markdown_file
     create_file('about.md', "## Ruby is...\n")
 
     get "#{APP_ROUTES[:view]}/about.md"

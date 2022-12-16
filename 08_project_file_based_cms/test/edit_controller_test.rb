@@ -9,7 +9,7 @@ class EditControllerTest < ControllerTestBase
     OUTER_APP
   end
 
-  def test_edit
+  def test_get
     create_file('about.md')
 
     get "#{APP_ROUTES[:edit]}/about.md"
@@ -17,7 +17,7 @@ class EditControllerTest < ControllerTestBase
     assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
   end
 
-  def test_edit_save
+  def test_post_success
     file_dir_relative = 'dir1'
     file_name = 'f1.txt'
     file_path_relative = "#{file_dir_relative}/#{file_name}"
@@ -39,7 +39,7 @@ class EditControllerTest < ControllerTestBase
     refute_includes last_response.body, flash_success_message
   end
 
-  def test_edit_directory
+  def test_get_subdirectory
     create_directory('dir1')
 
     get "#{APP_ROUTES[:edit]}/dir1"

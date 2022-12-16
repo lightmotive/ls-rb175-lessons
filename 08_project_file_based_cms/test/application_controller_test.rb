@@ -9,7 +9,7 @@ class ApplicationControllerTest < ControllerTestBase
     OUTER_APP
   end
 
-  def test_index
+  def test_get
     get '/'
     assert_equal 302, last_response.status
     assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
@@ -18,7 +18,7 @@ class ApplicationControllerTest < ControllerTestBase
     assert_empty last_response.body
   end
 
-  def test_invalid_route
+  def test_get_invalid_route
     get '/nothing_here'
     assert_equal 302, last_response.status
     assert_equal "http://example.org#{APP_ROUTES[:browse]}", last_response['Location']
