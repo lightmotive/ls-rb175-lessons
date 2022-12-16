@@ -15,9 +15,8 @@ class ControllerTestBase < Minitest::Test
     @content = Models::Content.new
   end
 
-  def_delegators :@content, :create_file
-  def_delegator :@content, :path, :path_absolute
-  def_delegator :@content, :create_dir, :create_directory
+  def_delegators :@content, :create_file, :create_directory
+  def_delegator :@content, :path, :content_path
   def_delegator :@content, :entry_type, :content_entry_type
 
   def setup

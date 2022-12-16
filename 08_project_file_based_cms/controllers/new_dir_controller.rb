@@ -31,7 +31,7 @@ module Controllers
 
       if Models::ContentEntry.dir_names_valid?(input_path)
         content = Models::Content.new
-        content.create_dir(File.join(current_location, input_path))
+        content.create_directory(File.join(current_location, input_path))
         redirect_to_current_location
       else
         session[:error] = [Models::ContentEntry.entry_name_chars_allowed_message,

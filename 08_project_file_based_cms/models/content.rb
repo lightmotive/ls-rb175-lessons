@@ -42,7 +42,7 @@ module Models
     def create_file(relative_path, content = '')
       if relative_path =~ %r{\w+/\w+}
         dir = relative_path[0..(relative_path.rindex('/'))]
-        create_dir(dir)
+        create_directory(dir)
       end
 
       File.open(path(relative_path), 'w') do |file|
@@ -53,7 +53,7 @@ module Models
     end
 
     # Create directory with parents as needed
-    def create_dir(new_entry_path)
+    def create_directory(new_entry_path)
       FileUtils.mkdir_p(path(new_entry_path))
     end
   end
