@@ -6,7 +6,10 @@ require 'tilt/erubis'
 
 APP_ROUTES = { browse: '/browse',
                view: '/view',
-               edit: '/edit' }.freeze
+               edit: '/edit',
+               new_dir: '/new/dir',
+               new_file: '/new/file',
+               index: '/' }.freeze
 
 require './url_utils'
 Dir.glob('./models/*.rb').sort.each { |file| require file }
@@ -22,7 +25,9 @@ class App
       map(APP_ROUTES[:edit]) { run Controllers::EditController.new }
       map(APP_ROUTES[:view]) { run Controllers::ViewController.new }
       map(APP_ROUTES[:browse]) { run Controllers::BrowseController.new }
-      map('/') { run Controllers::ApplicationController.new }
+      map(APP_ROUTES[:new_dir]) { run Controllers::NewDirController.new }
+      map(APP_ROUTES[:new_file]) { run Controllers::NewFileController.new }
+      map(APP_ROUTES[:index]) { run Controllers::ApplicationController.new }
     end
   end
 

@@ -1,42 +1,30 @@
 # frozen_string_literal: true
 
 # require 'fileutils'
+require 'forwardable'
 require_relative 'rack_test_helper'
 
 # All Controller tests should inherit this.
 class ControllerTestBase < Minitest::Test
   include Rack::Test::Methods
+  extend Forwardable
+
+  def initialize(*args)
+    super(*args)
+
+    @content = Models::Content.new
+  end
+
+  def_delegators :@content, :create_file
+  def_delegator :@content, :path, :path_absolute
+  def_delegator :@content, :create_dir, :create_directory
+  def_delegator :@content, :entry_type, :content_entry_type
 
   def setup
-    @test_content_path = Models::Content.new.path
-    FileUtils.mkdir_p(@test_content_path)
-  end
-
-  def path_absolute(content_relative_path)
-    File.join(@test_content_path, content_relative_path)
-  end
-
-  # Create test dir (for testing empty directories)
-  def create_directory(content_relative_path)
-    abs_path = path_absolute(content_relative_path)
-    FileUtils.mkdir_p(abs_path)
-  end
-
-  # Create test file
-  def create_file(content_relative_path, content = '')
-    if content_relative_path.include?('/')
-      dir = content_relative_path[0..(content_relative_path.rindex('/'))]
-      create_directory(dir)
-    end
-
-    File.open(path_absolute(content_relative_path), 'w') do |file|
-      file.write(content)
-      file.close
-      file
-    end
+    FileUtils.mkdir_p(@content.path)
   end
 
   def teardown
-    FileUtils.rm_rf(@test_content_path)
+    FileUtils.rm_rf(@content.path)
   end
 end

@@ -42,7 +42,7 @@ module Controllers
     end
 
     def content_missing(missing_path)
-      session[:error] = "#{URLUtils.join_components('/', missing_path)} wasn't found."
+      session[:error] = "#{missing_path} wasn't found."
       redirect APP_ROUTES[:browse]
     end
 
@@ -56,6 +56,10 @@ module Controllers
     before '/*' do
       @current_location = "/#{params['splat'].first}"
       validate_content_location(current_location)
+    end
+
+    def redirect_to_current_location(route = APP_ROUTES[:browse])
+      redirect URLUtils.join_components(route, current_location)
     end
   end
 end

@@ -17,10 +17,10 @@ module Models
 
     # => Absolute path
     def path(path_relative = '/')
-      path = 'content'
-      path = File.join('test', path) if ENV['RACK_ENV'] == 'test'
+      content_path = 'content'
+      content_path = File.join('test', content_path) if ENV['RACK_ENV'] == 'test'
 
-      File.join(app_root_path, path, path_relative)
+      File.join(app_root_path, content_path, path_relative)
     end
 
     def entry_type(path_relative)
@@ -35,6 +35,26 @@ module Models
           path_absolute: path(File.join(dir_relative, entry_name))
         )
       end
+    end
+
+    # Create file with optional content.
+    # Automatically create directories if included.
+    def create_file(relative_path, content = '')
+      if relative_path =~ %r{\w+/\w+}
+        dir = relative_path[0..(relative_path.rindex('/'))]
+        create_dir(dir)
+      end
+
+      File.open(path(relative_path), 'w') do |file|
+        file.write(content)
+        file.close
+        file
+      end
+    end
+
+    # Create directory with parents as needed
+    def create_dir(new_entry_path)
+      FileUtils.mkdir_p(path(new_entry_path))
     end
   end
 end

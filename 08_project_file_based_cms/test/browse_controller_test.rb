@@ -11,7 +11,7 @@ class BrowseControllerTest < ControllerTestBase
     OUTER_APP
   end
 
-  def test_browse
+  def test_get
     create_file('about.md')
     create_file('changes.txt')
     create_directory('dir1')
@@ -23,27 +23,44 @@ class BrowseControllerTest < ControllerTestBase
     assert_equal expected_body, last_response.body
   end
 
-  def test_browse_dir1
-    create_file('dir1/f1.txt')
+  def test_get_subdirectory_without_files
+    dir = 'dir1'
+    create_directory(dir)
 
-    get "#{APP_ROUTES[:browse]}/dir1"
+    get "#{APP_ROUTES[:browse]}/#{dir}"
     assert_equal 200, last_response.status
-    assert_includes last_response.body,
-                    %(<a href="#{APP_ROUTES[:view]}/dir1/f1.txt">f1.txt</a>)
+    new_dir_link = %(<a href="#{APP_ROUTES[:new_dir]}/#{dir}">[New Directory]</a>)
+    new_file_link = %(<a href="#{APP_ROUTES[:new_file]}/#{dir}">[New File]</a>)
+    assert_includes last_response.body, %(#{new_dir_link} #{new_file_link})
   end
 
-  def test_browse_dir2_dir21
-    create_file('dir2/dir2.1/f3.txt')
+  def test_get_first_subdirectory
+    dir = 'dir1'
+    create_file("#{dir}/f1.txt")
 
-    get "#{APP_ROUTES[:browse]}/dir2/dir2.1"
+    get "#{APP_ROUTES[:browse]}/#{dir}"
     assert_equal 200, last_response.status
-    assert_includes last_response.body,
-                    %(<h2><a href="#{APP_ROUTES[:browse]}">home</a>/<a href="#{APP_ROUTES[:browse]}/dir2">dir2</a>/dir2.1</h2>)
-    assert_includes last_response.body,
-                    %(<a href="#{APP_ROUTES[:view]}/dir2/dir2.1/f3.txt">f3.txt</a>)
+    file_link = %(<a href="#{APP_ROUTES[:view]}/#{dir}/f1.txt">f1.txt</a>)
+    assert_includes last_response.body, file_link
   end
 
-  def test_browse_changes_txt
+  def test_get_subdirectory_second_level
+    dirs = 'dir1/dir1.1'
+    create_file("#{dirs}/f3.txt")
+
+    get "#{APP_ROUTES[:browse]}/#{dirs}"
+    assert_equal 200, last_response.status
+    home_link = %(<a href="#{APP_ROUTES[:browse]}">home</a>)
+    dir2_link = %(<a href="#{APP_ROUTES[:browse]}/dir1">dir1</a>)
+    assert_includes last_response.body, %(<h2>#{home_link}/#{dir2_link}/dir1.1</h2>)
+    file_link = %(<a href="#{APP_ROUTES[:view]}/#{dirs}/f3.txt">f3.txt</a>)
+    assert_includes last_response.body, file_link
+    new_dir_link = %(<a href="#{APP_ROUTES[:new_dir]}/#{dirs}">[New Directory]</a>)
+    new_file_link = %(<a href="#{APP_ROUTES[:new_file]}/#{dirs}">[New File]</a>)
+    assert_includes last_response.body, %(#{new_dir_link} #{new_file_link})
+  end
+
+  def test_get_file
     create_file('changes.txt')
 
     get "#{APP_ROUTES[:browse]}/changes.txt"
@@ -51,7 +68,7 @@ class BrowseControllerTest < ControllerTestBase
     assert_equal "http://example.org#{APP_ROUTES[:view]}/changes.txt", last_response['Location']
   end
 
-  def test_browse_missing_content
+  def test_get_missing_content
     get "#{APP_ROUTES[:browse]}/missing_abc/xyz"
     assert_equal 302, last_response.status
     assert_equal 'text/html;charset=utf-8', last_response['Content-Type']

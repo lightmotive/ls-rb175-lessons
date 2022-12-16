@@ -21,6 +21,27 @@ module Models
       :unknown
     end
 
+    def self.entry_name_chars_allowed_message
+      'Please use only numbers, letters, underscores, and periods for names.'
+    end
+
+    def self.dir_name_valid?(dir_name)
+      !(dir_name =~ /\A[\w.]+\z/).nil?
+    end
+
+    def self.dir_names_valid?(names)
+      names = entry_names_from_user_input(names) if names.is_a?(String)
+      names.all?(&method(:dir_name_valid?))
+    end
+
+    def self.file_name_valid?(file_name)
+      !(file_name =~ /\A[\w.]+\z/).nil?
+    end
+
+    def self.entry_names_from_user_input(input_string)
+      input_string.split('/')
+    end
+
     private
 
     # Build "view" `href` attribute value based on entry type:
