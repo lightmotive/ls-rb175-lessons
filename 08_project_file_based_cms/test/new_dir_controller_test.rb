@@ -26,7 +26,11 @@ class NewDirControllerTest < ControllerTestBase
     post APP_ROUTES[:new_dir], 'entry_name' => 'dir1'
     assert_equal :directory, content_entry_type('dir1')
     assert_equal 302, last_response.status
-    assert_equal "http://example.org#{APP_ROUTES[:browse]}", last_response['Location']
+    first_response_location = last_response['Location']
+    assert_equal "http://example.org#{APP_ROUTES[:browse]}", first_response_location
+    get first_response_location
+    assert_includes last_response.body, %(<div class="flash success">)
+    assert_includes last_response.body, %('dir1' created successfully.)
   end
 
   def test_post_subdirectory
@@ -46,7 +50,7 @@ class NewDirControllerTest < ControllerTestBase
   def test_post_invalid_entry_name
     post APP_ROUTES[:new_dir], 'entry_name' => 'dir+3'
     assert_equal :unknown, content_entry_type('dir+3')
-    assert_equal 200, last_response.status
+    assert_equal 422, last_response.status
     assert_includes last_response.body, %(<div class="flash error">)
     assert_includes last_response.body, %(Please use only numbers, letters, underscores, and periods for names.)
     assert_includes last_response.body, %(<form action="#{APP_ROUTES[:new_dir]}/" method="post">)

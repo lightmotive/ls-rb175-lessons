@@ -26,7 +26,11 @@ class NewFileControllerTest < ControllerTestBase
     post APP_ROUTES[:new_file], 'entry_name' => 'something_new.txt'
     assert_equal :file, content_entry_type('something_new.txt')
     assert_equal 302, last_response.status
-    assert_equal "http://example.org#{APP_ROUTES[:browse]}", last_response['Location']
+    first_response_location = last_response['Location']
+    assert_equal "http://example.org#{APP_ROUTES[:browse]}", first_response_location
+    get first_response_location
+    assert_includes last_response.body, %(<div class="flash success">)
+    assert_includes last_response.body, %('something_new.txt' created successfully.)
   end
 
   def test_post_subdirectory
@@ -39,7 +43,7 @@ class NewFileControllerTest < ControllerTestBase
   def test_post_invalid_entry_name
     post APP_ROUTES[:new_file], 'entry_name' => 'something+invalid.txt'
     assert_equal :unknown, content_entry_type('something+invalid.txt')
-    assert_equal 200, last_response.status
+    assert_equal 422, last_response.status
     assert_includes last_response.body, %(<div class="flash error">)
     assert_includes last_response.body, %(Please use only numbers, letters, underscores, and periods for names.)
     assert_includes last_response.body, %(<form action="#{APP_ROUTES[:new_file]}/" method="post">)

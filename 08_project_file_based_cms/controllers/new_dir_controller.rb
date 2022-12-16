@@ -27,15 +27,18 @@ module Controllers
     # Validate and save submitted dir name, then redirect to current location.
     # post 'APP_ROUTES[:new_dir]/*'
     post '/*' do
-      input_path = Models::ContentEntry.entry_names_from_user_input(params['entry_name'])
+      input = params['entry_name']
+      input_paths = Models::ContentEntry.entry_names_from_user_input(input)
 
-      if Models::ContentEntry.dir_names_valid?(input_path)
+      if Models::ContentEntry.dir_names_valid?(input_paths)
         content = Models::Content.new
-        content.create_directory(File.join(current_location, input_path))
+        content.create_directory(File.join(current_location, input_paths))
+        session[:success] = "'#{input}' created successfully."
         redirect_to_current_location
       else
         session[:error] = [Models::ContentEntry.entry_name_chars_allowed_message,
                            "Use '/' to separate paths."]
+        status 422
         erb :new_entry
       end
     end
