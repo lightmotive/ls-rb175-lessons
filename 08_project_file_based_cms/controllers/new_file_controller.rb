@@ -30,7 +30,7 @@ module Controllers
         redirect_to_current_location
       else
         session[:error] = Models::ContentEntry.entry_name_chars_allowed_message
-        status 422
+        status 400
         erb :new_entry
       end
     end

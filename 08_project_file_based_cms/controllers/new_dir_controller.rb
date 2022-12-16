@@ -38,7 +38,7 @@ module Controllers
       else
         session[:error] = [Models::ContentEntry.entry_name_chars_allowed_message,
                            "Use '/' to separate paths."]
-        status 422
+        status 400
         erb :new_entry
       end
     end

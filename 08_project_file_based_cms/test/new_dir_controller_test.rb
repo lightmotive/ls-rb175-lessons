@@ -50,7 +50,7 @@ class NewDirControllerTest < ControllerTestBase
   def test_post_invalid_entry_name
     post APP_ROUTES[:new_dir], 'entry_name' => 'dir+3'
     assert_equal :unknown, content_entry_type('dir+3')
-    assert_equal 422, last_response.status
+    assert_equal 400, last_response.status
     assert_includes last_response.body, %(<div class="flash error">)
     assert_includes last_response.body, %(Please use only numbers, letters, underscores, and periods for names.)
     assert_includes last_response.body, %(<form action="#{APP_ROUTES[:new_dir]}/" method="post">)
