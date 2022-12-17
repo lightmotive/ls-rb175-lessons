@@ -39,13 +39,13 @@ module Models
 
     # Create file with optional content.
     # Automatically create directories if included.
-    def create_file(relative_path, content = '')
-      if relative_path =~ %r{\w+/\w+}
-        dir = relative_path[0..(relative_path.rindex('/'))]
+    def create_file(path_relative, content = '')
+      if path_relative =~ %r{\w+/\w+}
+        dir = path_relative[0..(path_relative.rindex('/'))]
         create_directory(dir)
       end
 
-      File.open(path(relative_path), 'w') do |file|
+      File.open(path(path_relative), 'w') do |file|
         file.write(content)
         file.close
         file
@@ -53,8 +53,8 @@ module Models
     end
 
     # Create directory with parents as needed
-    def create_directory(new_entry_path)
-      FileUtils.mkdir_p(path(new_entry_path))
+    def create_directory(path_relative)
+      FileUtils.mkdir_p(path(path_relative))
     end
   end
 end
