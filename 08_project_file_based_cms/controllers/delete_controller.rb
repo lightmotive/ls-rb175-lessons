@@ -5,7 +5,7 @@ require_relative 'application_controller'
 module Controllers
   # Handle 'app_route(:delete)' routes.
   class DeleteController < ApplicationController
-    # Save submitted content to file, then redirect to file's directory.
+    # Delete specified entry, then redirect to the entry's parent directory.
     # post 'app_route(:delete)/'
     post '/' do
       content = Models::Content.new
