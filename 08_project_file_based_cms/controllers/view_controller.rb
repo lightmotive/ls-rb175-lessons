@@ -45,7 +45,7 @@ module Controllers
       case content_entry_type(current_location)
       when :file
         view_file_response(current_location)
-      when :directory then redirect URLUtils.join_components(APP_ROUTES[:browse], current_location)
+      when :directory then redirect_to_current_location
       else
         content_missing(current_location)
       end

@@ -41,7 +41,7 @@ module Controllers
         enable_new_entries
         erb :browse
       when :file
-        redirect URLUtils.join_components(APP_ROUTES[:view], current_location)
+        redirect_to_current_location(APP_ROUTES[:view])
       else
         content_missing(current_location)
       end
