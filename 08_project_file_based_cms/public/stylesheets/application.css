@@ -25,17 +25,25 @@ html {
   background: #CBF2E5;
 }
 
+a.edit:before {
+  content: '\270E';
+}
+
+button.delete:before {
+  content: '\1F5D1';
+}
+
 ul li a.edit {
   text-decoration: none;
   color: black;
 }
 
-ul li .delete [type="submit"] {
+ul li [type="submit"].delete {
   background-color: transparent;
   cursor: pointer;
   border: none;
 }
 
-ul li form.delete {
+ul li form.inline {
   display: inline;
 }
