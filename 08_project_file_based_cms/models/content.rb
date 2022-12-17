@@ -56,5 +56,9 @@ module Models
     def create_directory(path_relative)
       FileUtils.mkdir_p(path(path_relative))
     end
+
+    def edit_file(path_relative, content)
+      File.write(path(path_relative), content)
+    end
   end
 end

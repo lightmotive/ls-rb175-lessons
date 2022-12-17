@@ -36,8 +36,9 @@ module Controllers
     # post 'APP_ROUTES[:edit]/*'
     post '/*' do
       file_content = params[:file_content]
-      file_path = content_path(current_location)
-      File.write(file_path, file_content)
+
+      content = Models::Content.new
+      content.edit_file(current_location, file_content)
 
       session[:success] = "#{File.basename(current_location)} has been updated."
       redirect URLUtils.join_components(
