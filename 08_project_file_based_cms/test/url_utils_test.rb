@@ -48,6 +48,12 @@ class URLUtilsTest < MiniTest::Test
     assert_equal 'start/2/3/', URLUtils.join_components('start/', '/2/', '/3//')
   end
 
+  def test_join_components_with_empty_subpaths
+    assert_equal 'start', URLUtils.join_components('start', '', '')
+    assert_equal '/start', URLUtils.join_components('/start', '', '')
+    assert_equal '/start', URLUtils.join_components('/start/', '', '')
+  end
+
   def test_join_components_with_only_separators
     assert_equal '/', URLUtils.join_components('/')
     assert_equal '/', URLUtils.join_components('/', '/')

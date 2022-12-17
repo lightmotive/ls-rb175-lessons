@@ -24,6 +24,13 @@ module Controllers
 
     helpers ViewHelpers::ApplicationHelper
 
+    def app_route(route, path = '')
+      route_value = APP_ROUTES[route]
+      return URLUtils.join_components(route_value, path) unless path.empty?
+
+      route_value
+    end
+
     configure do
       enable :sessions
       set :session_secret, 'd81b5e7a139eb9711a15d27c642ebe38e5457d86ad2d4d9c9f5df240e4d3ede8'
@@ -34,11 +41,11 @@ module Controllers
     end
 
     get '/' do
-      redirect APP_ROUTES[:browse]
+      redirect app_route(:browse)
     end
 
     not_found do
-      redirect APP_ROUTES[:browse]
+      redirect app_route(:browse)
     end
 
     def flash_error_message(message)
@@ -51,18 +58,14 @@ module Controllers
 
     def content_missing(missing_path)
       flash_error_message "#{missing_path} wasn't found."
-      redirect APP_ROUTES[:browse]
+      redirect app_route(:browse)
     end
 
-    # before 'APP_ROUTES[:*]/[*: current_location]'
+    # before 'app_route(:*)/[*: current_location]'
     before '/*' do
       splat = "/#{params['splat'].first}"
       validate_content_location(splat)
       @current_location = splat
-    end
-
-    def redirect_to_current_location(route = APP_ROUTES[:browse])
-      redirect URLUtils.join_components(route, current_location)
     end
 
     private

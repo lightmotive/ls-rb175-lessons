@@ -17,7 +17,7 @@ module Controllers
       def navigation_path(current_location = '/')
         return '' if current_location == '/'
 
-        href = APP_ROUTES[:browse]
+        href = app_route(:browse)
         nav_path = "<a href=\"#{href}\">home</a>"
 
         dir_names = current_location[1..].split('/')
@@ -31,7 +31,7 @@ module Controllers
       end
     end
 
-    # get 'APP_ROUTES[:browse]/*'
+    # get 'app_route(:browse)/*'
     # Get public content entries starting at current_location and render :browse if
     # :directory or redirect to view file if :file
     get '/*' do
@@ -41,15 +41,15 @@ module Controllers
         enable_new_entries
         erb :browse
       when :file
-        redirect_to_current_location(APP_ROUTES[:view])
+        redirect app_route(:view, current_location)
       else
         content_missing(current_location)
       end
     end
 
     def enable_new_entries
-      @new_directory_href = URLUtils.join_components(APP_ROUTES[:new_dir], current_location)
-      @new_file_href = URLUtils.join_components(APP_ROUTES[:new_file], current_location)
+      @new_directory_href = app_route(:new_dir, current_location)
+      @new_file_href = app_route(:new_file, current_location)
     end
   end
 end

@@ -3,10 +3,10 @@
 require_relative 'application_controller'
 
 module Controllers
-  # Handle 'APP_ROUTES[:delete]' routes.
+  # Handle 'app_route(:delete)' routes.
   class DeleteController < ApplicationController
     # Save submitted content to file, then redirect to file's directory.
-    # post 'APP_ROUTES[:delete]/*'
+    # post 'app_route(:delete)/*'
     post '/*' do
       content = Models::Content.new
       content.delete_entry(current_location)
@@ -15,10 +15,7 @@ module Controllers
         status 204
       else
         flash_success_message "#{File.basename(current_location)} was deleted."
-        redirect_location = URLUtils.join_components(
-          APP_ROUTES[:browse], File.dirname(current_location)
-        )
-        redirect redirect_location, 303
+        redirect app_route(:browse, File.dirname(current_location)), 303
       end
     end
   end

@@ -11,7 +11,7 @@ class NewDirControllerTest < ControllerTestBase
 
   def test_get
     get APP_ROUTES[:new_dir]
-    assert_includes last_response.body, %(<form action="#{APP_ROUTES[:new_dir]}/" method="post">)
+    assert_includes last_response.body, %(<form action="#{APP_ROUTES[:new_dir]}" method="post">)
     assert_match %r{<h2>\s*Create a new directory in /\s*</h2>}, last_response.body
   end
 
@@ -53,7 +53,7 @@ class NewDirControllerTest < ControllerTestBase
     assert_equal 400, last_response.status
     assert_includes last_response.body, %(<div class="flash error">)
     assert_includes last_response.body, %(Please use only numbers, letters, underscores, and periods for names.)
-    assert_includes last_response.body, %(<form action="#{APP_ROUTES[:new_dir]}/" method="post">)
+    assert_includes last_response.body, %(<form action="#{APP_ROUTES[:new_dir]}" method="post">)
     assert_includes last_response.body, %(<input name="entry_name" type="text" value="dir+3">)
   end
 end

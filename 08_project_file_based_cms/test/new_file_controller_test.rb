@@ -11,7 +11,7 @@ class NewFileControllerTest < ControllerTestBase
 
   def test_get
     get APP_ROUTES[:new_file]
-    assert_includes last_response.body, %(<form action="#{APP_ROUTES[:new_file]}/" method="post">)
+    assert_includes last_response.body, %(<form action="#{APP_ROUTES[:new_file]}" method="post">)
     assert_match %r{<h2>\s*Create a new file in /\s*</h2>}, last_response.body
   end
 
@@ -46,7 +46,7 @@ class NewFileControllerTest < ControllerTestBase
     assert_equal 400, last_response.status
     assert_includes last_response.body, %(<div class="flash error">)
     assert_includes last_response.body, %(Please use only numbers, letters, underscores, and periods for names.)
-    assert_includes last_response.body, %(<form action="#{APP_ROUTES[:new_file]}/" method="post">)
+    assert_includes last_response.body, %(<form action="#{APP_ROUTES[:new_file]}" method="post">)
     assert_includes last_response.body, %(<input name="entry_name" type="text" value="something+invalid.txt">)
   end
 end
