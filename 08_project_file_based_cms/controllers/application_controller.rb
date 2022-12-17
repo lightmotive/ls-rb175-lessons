@@ -46,20 +46,23 @@ module Controllers
       redirect APP_ROUTES[:browse]
     end
 
-    def validate_content_location(location)
-      # The web or app server handles this scenario automatically;
-      # just in case (need to learn more):
-      halt 404 if location.include?('..')
-    end
-
     # before 'APP_ROUTES[:*]/[*: current_location]'
     before '/*' do
-      @current_location = "/#{params['splat'].first}"
-      validate_content_location(current_location)
+      splat = "/#{params['splat'].first}"
+      validate_content_location(splat)
+      @current_location = splat
     end
 
     def redirect_to_current_location(route = APP_ROUTES[:browse])
       redirect URLUtils.join_components(route, current_location)
+    end
+
+    private
+
+    def validate_content_location(location)
+      # The web or app server handles this scenario automatically;
+      # just in case (need to learn more):
+      halt 404 if location.include?('..')
     end
   end
 end

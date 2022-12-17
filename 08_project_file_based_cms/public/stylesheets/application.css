@@ -24,3 +24,18 @@ html {
   color: #33cc99;
   background: #CBF2E5;
 }
+
+ul li a.edit {
+  text-decoration: none;
+  color: black;
+}
+
+ul li .delete [type="submit"] {
+  background-color: transparent;
+  cursor: pointer;
+  border: none;
+}
+
+ul li form.delete {
+  display: inline;
+}

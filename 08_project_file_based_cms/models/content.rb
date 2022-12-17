@@ -60,5 +60,12 @@ module Models
     def edit_file(path_relative, content)
       File.write(path(path_relative), content)
     end
+
+    def delete_entry(path_relative)
+      case entry_type(path_relative)
+      when :file then FileUtils.rm(path(path_relative))
+      when :directory then FileUtils.remove_dir(path(path_relative))
+      end
+    end
   end
 end

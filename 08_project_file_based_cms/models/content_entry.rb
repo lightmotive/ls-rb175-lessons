@@ -5,14 +5,22 @@ module Models
   # `./content` directory.
   class ContentEntry
     def initialize(dir_relative:, basename:, path_absolute:)
-      @directory = dir_relative.empty? ? '/' : dir_relative
+      @directory = ContentEntry.standardize_dir_relative(dir_relative)
       @name = basename
       @type = ContentEntry.type(path_absolute)
-      apply_view_href
-      apply_edit_href
+      @path_relative = File.join(directory, name)
+      apply_hrefs
     end
 
-    attr_reader :directory, :name, :type, :view_href, :edit_href
+    attr_reader :directory, :name, :path_relative, :type,
+                :view_href, :edit_href, :delete_href
+
+    # Ensure relative directory starts with '/'
+    def self.standardize_dir_relative(dir_relative)
+      standardized = dir_relative
+      standardized.prepend('/') unless standardized.start_with?('/')
+      standardized
+    end
 
     def self.type(path_absolute)
       return :directory if FileTest.directory?(path_absolute)
@@ -44,14 +52,19 @@ module Models
 
     private
 
+    def apply_hrefs
+      apply_view_href
+      apply_edit_href
+      apply_delete_href
+    end
+
     # Build "view" `href` attribute value based on entry type:
     # - Use `APP_ROUTES[:browse]` route for directories.
     # - Use `APP_ROUTES[:view]` route for files.
     def apply_view_href
-      path_relative = File.join(directory, name)
       @view_href = case type
-                   when :directory then URLUtils.join_components(APP_ROUTES[:browse], path_relative)
-                   when :file then URLUtils.join_components(APP_ROUTES[:view], path_relative)
+                   when :directory then "#{APP_ROUTES[:browse]}#{path_relative}"
+                   when :file then "#{APP_ROUTES[:view]}#{path_relative}"
                    end
     end
 
@@ -59,11 +72,20 @@ module Models
     # - Use `APP_ROUTES[:edit]` route for files.
     # - Disable for directories (assign `nil`).
     def apply_edit_href
-      path_relative = File.join(directory, name)
       @edit_href = case type
                    when :directory then nil
-                   when :file then URLUtils.join_components(APP_ROUTES[:edit], path_relative)
+                   when :file then "#{APP_ROUTES[:edit]}#{path_relative}"
                    end
+    end
+
+    # Build "edit" `href` attribute value based on entry type:
+    # - Use `APP_ROUTES[:edit]` route for files.
+    # - Disable for directories (assign `nil`).
+    def apply_delete_href
+      @delete_href = case type
+                     when :directory, :file
+                       "#{APP_ROUTES[:delete]}#{path_relative}"
+                     end
     end
   end
 end
