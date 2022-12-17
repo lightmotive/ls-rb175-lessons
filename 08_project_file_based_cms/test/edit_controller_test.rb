@@ -30,7 +30,7 @@ class EditControllerTest < ControllerTestBase
     assert_equal "http://example.org#{APP_ROUTES[:browse]}/#{file_dir_relative}",
                  post_response_location
     # Assert flash success message
-    flash_success_message = "#{file_name} has been updated."
+    flash_success_message = "#{file_name} was updated."
     get post_response_location
     assert_includes last_response.body, '<div class="flash success">'
     assert_includes last_response.body, flash_success_message

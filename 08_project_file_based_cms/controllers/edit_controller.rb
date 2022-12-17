@@ -40,7 +40,7 @@ module Controllers
       content = Models::Content.new
       content.edit_file(current_location, file_content)
 
-      session[:success] = "#{File.basename(current_location)} has been updated."
+      session[:success] = "#{File.basename(current_location)} was updated."
       redirect URLUtils.join_components(
         APP_ROUTES[:browse], File.dirname(current_location)
       ), 303
