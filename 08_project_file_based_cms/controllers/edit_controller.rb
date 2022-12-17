@@ -13,9 +13,8 @@ module Controllers
         session[:error] = 'Editing not allowed.'
         redirect URLUtils.join_components(APP_ROUTES[:browse], path)
       else
-        # :nocov:
+        session[:error] = 'Entry not found.'
         redirect APP_ROUTES[:browse]
-        # :nocov:
       end
     end
 

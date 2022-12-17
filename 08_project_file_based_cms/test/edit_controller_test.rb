@@ -51,4 +51,15 @@ class EditControllerTest < ControllerTestBase
     assert_includes last_response.body, '<div class="flash error">'
     assert_includes last_response.body, 'Editing not allowed.'
   end
+
+  def test_get_missing
+    get "#{APP_ROUTES[:edit]}/nada"
+    assert_equal 302, last_response.status
+    last_response_location = last_response['Location']
+    assert_equal "http://example.org#{APP_ROUTES[:browse]}", last_response_location
+    # Assert flash error message
+    get last_response_location
+    assert_includes last_response.body, '<div class="flash error">'
+    assert_includes last_response.body, 'Entry not found.'
+  end
 end
