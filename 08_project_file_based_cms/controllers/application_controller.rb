@@ -41,8 +41,16 @@ module Controllers
       redirect APP_ROUTES[:browse]
     end
 
+    def flash_error_message(message)
+      session[:error] = message
+    end
+
+    def flash_success_message(message)
+      session[:success] = message
+    end
+
     def content_missing(missing_path)
-      session[:error] = "#{missing_path} wasn't found."
+      flash_error_message "#{missing_path} wasn't found."
       redirect APP_ROUTES[:browse]
     end
 

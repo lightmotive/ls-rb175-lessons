@@ -14,7 +14,7 @@ module Controllers
       if env['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'
         status 204
       else
-        session[:success] = "#{File.basename(current_location)} was deleted."
+        flash_success_message "#{File.basename(current_location)} was deleted."
         redirect_location = URLUtils.join_components(
           APP_ROUTES[:browse], File.dirname(current_location)
         )

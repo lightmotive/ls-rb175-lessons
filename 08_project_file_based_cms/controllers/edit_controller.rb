@@ -10,10 +10,10 @@ module Controllers
       when :file
         path
       when :directory
-        session[:error] = 'Editing not allowed.'
+        flash_error_message 'Editing not allowed.'
         redirect URLUtils.join_components(APP_ROUTES[:browse], path)
       else
-        session[:error] = 'Entry not found.'
+        flash_error_message 'Entry not found.'
         redirect APP_ROUTES[:browse]
       end
     end
@@ -39,7 +39,7 @@ module Controllers
       content = Models::Content.new
       content.edit_file(current_location, file_content)
 
-      session[:success] = "#{File.basename(current_location)} was updated."
+      flash_success_message "#{File.basename(current_location)} was updated."
       redirect URLUtils.join_components(
         APP_ROUTES[:browse], File.dirname(current_location)
       ), 303
