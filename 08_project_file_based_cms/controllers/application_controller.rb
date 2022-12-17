@@ -2,6 +2,7 @@
 
 require 'sinatra/base'
 require 'forwardable'
+require 'uri'
 
 module Controllers
   # Handle '/' route. All other controllers inherit this.
@@ -23,13 +24,6 @@ module Controllers
     def_delegator :@content, :entries, :content_entries
 
     helpers ViewHelpers::ApplicationHelper
-
-    def app_route(route, path = '')
-      route_value = APP_ROUTES[route]
-      return URLUtils.join_components(route_value, path) unless path.empty?
-
-      route_value
-    end
 
     configure do
       enable :sessions
@@ -61,16 +55,16 @@ module Controllers
       redirect app_route(:browse)
     end
 
-    # before 'app_route(:*)/[*: current_location]'
-    before '/*' do
-      splat = "/#{params['splat'].first}"
-      validate_content_location(splat)
-      @current_location = splat
+    # before {all routes}, extract global parameters
+    before '/' do
+      location = params[:loc] || '/'
+      validate_location(location)
+      @current_location = location
     end
 
     private
 
-    def validate_content_location(location)
+    def validate_location(location)
       # The web or app server handles this scenario automatically;
       # just in case (need to learn more):
       halt 404 if location.include?('..')

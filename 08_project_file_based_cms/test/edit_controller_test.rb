@@ -3,7 +3,7 @@
 require_relative 'controller_test_base'
 require './controllers/edit_controller'
 
-# Test 'APP_ROUTES[:edit]' routes.
+# Test 'app_route([:edit])' routes.
 class EditControllerTest < ControllerTestBase
   def app
     OUTER_APP
@@ -12,7 +12,7 @@ class EditControllerTest < ControllerTestBase
   def test_get
     create_file('about.md')
 
-    get "#{APP_ROUTES[:edit]}/about.md"
+    get app_route(:edit, loc: 'about.md')
     assert_equal 200, last_response.status
     assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
   end
@@ -23,11 +23,11 @@ class EditControllerTest < ControllerTestBase
     file_path_relative = "#{file_dir_relative}/#{file_name}"
     file = create_file(file_path_relative, 'About to be updated...')
 
-    post "#{APP_ROUTES[:edit]}/#{file_path_relative}", 'file_content' => 'Updated'
+    post app_route(:edit, loc: file_path_relative), 'file_content' => 'Updated'
     assert_equal 'Updated', File.read(file.path)
     assert_equal 303, last_response.status
     post_response_location = last_response['Location']
-    assert_equal "http://example.org#{APP_ROUTES[:browse]}/#{file_dir_relative}",
+    assert_equal "http://example.org#{app_route(:browse, loc: file_dir_relative)}",
                  post_response_location
     # Assert flash success message
     flash_success_message = "#{file_name} was updated."
@@ -42,10 +42,10 @@ class EditControllerTest < ControllerTestBase
   def test_get_subdirectory
     create_directory('dir1')
 
-    get "#{APP_ROUTES[:edit]}/dir1"
+    get app_route(:edit, loc: 'dir1')
     assert_equal 302, last_response.status
     last_response_location = last_response['Location']
-    assert_equal "http://example.org#{APP_ROUTES[:browse]}/dir1", last_response_location
+    assert_equal "http://example.org#{app_route(:browse, loc: 'dir1')}", last_response_location
     # Assert flash error message
     get last_response_location
     assert_includes last_response.body, '<div class="flash error">'
@@ -53,10 +53,10 @@ class EditControllerTest < ControllerTestBase
   end
 
   def test_get_missing
-    get "#{APP_ROUTES[:edit]}/nada"
+    get app_route(:edit, loc: 'nada')
     assert_equal 302, last_response.status
     last_response_location = last_response['Location']
-    assert_equal "http://example.org#{APP_ROUTES[:browse]}", last_response_location
+    assert_equal "http://example.org#{app_route(:browse)}", last_response_location
     # Assert flash error message
     get last_response_location
     assert_includes last_response.body, '<div class="flash error">'

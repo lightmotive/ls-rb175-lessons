@@ -5,7 +5,7 @@ require './controllers/browse_controller'
 
 require 'pry'
 
-# Test APP_ROUTES[:browse] routes.
+# Test 'app_route(:browse)' routes.
 class BrowseControllerTest < ControllerTestBase
   def app
     OUTER_APP
@@ -16,7 +16,7 @@ class BrowseControllerTest < ControllerTestBase
     create_file('changes.txt')
     create_directory('dir1')
 
-    get APP_ROUTES[:browse]
+    get app_route(:browse)
     assert_equal 200, last_response.status
     assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
     expected_body = File.read('./test/expected_body/browse.html')
@@ -27,54 +27,56 @@ class BrowseControllerTest < ControllerTestBase
     dir = 'dir1'
     create_directory(dir)
 
-    get "#{APP_ROUTES[:browse]}/#{dir}"
+    get app_route(:browse, loc: dir)
     assert_equal 200, last_response.status
-    new_dir_link = %(<a href="#{APP_ROUTES[:new_dir]}/#{dir}">[New Directory]</a>)
-    new_file_link = %(<a href="#{APP_ROUTES[:new_file]}/#{dir}">[New File]</a>)
+    new_dir_link = %(<a href="#{app_route(:new_dir, loc: dir)}">[New Directory]</a>)
+    new_file_link = %(<a href="#{app_route(:new_file, loc: dir)}">[New File]</a>)
     assert_includes last_response.body, %(#{new_dir_link} #{new_file_link})
   end
 
   def test_get_first_subdirectory
     dir = 'dir1'
-    create_file("#{dir}/f1.txt")
+    file_name = 'f1.txt'
+    create_file("#{dir}/#{file_name}")
 
-    get "#{APP_ROUTES[:browse]}/#{dir}"
+    get app_route(:browse, loc: dir)
     assert_equal 200, last_response.status
-    file_link = %(<a href="#{APP_ROUTES[:view]}/#{dir}/f1.txt">f1.txt</a>)
+    file_link = %(<a href="#{app_route(:view, loc: "#{dir}/#{file_name}")}">f1.txt</a>)
     assert_includes last_response.body, file_link
   end
 
   def test_get_subdirectory_second_level
-    dirs = 'dir1/dir1.1'
-    create_file("#{dirs}/f3.txt")
+    location = 'dir1/dir1.1'
+    file_name = 'f3.txt'
+    create_file("#{location}/#{file_name}")
 
-    get "#{APP_ROUTES[:browse]}/#{dirs}"
+    get app_route(:browse, loc: location)
     assert_equal 200, last_response.status
-    home_link = %(<a href="#{APP_ROUTES[:browse]}">home</a>)
-    dir2_link = %(<a href="#{APP_ROUTES[:browse]}/dir1">dir1</a>)
-    assert_includes last_response.body, %(<h2>#{home_link}/#{dir2_link}/dir1.1</h2>)
-    file_link = %(<a href="#{APP_ROUTES[:view]}/#{dirs}/f3.txt">f3.txt</a>)
+    home_link = %(<a href="#{app_route(:browse)}">home</a>)
+    dir1_link = %(<a href="#{app_route(:browse, loc: 'dir1')}">dir1</a>)
+    assert_includes last_response.body, %(<h2>#{home_link}/#{dir1_link}/dir1.1</h2>)
+    file_link = %(<a href="#{app_route(:view, loc: "#{location}/#{file_name}")}">#{file_name}</a>)
     assert_includes last_response.body, file_link
-    new_dir_link = %(<a href="#{APP_ROUTES[:new_dir]}/#{dirs}">[New Directory]</a>)
-    new_file_link = %(<a href="#{APP_ROUTES[:new_file]}/#{dirs}">[New File]</a>)
+    new_dir_link = %(<a href="#{app_route(:new_dir, loc: location)}">[New Directory]</a>)
+    new_file_link = %(<a href="#{app_route(:new_file, loc: location)}">[New File]</a>)
     assert_includes last_response.body, %(#{new_dir_link} #{new_file_link})
   end
 
   def test_get_file
     create_file('changes.txt')
 
-    get "#{APP_ROUTES[:browse]}/changes.txt"
+    get app_route(:browse, loc: 'changes.txt')
     assert_equal 302, last_response.status
-    assert_equal "http://example.org#{APP_ROUTES[:view]}/changes.txt", last_response['Location']
+    assert_equal "http://example.org#{app_route(:view, loc: 'changes.txt')}", last_response['Location']
   end
 
   def test_get_missing_content
-    get "#{APP_ROUTES[:browse]}/missing_abc/xyz"
+    get app_route(:browse, loc: 'missing_abc/xyz')
     assert_equal 302, last_response.status
     assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
     assert_equal '0', last_response['Content-Length']
     first_response_location = last_response['Location']
-    assert_equal "http://example.org#{APP_ROUTES[:browse]}", first_response_location
+    assert_equal "http://example.org#{app_route(:browse)}", first_response_location
     assert_empty last_response.body
     # Assert flash error message
     get first_response_location

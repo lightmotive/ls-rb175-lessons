@@ -19,14 +19,14 @@ module Controllers
     end
 
     # Customize `new_entry` template to create directory in current location
-    # get 'app_route(:new_dir)/*'
-    get '/*' do
+    # get 'app_route(:new_dir)/'
+    get '/' do
       erb :new_entry
     end
 
     # Validate and save submitted dir name, then redirect to current location.
-    # post 'app_route(:new_dir)/*'
-    post '/*' do
+    # post 'app_route(:new_dir)/'
+    post '/' do
       input = params['entry_name']
       input_paths = Models::ContentEntry.entry_names_from_user_input(input)
 
@@ -34,7 +34,7 @@ module Controllers
         content = Models::Content.new
         content.create_directory(File.join(current_location, input_paths))
         flash_success_message "'#{input}' created successfully."
-        redirect app_route(:browse, current_location)
+        redirect app_route(:browse, loc: current_location), 303
       else
         flash_error_message [Models::ContentEntry.entry_name_chars_allowed_message,
                              "Use '/' to separate paths."]

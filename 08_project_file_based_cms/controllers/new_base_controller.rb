@@ -16,8 +16,8 @@ module Controllers
     helpers do
       def post_route
         case type
-        when :dir then app_route(:new_dir, current_location)
-        when :file then app_route(:new_file, current_location)
+        when :dir then app_route(:new_dir, loc: current_location)
+        when :file then app_route(:new_file, loc: current_location)
         end
       end
 

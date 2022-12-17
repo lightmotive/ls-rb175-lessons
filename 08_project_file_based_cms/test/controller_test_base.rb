@@ -7,6 +7,7 @@ require_relative 'rack_test_helper'
 # All Controller tests should inherit this.
 class ControllerTestBase < Minitest::Test
   include Rack::Test::Methods
+  include ViewHelpers::ApplicationHelper
   extend Forwardable
 
   def initialize(*args)

@@ -3,9 +3,9 @@
 <ul>
 <% @entries.each do |entry| %>
   <li>
-    <a href="<%= entry.view_href %>"><%= entry.name %></a>
-    <% if entry.edit_href %><a class="edit" href="<%= entry.edit_href %>">&#9998;</a><% end %>
-    <% if entry.delete_href %><form class="delete" action="<%= entry.delete_href %>" method="post">
+    <a href="<%= entry_view_href(entry) %>"><%= entry.name %></a>
+    <% edit_href = entry_edit_href(entry); if edit_href %><a class="edit" href="<%= edit_href %>">&#9998;</a><% end %>
+    <% delete_href = entry_delete_href(entry); if delete_href %><form class="delete" action="<%= delete_href %>" method="post">
       <input type="submit" value="&#128465;">
     </form><% end %>
   </li>

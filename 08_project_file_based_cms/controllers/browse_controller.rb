@@ -13,43 +13,27 @@ module Controllers
 
     attr_reader :new_directory_href, :new_file_href
 
-    helpers do
-      def navigation_path(current_location = '/')
-        return '' if current_location == '/'
+    helpers ViewHelpers::Browse
 
-        href = app_route(:browse)
-        nav_path = "<a href=\"#{href}\">home</a>"
-
-        dir_names = current_location[1..].split('/')
-        dir_names[0..-2].each do |name|
-          href += "/#{name}"
-          nav_path += "/<a href=\"#{href}\">#{name}</a>"
-        end
-
-        nav_path += "/#{dir_names.last}"
-        nav_path
-      end
-    end
-
-    # get 'app_route(:browse)/*'
+    # get 'app_route(:browse)/'
     # Get public content entries starting at current_location and render :browse if
     # :directory or redirect to view file if :file
-    get '/*' do
+    get '/' do
       case content_entry_type(current_location)
       when :directory
         @entries = content_entries(current_location)
         enable_new_entries
         erb :browse
       when :file
-        redirect app_route(:view, current_location)
+        redirect app_route(:view, loc: current_location)
       else
         content_missing(current_location)
       end
     end
 
     def enable_new_entries
-      @new_directory_href = app_route(:new_dir, current_location)
-      @new_file_href = app_route(:new_file, current_location)
+      @new_directory_href = app_route(:new_dir, loc: current_location)
+      @new_file_href = app_route(:new_file, loc: current_location)
     end
   end
 end
