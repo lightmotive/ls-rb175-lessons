@@ -5,10 +5,6 @@ require './controllers/edit_controller'
 
 # Test 'app_route([:edit])' routes.
 class EditControllerTest < ControllerTestBase
-  def app
-    OUTER_APP
-  end
-
   def test_get
     create_file('about.md')
 

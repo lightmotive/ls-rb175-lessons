@@ -5,10 +5,6 @@ require './controllers/delete_controller'
 
 # Test 'app_route([:delete])' routes.
 class DeleteControllerTest < ControllerTestBase
-  def app
-    OUTER_APP
-  end
-
   def test_post_file
     file_name = 'deletable.txt'
     create_file(file_name)

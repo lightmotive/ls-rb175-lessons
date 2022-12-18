@@ -5,10 +5,6 @@ require './controllers/application_controller'
 
 # Test main app controller, including '/' route.
 class ApplicationControllerTest < ControllerTestBase
-  def app
-    OUTER_APP
-  end
-
   def test_get
     get '/'
     assert_equal 302, last_response.status

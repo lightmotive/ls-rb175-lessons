@@ -5,10 +5,6 @@ require './controllers/new_file_controller'
 
 # Test 'app_route([:edit])' routes.
 class NewFileControllerTest < ControllerTestBase
-  def app
-    OUTER_APP
-  end
-
   def test_get
     get app_route(:new_file)
     assert_includes last_response.body, %(<form action="#{app_route(:new_file)}" method="post">)

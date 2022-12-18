@@ -5,10 +5,6 @@ require './controllers/view_controller'
 
 # Test 'app_route([:view])' routes.
 class ViewControllerTest < ControllerTestBase
-  def app
-    OUTER_APP
-  end
-
   def test_get_subdirectory
     create_directory('dir1')
 

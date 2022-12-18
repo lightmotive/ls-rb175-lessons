@@ -7,10 +7,6 @@ require 'pry'
 
 # Test 'app_route(:browse)' routes.
 class BrowseControllerTest < ControllerTestBase
-  def app
-    OUTER_APP
-  end
-
   def test_get
     create_file('about.md')
     create_file('changes.txt')

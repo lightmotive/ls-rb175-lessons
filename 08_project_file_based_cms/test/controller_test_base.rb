@@ -20,6 +20,10 @@ class ControllerTestBase < Minitest::Test
   def_delegator :@content, :path, :content_path
   def_delegator :@content, :entry_type, :content_entry_type
 
+  def app
+    OUTER_APP
+  end
+
   def setup
     FileUtils.mkdir_p(@content.path)
   end
