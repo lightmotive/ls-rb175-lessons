@@ -17,7 +17,7 @@ module Controllers
     end
 
     attr_accessor :title
-    attr_reader :current_location
+    attr_reader :current_location, :current_location_entry_type
 
     def_delegator :@content, :path, :content_path
     def_delegator :@content, :entry_type, :content_entry_type
@@ -50,24 +50,36 @@ module Controllers
       session[:success] = message
     end
 
-    def content_missing(missing_path)
-      flash_error_message "#{missing_path} wasn't found."
-      redirect app_route(:browse)
+    def authenticated?
+      !!session[:username]
     end
 
-    # before {all routes}, extract global parameters
+    # before {all routes}
     before '/' do
-      location = params[:loc] || '/'
-      validate_location(location)
-      @current_location = location
+      # Apply global query parameters
+      location = params[:loc]
+      halt 404 if location&.include?('..')
+      @current_location = location.nil? || location.empty? ? '/' : location
+
+      # # Check signed-in status
+      # redirect app_route(:login, loc: @current_location) unless session[:username]
+
+      verify_location_exists(@current_location)
     end
 
     private
 
-    def validate_location(location)
-      # The web or app server handles this scenario automatically;
-      # just in case (need to learn more):
-      halt 404 if location.include?('..')
+    attr_writer :current_location_entry_type
+
+    # Redirect if it doesn't exist
+    def verify_location_exists(location)
+      type = content_entry_type(location)
+      if %i[file directory].include?(type)
+        self.current_location_entry_type = type
+      else
+        flash_error_message 'Entry not found.'
+        redirect app_route(:browse)
+      end
     end
   end
 end

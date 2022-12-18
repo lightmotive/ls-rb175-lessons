@@ -6,15 +6,10 @@ module Controllers
   # Handle 'app_route(:edit)' routes.
   class EditController < ApplicationController
     def validate_edit_path(path)
-      case content_entry_type(path)
-      when :file
-        path
+      case current_location_entry_type
       when :directory
         flash_error_message 'Editing not allowed.'
         redirect app_route(:browse, loc: path)
-      else
-        flash_error_message 'Entry not found.'
-        redirect app_route(:browse)
       end
     end
 

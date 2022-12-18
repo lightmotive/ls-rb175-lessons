@@ -50,4 +50,9 @@ class DeleteControllerTest < ControllerTestBase
          { 'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest' }
     assert_equal 204, last_response.status
   end
+
+  def test_post_missing_directory
+    post app_route(:delete, loc: 'nada')
+    assert_equal 302, last_response.status
+  end
 end

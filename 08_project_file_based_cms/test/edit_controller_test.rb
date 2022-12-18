@@ -44,22 +44,17 @@ class EditControllerTest < ControllerTestBase
 
     get app_route(:edit, loc: 'dir1')
     assert_equal 302, last_response.status
-    last_response_location = last_response['Location']
-    assert_equal "http://example.org#{app_route(:browse, loc: 'dir1')}", last_response_location
-    # Assert flash error message
-    get last_response_location
+    first_response_location = last_response['Location']
+    assert_equal "http://example.org#{app_route(:browse, loc: 'dir1')}", first_response_location
+    # Assert error message
+    get first_response_location
+    assert_equal 200, last_response.status
     assert_includes last_response.body, '<div class="flash error">'
-    assert_includes last_response.body, 'Editing not allowed.'
+    assert_includes last_response.body, '<p>Editing not allowed.</p>'
   end
 
   def test_get_missing
     get app_route(:edit, loc: 'nada')
     assert_equal 302, last_response.status
-    last_response_location = last_response['Location']
-    assert_equal "http://example.org#{app_route(:browse)}", last_response_location
-    # Assert flash error message
-    get last_response_location
-    assert_includes last_response.body, '<div class="flash error">'
-    assert_includes last_response.body, 'Entry not found.'
   end
 end

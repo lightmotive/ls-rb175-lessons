@@ -30,7 +30,7 @@ class NewFileControllerTest < ControllerTestBase
     assert_equal "http://example.org#{app_route(:browse)}", first_response_location
     get first_response_location
     assert_includes last_response.body, %(<div class="flash success">)
-    assert_includes last_response.body, %('something_new.txt' created successfully.)
+    assert_includes last_response.body, %(&#x27;something_new.txt&#x27; created successfully.)
   end
 
   def test_post_in_subdirectory

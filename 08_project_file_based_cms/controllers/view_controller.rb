@@ -42,12 +42,10 @@ module Controllers
     # View files (`send_file` or custom processing)
     # get 'app_route(:view)/'
     get '/' do
-      case content_entry_type(current_location)
+      case current_location_entry_type
       when :file
         view_file_response(current_location)
       when :directory then redirect app_route(:browse, loc: current_location)
-      else
-        content_missing(current_location)
       end
     end
   end
