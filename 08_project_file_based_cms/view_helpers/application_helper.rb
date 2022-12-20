@@ -1,24 +1,8 @@
 # frozen_string_literal: true
 
-require 'uri'
-require './url_utils'
-
 module ViewHelpers
   # Global app helpers
   module ApplicationHelper
-    def app_route(route, path: '', loc: nil, query: {})
-      route = APP_ROUTES[route]
-
-      loc = nil if loc == '/'
-      unless loc.nil? || loc.empty?
-        loc = "/#{loc}" unless loc.start_with?('/')
-        query = { loc: loc }.merge(query) unless loc.empty?
-      end
-      query_string = query.empty? ? '' : "?#{URI.encode_www_form(query)}"
-
-      "#{URLUtils.join_components(route, path)}#{query_string}"
-    end
-
     def session_flash_messages(content)
       return '' if content.nil?
 
