@@ -26,13 +26,7 @@ class EditControllerTest < ControllerTestBase
     assert_equal "http://example.org#{app_route(:browse, loc: file_dir_relative)}",
                  post_response_location
     # Assert flash success message
-    flash_success_message = "#{file_name} was updated."
-    get post_response_location
-    assert_includes last_response.body, '<div class="flash success">'
-    assert_includes last_response.body, flash_success_message
-    # Assert flash success message disappears on reload
-    get post_response_location
-    refute_includes last_response.body, flash_success_message
+    assert_equal "#{file_name} was updated.", last_request.session[:success]
   end
 
   def test_get_subdirectory
@@ -42,11 +36,8 @@ class EditControllerTest < ControllerTestBase
     assert_equal 302, last_response.status
     first_response_location = last_response['Location']
     assert_equal "http://example.org#{app_route(:browse, loc: 'dir1')}", first_response_location
-    # Assert error message
-    get first_response_location
-    assert_equal 200, last_response.status
-    assert_includes last_response.body, '<div class="flash error">'
-    assert_includes last_response.body, '<p>Editing not allowed.</p>'
+    # Assert flash error message
+    assert_equal 'Editing not allowed.', last_request.session[:error]
   end
 
   def test_get_missing
