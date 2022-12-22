@@ -53,8 +53,8 @@ module CMSAppHelper
   end
 
   # Current request's Rack App-mapped route
-  def current_request_rack_mapped_route
-    name = request.env['SCRIPT_NAME']
+  def request_script_name_standardized
+    name = request.script_name
     name.empty? ? '/' : name
   end
 
