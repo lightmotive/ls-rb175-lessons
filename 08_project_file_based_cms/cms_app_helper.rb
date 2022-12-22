@@ -22,7 +22,7 @@ module CMSAppHelper
     return {} if loc.nil? || loc.empty?
 
     loc = "/#{loc}" unless loc.start_with?('/')
-    { loc: loc }
+    { loc: }
   end
 
   def self.app_route(route, path: '', loc: nil, other_query_params: {})
@@ -48,7 +48,7 @@ module CMSAppHelper
   # Get a standardized app route path
   def app_route(route, path: '', loc: nil, other_query_params: {})
     CMSAppHelper.app_route(
-      route, path: path, loc: loc, other_query_params: other_query_params
+      route, path:, loc:, other_query_params:
     )
   end
 
