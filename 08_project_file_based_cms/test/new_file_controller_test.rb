@@ -24,9 +24,7 @@ class NewFileControllerTest < ControllerTestBase
     assert_equal 303, last_response.status
     first_response_location = last_response['Location']
     assert_equal "http://example.org#{app_route(:browse)}", first_response_location
-    get first_response_location
-    assert_includes last_response.body, %(<div class="flash success">)
-    assert_includes last_response.body, %(&#x27;something_new.txt&#x27; created successfully.)
+    assert_equal "'something_new.txt' created successfully.", last_request.session[:success]
   end
 
   def test_post_in_subdirectory
@@ -40,8 +38,10 @@ class NewFileControllerTest < ControllerTestBase
     post app_route(:new_file), 'entry_name' => 'something+invalid.txt'
     assert_equal :unknown, content_entry_type('something+invalid.txt')
     assert_equal 400, last_response.status
-    assert_includes last_response.body, %(<div class="flash error">)
-    assert_includes last_response.body, %(Please use only numbers, letters, underscores, and periods for names.)
+    assert_flash_message_rendering(
+      :error, 'Please use only numbers, letters, underscores, and periods for names.',
+      last_response.body
+    )
     assert_includes last_response.body, %(<form action="#{app_route(:new_file)}" method="post">)
     assert_includes last_response.body, %(<input name="entry_name" type="text" value="something+invalid.txt">)
   end

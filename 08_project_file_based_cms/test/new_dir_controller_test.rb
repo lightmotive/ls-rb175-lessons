@@ -24,9 +24,7 @@ class NewDirControllerTest < ControllerTestBase
     assert_equal 303, last_response.status
     first_response_location = last_response['Location']
     assert_equal "http://example.org#{app_route(:browse)}", first_response_location
-    get first_response_location
-    assert_includes last_response.body, %(<div class="flash success">)
-    assert_includes last_response.body, %(&#x27;dir1&#x27; created successfully.)
+    assert_equal "'dir1' created successfully.", last_request.session[:success]
   end
 
   def test_post_subdirectory
@@ -47,8 +45,10 @@ class NewDirControllerTest < ControllerTestBase
     post app_route(:new_dir), 'entry_name' => 'dir+3'
     assert_equal :unknown, content_entry_type('dir+3')
     assert_equal 400, last_response.status
-    assert_includes last_response.body, %(<div class="flash error">)
-    assert_includes last_response.body, %(Please use only numbers, letters, underscores, and periods for names.)
+    assert_flash_message_rendering(
+      :error, 'Please use only numbers, letters, underscores, and periods for names.',
+      last_response.body
+    )
     assert_includes last_response.body, %(<form action="#{app_route(:new_dir)}" method="post">)
     assert_includes last_response.body, %(<input name="entry_name" type="text" value="dir+3">)
   end
