@@ -7,6 +7,19 @@ class CMSAppHelperTest < MiniTest::Test
     @obj.extend(CMSAppHelper)
   end
 
+  def test_location_query_param_is_standardized
+    assert_equal({}, CMSAppHelper.location_query_param('/'))
+    assert_equal({}, CMSAppHelper.location_query_param(''))
+    assert_equal({ loc: '/dir' }, CMSAppHelper.location_query_param('dir'))
+    assert_equal({ loc: '/dir' }, CMSAppHelper.location_query_param('/dir'))
+  end
+
+  def test_public_routes
+    CMSAppHelper::PUBLIC_ROUTES.each do |route|
+      assert_equal true, @obj.route_public?(route)
+    end
+  end
+
   def test_app_route
     assert_equal '/browse', @obj.app_route(:browse)
     assert_equal '/', @obj.app_route(:index)
