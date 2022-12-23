@@ -21,7 +21,7 @@ module Controllers
       if authenticated?
         redirect_after_auth
       else
-        flash_error_message 'Invalid credentials. Please check your username and password.'
+        flash_message :error, 'Invalid credentials. Please check your username and password.'
         erb :login
       end
     end

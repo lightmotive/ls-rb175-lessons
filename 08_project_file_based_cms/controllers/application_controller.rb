@@ -36,12 +36,12 @@ module Controllers
       set :views, File.join(content.app_root_path, 'views')
     end
 
-    def flash_error_message(message)
-      session[:error] = message
-    end
-
     def flash_success_message(message)
       session[:success] = message
+    end
+
+    def flash_message(flash_key, content)
+      session[flash_key] = content
     end
 
     # Apply location ("loc" query param) to request.
@@ -101,14 +101,14 @@ module Controllers
     end
 
     def logout
-      flash_success_message 'You have been signed out.'
+      flash_message :success, 'You have been signed out.'
       session.delete(:username)
       redirect app_route(:index)
     end
 
     def redirect_after_auth
       location = session.delete(:post_auth_location)
-      flash_success_message 'Welcome!' if location.nil? || location == app_route(:index)
+      flash_message :success, 'Welcome!' if location.nil? || location == app_route(:index)
 
       return redirect app_route(:browse) if location.nil?
 
@@ -121,7 +121,7 @@ module Controllers
       if %i[file directory].include?(type)
         self.current_location_entry_type = type
       else
-        flash_error_message 'Entry not found.'
+        flash_message :error, 'Entry not found.'
         redirect app_route(:browse)
       end
     end

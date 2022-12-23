@@ -26,10 +26,10 @@ module Controllers
       if Models::ContentEntry.file_name_valid?(input_name)
         content = Models::Content.new
         content.create_file(File.join(current_location, input_name))
-        flash_success_message "'#{input_name}' created successfully."
+        flash_message :success, "'#{input_name}' created successfully."
         redirect app_route(:browse, loc: current_location), 303
       else
-        flash_error_message Models::ContentEntry.entry_name_chars_allowed_message
+        flash_message :error, Models::ContentEntry.entry_name_chars_allowed_message
         status 400
         erb :new_entry
       end

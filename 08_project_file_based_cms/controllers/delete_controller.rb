@@ -14,7 +14,7 @@ module Controllers
       if env['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'
         status 204
       else
-        flash_success_message "#{File.basename(current_location)} was deleted."
+        flash_message :success, "#{File.basename(current_location)} was deleted."
         redirect app_route(:browse, loc: File.dirname(current_location)), 303
       end
     end

@@ -8,7 +8,7 @@ module Controllers
     def validate_edit_path(path)
       case current_location_entry_type
       when :directory
-        flash_error_message 'Editing not allowed.'
+        flash_message :error, 'Editing not allowed.'
         redirect app_route(:browse, loc: path)
       end
     end
@@ -34,7 +34,7 @@ module Controllers
       content = Models::Content.new
       content.edit_file(current_location, file_content)
 
-      flash_success_message "#{File.basename(current_location)} was updated."
+      flash_message :success, "#{File.basename(current_location)} was updated."
       redirect app_route(:browse, loc: File.dirname(current_location)), 303
     end
   end

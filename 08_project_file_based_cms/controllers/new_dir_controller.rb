@@ -33,11 +33,11 @@ module Controllers
       if Models::ContentEntry.dir_names_valid?(input_paths)
         content = Models::Content.new
         content.create_directory(File.join(current_location, input_paths))
-        flash_success_message "'#{input}' created successfully."
+        flash_message :success, "'#{input}' created successfully."
         redirect app_route(:browse, loc: current_location), 303
       else
-        flash_error_message [Models::ContentEntry.entry_name_chars_allowed_message,
-                             "Use '/' to separate paths."]
+        flash_message :error, [Models::ContentEntry.entry_name_chars_allowed_message,
+                               "Use '/' to separate paths."]
         status 400
         erb :new_entry
       end
