@@ -5,8 +5,8 @@ require './controllers/logout_controller'
 
 # Test 'app_route([:logout])' routes.
 class LogoutControllerTest < ControllerTestBase
-  def test_get
-    get app_route(:logout)
+  def test_post
+    post app_route(:logout)
     assert_nil last_request.session.fetch(:username, nil)
     assert_flash_message :success, 'You have been signed out.', last_request.session
     assert_equal 302, last_response.status

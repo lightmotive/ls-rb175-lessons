@@ -5,7 +5,7 @@ require_relative 'application_controller'
 module Controllers
   # Handle 'app_route(:login)' routes.
   class LogoutController < ApplicationController
-    get '/' do
+    post '/' do
       logout
     end
   end
