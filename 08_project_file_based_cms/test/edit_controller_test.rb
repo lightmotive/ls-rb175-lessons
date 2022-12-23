@@ -25,8 +25,7 @@ class EditControllerTest < ControllerTestBase
     post_response_location = last_response['Location']
     assert_equal "http://example.org#{app_route(:browse, loc: file_dir_relative)}",
                  post_response_location
-    # Assert flash success message
-    assert_equal "#{file_name} was updated.", last_request.session[:success]
+    assert_flash_message :success, "#{file_name} was updated.", last_request.session
   end
 
   def test_get_subdirectory

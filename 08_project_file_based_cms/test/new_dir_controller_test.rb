@@ -24,7 +24,7 @@ class NewDirControllerTest < ControllerTestBase
     assert_equal 303, last_response.status
     first_response_location = last_response['Location']
     assert_equal "http://example.org#{app_route(:browse)}", first_response_location
-    assert_equal "'dir1' created successfully.", last_request.session[:success]
+    assert_flash_message :success, "'dir1' created successfully.", last_request.session
   end
 
   def test_post_subdirectory

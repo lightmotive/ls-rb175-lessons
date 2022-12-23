@@ -30,7 +30,7 @@ module Models
     def entries(dir_relative = '/')
       Dir.each_child(path(dir_relative)).map do |entry_name|
         ContentEntry.new(
-          dir_relative: dir_relative,
+          dir_relative:,
           basename: entry_name,
           path_absolute: path(File.join(dir_relative, entry_name))
         )

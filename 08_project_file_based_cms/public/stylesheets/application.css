@@ -45,6 +45,10 @@ ul li [type="submit"].delete {
   border: none;
 }
 
-ul li form.inline {
+form.inline {
   display: inline;
+}
+
+footer>div.auth-status {
+  padding-top: 1em;
 }

@@ -3,11 +3,13 @@
 require 'sinatra/base'
 require 'forwardable'
 require 'uri'
+require './cms_app_helper'
 
 module Controllers
   # Handle '/' route. All other controllers inherit this.
   class ApplicationController < Sinatra::Base
     extend Forwardable
+    include CMSAppHelper
 
     def initialize
       super
@@ -23,7 +25,7 @@ module Controllers
     def_delegator :@content, :entry_type, :content_entry_type
     def_delegator :@content, :entries, :content_entries
 
-    helpers ViewHelpers::ApplicationHelper
+    helpers Sinatra::ContentFor, ViewHelpers::ApplicationHelper
 
     configure do
       enable :sessions
@@ -34,14 +36,6 @@ module Controllers
       set :views, File.join(content.app_root_path, 'views')
     end
 
-    get '/' do
-      redirect app_route(:browse)
-    end
-
-    not_found do
-      redirect app_route(:browse)
-    end
-
     def flash_error_message(message)
       session[:error] = message
     end
@@ -50,28 +44,78 @@ module Controllers
       session[:success] = message
     end
 
-    def authenticated?
-      !!session[:username]
+    # Apply location ("loc" query param) to request.
+    # This param is available to use with most requests.
+    def validate_and_set_location
+      location = params[:loc]
+      params.delete(:loc)
+      return halt(400, 'Invalid location') if location&.include?('..')
+
+      @current_location = location.nil? || location.empty? ? '/' : location
     end
 
     # before {all routes}
-    before '/' do
-      # Apply global query parameters
-      location = params[:loc]
-      halt 404 if location&.include?('..')
-      @current_location = location.nil? || location.empty? ? '/' : location
-
-      # # Check signed-in status
-      # redirect app_route(:login, loc: @current_location) unless session[:username]
-
+    before '*' do
+      validate_and_set_location
+      check_authentication
       verify_location_exists(@current_location)
+    end
+
+    get '/' do
+      return redirect app_route(:browse) if authenticated?
+
+      erb :index
+    end
+
+    not_found do
+      return redirect app_route(:browse) if authenticated?
+
+      redirect app_route(:index)
+    end
+
+    def username
+      session[:username]
     end
 
     private
 
     attr_writer :current_location_entry_type
 
-    # Redirect if it doesn't exist
+    def authenticated?
+      !!session[:username]
+    end
+
+    # Redirect to login route if appropriate
+    def check_authentication
+      return if authenticated? || route_public?(request_script_name_standardized)
+
+      session[:post_auth_location] = app_route(APP_ROUTES.key(request.env['SCRIPT_NAME']), loc: @current_location)
+      redirect app_route(:login)
+    end
+
+    def authenticate(username, password)
+      return if ENV.fetch('RACK_ENV', nil) == 'test' && test_authenticated?(session)
+      return unless Models::Authenticator.new({ username:, password: }).valid?
+
+      session[:username] = username
+    end
+
+    def logout
+      flash_success_message 'You have been signed out.'
+      session.delete(:username)
+      redirect app_route(:index)
+    end
+
+    def redirect_after_auth
+      location = session.delete(:post_auth_location)
+      flash_success_message 'Welcome!' if location.nil? || location == app_route(:index)
+
+      return redirect app_route(:browse) if location.nil?
+
+      redirect location
+    end
+
+    # Redirect if location doesn't exist.
     def verify_location_exists(location)
       type = content_entry_type(location)
       if %i[file directory].include?(type)

@@ -23,4 +23,17 @@
       <%== yield %>
     </main>
   </body>
+  <footer>
+    <div>
+      <%== yield_content :footer %>
+    </div>
+    <% if authenticated? %>
+    <div class="auth-status">
+      <i>Signed in as <%= username %>.</i>
+      <form class="inline" action="<%= app_route(:logout) %>">
+        <button type="submit">Sign out</button>
+      </form>
+    </div>
+    <% end %>
+  </footer>
 </html>
