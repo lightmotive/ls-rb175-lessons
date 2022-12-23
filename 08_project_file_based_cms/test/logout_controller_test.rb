@@ -8,7 +8,7 @@ class LogoutControllerTest < ControllerTestBase
   def test_post
     post app_route(:logout)
     assert_nil last_request.session.fetch(:username, nil)
-    assert_flash_message :success, 'You have been signed out.', last_request.session
+    assert_flash_message :success, 'You have been signed out.'
     assert_equal 302, last_response.status
     assert_equal app_route_for_assert(:index), last_response['Location']
   end

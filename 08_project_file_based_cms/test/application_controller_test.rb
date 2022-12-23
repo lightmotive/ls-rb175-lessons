@@ -28,11 +28,11 @@ class ApplicationControllerTest < ControllerTestBase
     first_response_location = last_response['Location']
     assert_equal app_route_for_assert(:browse), first_response_location
     assert_empty last_response.body
-    assert_flash_message :error, 'Entry not found.', last_request.session
+    assert_flash_message :error, 'Entry not found.'
     # Assert flash error message:
     get first_response_location
     assert_equal 200, last_response.status
-    assert_flash_message_rendering(:error, 'Entry not found.', last_response.body)
+    assert_flash_message_rendering :error, 'Entry not found.', last_response.body
     # Assert flash error was deleted from session:
     assert_nil last_request.session[:error]
   end
@@ -69,7 +69,7 @@ class ApplicationControllerTest < ControllerTestBase
     # NOTE: content existence check should be delayed until after login
     route = app_route(:browse, loc: '/some_dir/some_file.txt')
     get route
-    assert_equal route, last_request.session[:post_auth_location]
+    assert_equal route, session[:post_auth_location]
     assert_equal 302, last_response.status
     assert_equal app_route_for_assert(:login), last_response['Location']
   end

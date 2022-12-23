@@ -24,7 +24,7 @@ class LoginControllerTest < ControllerTestBase
       password: ENV.fetch('TEST_OR_DEV_USER_PASSWORD', nil)
     }
     assert_equal 302, last_response.status
-    assert_flash_message :success, 'Welcome!', last_request.session
+    assert_flash_message :success, 'Welcome!'
     assert_equal app_route_for_assert(:browse), last_response['Location']
   end
 

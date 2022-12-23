@@ -24,7 +24,7 @@ class NewFileControllerTest < ControllerTestBase
     assert_equal 303, last_response.status
     first_response_location = last_response['Location']
     assert_equal app_route_for_assert(:browse), first_response_location
-    assert_flash_message :success, "'something_new.txt' created successfully.", last_request.session
+    assert_flash_message :success, "'something_new.txt' created successfully."
   end
 
   def test_post_in_subdirectory

@@ -31,26 +31,36 @@ class ControllerTestBase < Minitest::Test
     simulate_authenticated_user
   end
 
+  def session
+    last_request.session
+    # Alt: last_request.env['rack.session']
+  end
+
+  def configure_session(hash)
+    env 'rack.session', hash
+  end
+
   def simulate_authenticated_user
-    env 'rack.session', { username: ENV.fetch('TEST_AUTHENTICATED', nil) }
+    configure_session({ username: ENV.fetch('TEST_AUTHENTICATED', nil) })
   end
 
   def simulate_unauthenticated_user
-    env 'rack.session', { username: nil }
+    configure_session({ username: nil })
   end
 
   def app_route_for_assert(...)
     "http://example.org#{app_route(...)}"
   end
 
-  def assert_flash_message(flash_class, expected_message, session)
+  def assert_flash_message(flash_key, expected_message, session: self.session)
     assert_equal expected_message,
-                 session[flash_class],
-                 "The last action should have set session[:#{flash_class}] to the expected message."
+                 session[flash_key],
+                 "The last request should have set `session[:#{flash_key}]` " \
+                 'to the expected message'
   end
 
-  def assert_flash_message_rendering(flash_class, message, in_content)
-    assert_includes in_content, %(<div class="flash #{flash_class}">)
+  def assert_flash_message_rendering(flash_key, message, in_content)
+    assert_includes in_content, %(<div class="flash #{flash_key}">)
     assert_includes in_content, Rack::Utils.escape_html(message)
   end
 
