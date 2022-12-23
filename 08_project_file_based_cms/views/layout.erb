@@ -14,9 +14,15 @@
     <div class="flash error">
       <%== session_flash_messages(session.delete(:error)) %>
     </div>
-    <% elsif session[:success] %>
+    <% end %>
+    <% if session[:success] %>
     <div class="flash success">
       <%== session_flash_messages(session.delete(:success)) %>
+    </div>
+    <% end %>
+    <% if session[:info] %>
+    <div class="flash info">
+      <%== session_flash_messages(session.delete(:info)) %>
     </div>
     <% end %>
     <main>

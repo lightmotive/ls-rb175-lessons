@@ -26,6 +26,11 @@ body {
   background: #CBF2E5;
 }
 
+.flash.info {
+  color: #000000;
+  background: #ffffad;
+}
+
 a.edit:before {
   content: '\270E';
 }
