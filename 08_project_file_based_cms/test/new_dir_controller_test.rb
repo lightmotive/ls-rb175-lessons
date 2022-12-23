@@ -23,7 +23,7 @@ class NewDirControllerTest < ControllerTestBase
     assert_equal :directory, content_entry_type('dir1')
     assert_equal 303, last_response.status
     first_response_location = last_response['Location']
-    assert_equal "http://example.org#{app_route(:browse)}", first_response_location
+    assert_equal app_route_for_assert(:browse), first_response_location
     assert_flash_message :success, "'dir1' created successfully.", last_request.session
   end
 
@@ -31,14 +31,14 @@ class NewDirControllerTest < ControllerTestBase
     create_directory('dir1')
     post app_route(:new_dir, loc: 'dir1'), 'entry_name' => 'dir1.1'
     assert_equal :directory, content_entry_type('dir1/dir1.1')
-    assert_equal "http://example.org#{app_route(:browse, loc: 'dir1')}", last_response['Location']
+    assert_equal app_route_for_assert(:browse, loc: 'dir1'), last_response['Location']
   end
 
   def test_post_multiple_subdirectories
     create_directory('dir2/dir2.1')
     post app_route(:new_dir), 'entry_name' => 'dir2/dir2.1'
     assert_equal :directory, content_entry_type('dir2/dir2.1')
-    assert_equal "http://example.org#{app_route(:browse)}", last_response['Location']
+    assert_equal app_route_for_assert(:browse), last_response['Location']
   end
 
   def test_post_invalid_entry_name

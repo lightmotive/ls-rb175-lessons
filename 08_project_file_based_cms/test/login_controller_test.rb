@@ -15,7 +15,7 @@ class LoginControllerTest < ControllerTestBase
   def test_get_when_authenticated
     get app_route(:login)
     assert_equal 302, last_response.status
-    assert_equal app_route_for_assertion(:browse), last_response['Location']
+    assert_equal app_route_for_assert(:browse), last_response['Location']
   end
 
   def test_post_valid_credentials
@@ -25,7 +25,7 @@ class LoginControllerTest < ControllerTestBase
     }
     assert_equal 302, last_response.status
     assert_flash_message :success, 'Welcome!', last_request.session
-    assert_equal app_route_for_assertion(:browse), last_response['Location']
+    assert_equal app_route_for_assert(:browse), last_response['Location']
   end
 
   def test_post_valid_credentials_after_unauthenticated_browse
@@ -35,7 +35,7 @@ class LoginControllerTest < ControllerTestBase
     get_route = app_route(:browse, loc: browse_location)
     get get_route
     assert_equal 302, last_response.status
-    assert_equal app_route_for_assertion(:login), last_response['Location']
+    assert_equal app_route_for_assert(:login), last_response['Location']
     get app_route(:login)
     assert_equal 200, last_response.status
     post app_route(:login), {
@@ -43,7 +43,7 @@ class LoginControllerTest < ControllerTestBase
       password: ENV.fetch('TEST_OR_DEV_USER_PASSWORD', nil)
     }
     assert_equal 302, last_response.status
-    assert_equal app_route_for_assertion(:browse, loc: browse_location),
+    assert_equal app_route_for_assert(:browse, loc: browse_location),
                  last_response['Location']
   end
 

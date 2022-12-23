@@ -63,7 +63,7 @@ class BrowseControllerTest < ControllerTestBase
 
     get app_route(:browse, loc: 'changes.txt')
     assert_equal 302, last_response.status
-    assert_equal "http://example.org#{app_route(:view, loc: 'changes.txt')}", last_response['Location']
+    assert_equal app_route_for_assert(:view, loc: 'changes.txt'), last_response['Location']
   end
 
   def test_get_missing_content

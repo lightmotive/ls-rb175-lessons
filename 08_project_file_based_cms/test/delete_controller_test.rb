@@ -10,7 +10,7 @@ class DeleteControllerTest < ControllerTestBase
     create_file(file_name)
     post app_route(:delete, loc: file_name)
     assert_equal 303, last_response.status
-    assert_equal "http://example.org#{app_route(:browse)}", last_response['Location']
+    assert_equal app_route_for_assert(:browse), last_response['Location']
     assert_flash_message :success, "#{file_name} was deleted.", last_request.session
   end
 
@@ -27,7 +27,7 @@ class DeleteControllerTest < ControllerTestBase
     create_directory(dir)
     post app_route(:delete, loc: dir)
     assert_equal 303, last_response.status
-    assert_equal "http://example.org#{app_route(:browse, loc: 'dir1')}", last_response['Location']
+    assert_equal app_route_for_assert(:browse, loc: 'dir1'), last_response['Location']
     assert_flash_message :success, 'dir1.1 was deleted.', last_request.session
   end
 

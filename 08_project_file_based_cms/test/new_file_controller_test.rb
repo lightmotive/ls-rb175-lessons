@@ -23,7 +23,7 @@ class NewFileControllerTest < ControllerTestBase
     assert_equal :file, content_entry_type('something_new.txt')
     assert_equal 303, last_response.status
     first_response_location = last_response['Location']
-    assert_equal "http://example.org#{app_route(:browse)}", first_response_location
+    assert_equal app_route_for_assert(:browse), first_response_location
     assert_flash_message :success, "'something_new.txt' created successfully.", last_request.session
   end
 
@@ -31,7 +31,7 @@ class NewFileControllerTest < ControllerTestBase
     create_directory('dir1')
     post app_route(:new_file, loc: 'dir1'), 'entry_name' => 'something_new.md'
     assert_equal :file, content_entry_type('dir1/something_new.md')
-    assert_equal "http://example.org#{app_route(:browse, loc: 'dir1')}", last_response['Location']
+    assert_equal app_route_for_assert(:browse, loc: 'dir1'), last_response['Location']
   end
 
   def test_post_invalid_entry_name

@@ -23,7 +23,7 @@ class EditControllerTest < ControllerTestBase
     assert_equal 'Updated', File.read(file.path)
     assert_equal 303, last_response.status
     post_response_location = last_response['Location']
-    assert_equal "http://example.org#{app_route(:browse, loc: file_dir_relative)}",
+    assert_equal app_route_for_assert(:browse, loc: file_dir_relative),
                  post_response_location
     assert_flash_message :success, "#{file_name} was updated.", last_request.session
   end
@@ -34,7 +34,7 @@ class EditControllerTest < ControllerTestBase
     get app_route(:edit, loc: 'dir1')
     assert_equal 302, last_response.status
     first_response_location = last_response['Location']
-    assert_equal "http://example.org#{app_route(:browse, loc: 'dir1')}", first_response_location
+    assert_equal app_route_for_assert(:browse, loc: 'dir1'), first_response_location
     # Assert flash error message
     assert_equal 'Editing not allowed.', last_request.session[:error]
   end

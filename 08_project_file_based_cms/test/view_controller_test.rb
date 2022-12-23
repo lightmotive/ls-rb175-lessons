@@ -10,7 +10,7 @@ class ViewControllerTest < ControllerTestBase
 
     get app_route(:view, loc: 'dir1')
     assert_equal 302, last_response.status
-    assert_equal "http://example.org#{app_route(:browse, loc: 'dir1')}", last_response['Location']
+    assert_equal app_route_for_assert(:browse, loc: 'dir1'), last_response['Location']
   end
 
   def test_get_file
@@ -34,7 +34,7 @@ class ViewControllerTest < ControllerTestBase
   def test_get_missing_content
     get app_route(:view, loc: 'nada')
     assert_equal 302, last_response.status
-    assert_equal "http://example.org#{app_route(:browse)}", last_response['Location']
+    assert_equal app_route_for_assert(:browse), last_response['Location']
     assert_empty last_response.body
   end
 

@@ -39,7 +39,7 @@ class ControllerTestBase < Minitest::Test
     env 'rack.session', { username: nil }
   end
 
-  def app_route_for_assertion(...)
+  def app_route_for_assert(...)
     "http://example.org#{app_route(...)}"
   end
 
