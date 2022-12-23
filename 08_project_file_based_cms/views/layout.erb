@@ -30,7 +30,7 @@
     <% if authenticated? %>
     <div class="auth-status">
       <i>Signed in as <%= username %>.</i>
-      <form class="inline" action="<%= app_route(:logout) %>">
+      <form class="inline" action="<%= app_route(:logout) %>" method="post">
         <button type="submit">Sign out</button>
       </form>
     </div>

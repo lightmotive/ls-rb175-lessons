@@ -1,5 +1,13 @@
 # frozen_string_literal: true
 
+# TODO: set the following env vars using environment management systems:
+# - For dev and test: https://github.com/bkeepers/dotenv
+# - For production, use host framework's secure environment management system.
+if %w[test development].include?(ENV.fetch('RACK_ENV', nil))
+  ENV['TEST_OR_DEV_USER_USERNAME'] = 'admin'
+  ENV['TEST_OR_DEV_USER_PASSWORD'] = 'secret'
+end
+
 module Models
   # Authenticate credentials.
   class Authenticator
