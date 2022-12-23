@@ -36,10 +36,6 @@ module Controllers
       set :views, File.join(content.app_root_path, 'views')
     end
 
-    def flash_success_message(message)
-      session[:success] = message
-    end
-
     def flash_message(flash_key, content)
       session[flash_key] = content
     end
