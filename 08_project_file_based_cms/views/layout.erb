@@ -12,17 +12,17 @@
     </header>
     <% if session[:error] %>
     <div class="flash error">
-      <%== session_flash_messages(session.delete(:error)) %>
+      <%== render_flash_messages(:error) %>
     </div>
     <% end %>
     <% if session[:success] %>
     <div class="flash success">
-      <%== session_flash_messages(session.delete(:success)) %>
+      <%== render_flash_messages(:success) %>
     </div>
     <% end %>
     <% if session[:info] %>
     <div class="flash info">
-      <%== session_flash_messages(session.delete(:info)) %>
+      <%== render_flash_messages(:info) %>
     </div>
     <% end %>
     <main>

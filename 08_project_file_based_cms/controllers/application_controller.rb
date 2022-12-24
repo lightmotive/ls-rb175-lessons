@@ -37,7 +37,9 @@ module Controllers
     end
 
     def flash_message(flash_key, content)
-      session[flash_key] = content
+      ViewHelpers::ApplicationHelper.flash_message(
+        flash_key, content, store: session
+      )
     end
 
     # Apply location ("loc" query param) to request.
@@ -86,6 +88,7 @@ module Controllers
       return if authenticated? || route_public?(request_script_name_standardized)
 
       session[:post_auth_location] = app_route(APP_ROUTES.key(request.env['SCRIPT_NAME']), loc: @current_location)
+      flash_message(:info, 'Please sign in to access that resource.')
       redirect app_route(:login)
     end
 

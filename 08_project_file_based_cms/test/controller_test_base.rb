@@ -53,10 +53,10 @@ class ControllerTestBase < Minitest::Test
   end
 
   def assert_flash_message(flash_key, expected_message, session: self.session)
-    assert_equal expected_message,
-                 session[flash_key],
-                 "The last request should have set `session[:#{flash_key}]` " \
-                 'to the expected message'
+    assert_includes session[flash_key],
+                    expected_message,
+                    'The last request should have added the expected message to ' \
+                    "to an array stored in `session[:#{flash_key}]`"
   end
 
   def assert_flash_message_rendering(flash_key, message, in_content)
