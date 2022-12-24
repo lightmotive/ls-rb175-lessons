@@ -39,7 +39,7 @@ class ControllerTestBase < Minitest::Test
     env 'rack.session', hash
   end
 
-  def simulate_authenticated_user(username: ENV.fetch('TEST_USER_ADMIN', nil))
+  def simulate_authenticated_user(username: 'admin')
     configure_session({ username: })
   end
 

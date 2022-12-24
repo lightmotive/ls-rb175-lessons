@@ -91,7 +91,6 @@ module Controllers
     end
 
     def authenticate(username, password)
-      return if ENV.fetch('RACK_ENV', nil) == 'test' && test_authenticated?(session)
       return unless Models::Authenticator.new({ username:, password: }).valid?
 
       session[:username] = username

@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
-# TODO: set the following env vars using environment management systems:
-# - For dev and test: https://github.com/bkeepers/dotenv
-# - For production, use host framework's secure environment management system.
-if %w[test development].include?(ENV.fetch('RACK_ENV', nil))
-  ENV['TEST_OR_DEV_USER_USERNAME'] = 'admin'
-  ENV['TEST_OR_DEV_USER_PASSWORD'] = 'secret'
-end
+require 'yaml'
 
 module Models
   # Authenticate credentials.
@@ -36,15 +30,17 @@ module Models
     end
 
     def username_and_password_valid?
-      if %w[test development].include?(
-        ENV.fetch('RACK_ENV', nil)
-      ) && (credentials[:username] == ENV['TEST_OR_DEV_USER_USERNAME'] &&
-            credentials[:password] == ENV['TEST_OR_DEV_USER_PASSWORD'])
-        return true
-      end
+      return true if test_or_dev_username_and_password_valid?
 
       # TODO: implement secure credential management system...
       false
+    end
+
+    def test_or_dev_username_and_password_valid?
+      return false unless %w[test development].include?(ENV.fetch('RACK_ENV', nil))
+
+      user = test_user(credentials[:username])
+      return true if user&.[]('pw') == credentials[:password]
     end
   end
 end

@@ -1,0 +1,7 @@
+# Placeholder/mock - this file won't be used in a production app for
+# authentication purposes!
+{
+  admin: { type: admin, pw: super-secret },
+  user1: { type: user, pw: secret1 },
+  user2: { type: user, pw: secret2 }
+}
