@@ -35,7 +35,7 @@ module CMSAppHelper
                      "?#{URI.encode_www_form(query_params)}"
                    end
 
-    "#{URLUtils.join_components(route, path)}#{query_string}"
+    "#{URLUtils.join_paths(route, path)}#{query_string}"
   end
 
   # Define routes available to unauthenticated users

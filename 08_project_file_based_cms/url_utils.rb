@@ -5,86 +5,86 @@
 module URLUtils
   PATH_SEPARATOR = '/'
 
-  # Join relative URL path components without worrying about leading and
+  # Join relative URL path paths without worrying about leading and
   # trailing slashes.
-  def self.join_components(*components)
-    PathNormalizer.new(components).joined
+  def self.join_paths(*paths)
+    PathNormalizer.new(paths).joined
   end
 
   class PathNormalizer
-    attr_reader :components_normalized
+    attr_reader :paths_normalized
 
-    def initialize(components)
-      @components_normalized = compact(normalize(components.flatten))
+    def initialize(paths)
+      @paths_normalized = compact(normalize(paths.flatten))
     end
 
     def joined
-      squeeze_separators(components_normalized.join(PATH_SEPARATOR))
+      squeeze_separators(paths_normalized.join(PATH_SEPARATOR))
     end
 
     private
 
-    # - Retain single leading separators for first component, if any.
-    # - Remove leading and trailing separators from middle components.
-    # - Retain single trailing slash for last component, if any.
-    def normalize(components)
-      components = compact(components)
-      return [''] if components.empty?
+    # - Retain single leading separators for first path, if any.
+    # - Remove leading and trailing separators from middle paths.
+    # - Retain single trailing slash for last path, if any.
+    def normalize(paths)
+      paths = compact(paths)
+      return [''] if paths.empty?
 
-      components[0] = normalize_first_component(components[0])
-      return components if components.size == 1
+      paths[0] = normalize_first_path(paths[0])
+      return paths if paths.size == 1
 
-      components[-1] = normalize_last_component(components[-1])
-      return components if components.size == 2
+      paths[-1] = normalize_last_path(paths[-1])
+      return paths if paths.size == 2
 
-      components[1..-2] = normalize_middle_components(components[1..-2])
+      paths[1..-2] = normalize_middle_paths(paths[1..-2])
 
-      components
+      paths
     end
 
     # - Remove nil and empty elements.
-    # - Consolidate sequential separators in each component into one.
-    def compact(components)
-      components.compact.reject(&:empty?).map(&method(:squeeze_separators))
+    # - Consolidate sequential separators in each path into one.
+    def compact(paths)
+      paths.compact.reject(&:empty?).map(&method(:squeeze_separators))
     end
 
     # Squeeze sequential separators, e.g., '//example///' => '/example/'
-    def squeeze_separators(component)
-      component.squeeze(PATH_SEPARATOR)
+    def squeeze_separators(path)
+      path.squeeze(PATH_SEPARATOR)
     end
 
-    def trim_leading_separators(component)
-      component.match(/(?:\A#{PATH_SEPARATOR}*)(.*)/)[1]
+    def trim_leading_separators(path)
+      path.match(/(?:\A#{PATH_SEPARATOR}*)(.*)/)[1]
     end
 
-    def trim_trailing_separators(component)
-      match = component.match(/.*(?=#{PATH_SEPARATOR}+\z)/)
-      return component if match.nil?
+    def trim_trailing_separators(path)
+      match = path.match(/.*(?=#{PATH_SEPARATOR}+\z)/)
+      return path if match.nil?
 
       match[0]
     end
 
     # Retain up to 1 leading separator and remove trailing separators
-    def normalize_first_component(component)
-      match = component.match(/\A(#{PATH_SEPARATOR})?\1*(.*)/)
+    def normalize_first_path(path)
+      match = path.match(/\A(#{PATH_SEPARATOR})?\1*(.*)/)
       return '' if match.nil?
 
-      component = "#{match[1]}#{match[2]}"
-      return component if component == PATH_SEPARATOR
+      path = "#{match[1]}#{match[2]}"
+      return path if path == PATH_SEPARATOR
 
-      trim_trailing_separators(component)
+      trim_trailing_separators(path)
     end
 
     # Remove leading and trailing separators
-    def normalize_middle_components(components)
-      components.map do |component|
-        component = trim_leading_separators(component)
-        trim_trailing_separators(component)
+    def normalize_middle_paths(paths)
+      paths.map do |path|
+        path = trim_leading_separators(path)
+        trim_trailing_separators(path)
       end
     end
 
-    def normalize_last_component(component)
-      trim_leading_separators(component)
+    def normalize_last_path(path)
+      trim_leading_separators(path)
     end
   end
 end
