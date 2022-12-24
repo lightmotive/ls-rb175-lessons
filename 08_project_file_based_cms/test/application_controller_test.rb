@@ -46,6 +46,7 @@ class ApplicationControllerTest < ControllerTestBase
   def test_get_index_when_unauthenticated
     simulate_unauthenticated_user
     get app_route(:index)
+    assert_nil session[:info]
     assert_equal 200, last_response.status
     assert_includes last_response.body, %(<a href="#{app_route(:login)}">Sign In</a>)
   end
@@ -53,6 +54,7 @@ class ApplicationControllerTest < ControllerTestBase
   def test_get_login_when_unauthenticated
     simulate_unauthenticated_user
     get app_route(:login)
+    assert_nil session[:info]
     assert_equal 200, last_response.status
     assert_includes last_response.body, %(<button type="submit">Sign In</button>)
   end
@@ -60,6 +62,7 @@ class ApplicationControllerTest < ControllerTestBase
   def test_post_logout_when_unauthenticated
     simulate_unauthenticated_user
     post app_route(:logout)
+    assert_nil session[:info]
     assert_equal 302, last_response.status
     assert_equal app_route_for_assert(:index), last_response['Location']
   end
@@ -69,6 +72,7 @@ class ApplicationControllerTest < ControllerTestBase
     # NOTE: content existence check should be delayed until after login
     route = app_route(:browse, loc: '/some_dir/some_file.txt')
     get route
+    assert_flash_message :info, 'Please sign in to access that resource.'
     assert_equal route, session[:post_auth_location]
     assert_equal 302, last_response.status
     assert_equal app_route_for_assert(:login), last_response['Location']
@@ -77,6 +81,7 @@ class ApplicationControllerTest < ControllerTestBase
   def test_get_invalid_route_when_unauthenticated
     simulate_unauthenticated_user
     get '/nothing_here'
+    assert_nil session[:info]
     assert_equal 302, last_response.status
     assert_equal app_route_for_assert(:index), last_response['Location']
   end
