@@ -1,17 +1,10 @@
 # frozen_string_literal: true
 
 require_relative 'test_helper'
-require './view_helpers/app'
+require_relative 'view_mock'
 
-class ViewMock
-  include ViewHelpers::App
-
-  def initialize
-    @session = {}
-  end
-
-  attr_reader :session
-
+# For tests in this file.
+class ViewMockHelperApp < ViewMock
   def flash_message(flash_key, content)
     ViewHelpers::App.flash_message(flash_key, content, store: session)
   end
@@ -20,7 +13,7 @@ end
 # Application view helpers
 class HelperAppTest < MiniTest::Test
   def setup
-    @view = ViewMock.new
+    @view = ViewMockHelperApp.new
   end
 
   def test_flash_message_append_string
