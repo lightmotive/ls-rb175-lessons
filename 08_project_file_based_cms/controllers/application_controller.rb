@@ -25,7 +25,7 @@ module Controllers
     def_delegator :@content, :entry_type, :content_entry_type
     def_delegator :@content, :entries, :content_entries
 
-    helpers Sinatra::ContentFor, ViewHelpers::ApplicationHelper
+    helpers Sinatra::ContentFor, ViewHelpers::App
 
     configure do
       enable :sessions
@@ -37,9 +37,7 @@ module Controllers
     end
 
     def flash_message(flash_key, content)
-      ViewHelpers::ApplicationHelper.flash_message(
-        flash_key, content, store: session
-      )
+      ViewHelpers::App.flash_message(flash_key, content, store: session)
     end
 
     # Apply location ("loc" query param) to request.

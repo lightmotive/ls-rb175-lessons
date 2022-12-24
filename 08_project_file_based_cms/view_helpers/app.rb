@@ -2,7 +2,7 @@
 
 module ViewHelpers
   # Global app helpers
-  module ApplicationHelper
+  module App
     # Output flash message content
     def render_flash_messages(flash_key, store: session, delete_after_rendering: true)
       store = MessageStore.new(store, flash_key)

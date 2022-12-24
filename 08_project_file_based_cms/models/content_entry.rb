@@ -1,13 +1,9 @@
 # frozen_string_literal: true
 
-require './view_helpers/application_helper'
-
 module Models
   # Content Entry (file system) model with paths relative to application's
   # `./content` directory.
   class ContentEntry
-    include ViewHelpers::ApplicationHelper
-
     def initialize(dir_relative:, basename:, path_absolute:)
       @directory = ContentEntry.standardize_dir_relative(dir_relative)
       @name = basename

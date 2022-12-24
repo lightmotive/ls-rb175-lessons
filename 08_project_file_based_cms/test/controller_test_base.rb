@@ -9,7 +9,6 @@ require './cms_app_helper'
 class ControllerTestBase < Minitest::Test
   include Rack::Test::Methods
   include CMSAppHelper
-  include ViewHelpers::ApplicationHelper
   extend Forwardable
 
   def initialize(*args)

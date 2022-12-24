@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require_relative 'test_helper'
-require './view_helpers/application_helper'
+require './view_helpers/app'
 
-class AppMock
-  include ViewHelpers::ApplicationHelper
+class ViewMock
+  include ViewHelpers::App
 
   def initialize
     @session = {}
@@ -13,21 +13,21 @@ class AppMock
   attr_reader :session
 
   def flash_message(flash_key, content)
-    ViewHelpers::ApplicationHelper.flash_message(flash_key, content, store: session)
+    ViewHelpers::App.flash_message(flash_key, content, store: session)
   end
 end
 
 # Application view helpers
-class ApplicationHelperTest < MiniTest::Test
+class HelperAppTest < MiniTest::Test
   def setup
-    @obj = AppMock.new
+    @view = ViewMock.new
   end
 
   def test_flash_message_append_string
     session = {}
     message = 'Test success message.'
 
-    ViewHelpers::ApplicationHelper.flash_message(
+    ViewHelpers::App.flash_message(
       :success, message, store: session
     )
 
@@ -38,7 +38,7 @@ class ApplicationHelperTest < MiniTest::Test
     session = {}
     errors = ['Test error 1.', 'Test error 2.']
 
-    ViewHelpers::ApplicationHelper.flash_message(
+    ViewHelpers::App.flash_message(
       :error, errors, store: session
     )
 
@@ -51,7 +51,7 @@ class ApplicationHelperTest < MiniTest::Test
     third_message = 'Message three.'
     session = { info: [first_message, second_message] }
 
-    ViewHelpers::ApplicationHelper.flash_message(
+    ViewHelpers::App.flash_message(
       :info, third_message, store: session
     )
 
@@ -65,7 +65,7 @@ class ApplicationHelperTest < MiniTest::Test
     fourth_message = 'Message four.'
     session = { success: [first_message, second_message] }
 
-    ViewHelpers::ApplicationHelper.flash_message(
+    ViewHelpers::App.flash_message(
       :success, [third_message, fourth_message], store: session
     )
 
@@ -73,23 +73,23 @@ class ApplicationHelperTest < MiniTest::Test
   end
 
   def test_render_flash_messages_none
-    assert_equal '', @obj.render_flash_messages(:test)
+    assert_equal '', @view.render_flash_messages(:test)
   end
 
   def test_render_flash_messages_single
     message = 'Test single message'
-    @obj.flash_message :test, message
-    assert_equal "<p>#{message}</p>", @obj.render_flash_messages(:test)
+    @view.flash_message :test, message
+    assert_equal "<p>#{message}</p>", @view.render_flash_messages(:test)
   end
 
   def test_render_flash_messages_multiple
     content_array = ['Test message 1', 'Test message 2']
-    @obj.flash_message :test, content_array
+    @view.flash_message :test, content_array
     expected_content = <<~CONTENT
       <ul>
       <li>#{content_array.join("</li>\n<li>")}</li>
       </ul>
     CONTENT
-    assert_equal expected_content, @obj.render_flash_messages(:test)
+    assert_equal expected_content, @view.render_flash_messages(:test)
   end
 end
