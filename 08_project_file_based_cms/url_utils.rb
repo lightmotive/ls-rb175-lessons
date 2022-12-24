@@ -54,22 +54,19 @@ module URLUtils
     end
 
     def trim_leading_separators(path)
-      path.match(/(?:\A#{PATH_SEPARATOR}*)(.*)/)[1]
+      path = path[1..] while path.start_with?(PATH_SEPARATOR)
+      path
     end
 
     def trim_trailing_separators(path)
-      match = path.match(/.*(?=#{PATH_SEPARATOR}+\z)/)
-      return path if match.nil?
+      return path if path.length < 2
 
-      match[0]
+      path = path[0..-2] while path.end_with?(PATH_SEPARATOR)
+      path
     end
 
     # Retain up to 1 leading separator and remove trailing separators
     def normalize_first_path(path)
-      match = path.match(/\A(#{PATH_SEPARATOR})?\1*(.*)/)
-      return '' if match.nil?
-
-      path = "#{match[1]}#{match[2]}"
       return path if path == PATH_SEPARATOR
 
       trim_trailing_separators(path)
