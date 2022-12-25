@@ -12,6 +12,10 @@ module Controllers
       @type = :file
     end
 
+    def title
+      "Create File in #{super}"
+    end
+
     # Customize `new_entry` template to create directory in current location
     # get 'app_route(:new_dir)/'
     get '/' do

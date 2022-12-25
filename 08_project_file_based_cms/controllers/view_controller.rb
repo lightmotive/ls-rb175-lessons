@@ -12,6 +12,10 @@ module Controllers
       @custom_file_content = nil
     end
 
+    def title
+      "View #{super}"
+    end
+
     attr_accessor :custom_file_content
 
     # TODO: Refactor to class with separate classes mapped for each file type.
@@ -28,7 +32,6 @@ module Controllers
 
     def view_file_response(file_path_relative)
       file_path = content_path(file_path_relative)
-      self.title = "#{file_path_relative} - #{@title}"
 
       custom_renderer = custom_file_renderers[File.extname(file_path)]
       if custom_renderer

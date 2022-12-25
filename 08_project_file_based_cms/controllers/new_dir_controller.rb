@@ -12,6 +12,10 @@ module Controllers
       @type = :dir
     end
 
+    def title
+      "Create Directory in #{super}"
+    end
+
     helpers do
       def allowed_input_message
         "#{super} Use '/' to separate paths."

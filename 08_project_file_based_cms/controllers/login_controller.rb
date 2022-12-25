@@ -5,6 +5,10 @@ require_relative 'application_controller'
 module Controllers
   # Handle 'app_route(:login)' routes.
   class LoginController < ApplicationController
+    def title
+      "Log in - #{super}"
+    end
+
     # Display login page
     # get 'app_route(:login)/'
     get '/' do

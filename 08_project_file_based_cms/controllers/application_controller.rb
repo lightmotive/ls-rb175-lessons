@@ -14,12 +14,15 @@ module Controllers
     def initialize
       super
       @content = Models::Content.new
-      @title = 'Neato CMS'
+      self.title = ''
       @current_location = nil
     end
 
-    attr_accessor :title
-    attr_reader :current_location, :current_location_entry_type
+    attr_reader :title, :current_location, :current_location_entry_type
+
+    def title=(value)
+      @title = "#{value.empty? ? '' : "#{value} - "}Neato CMS"
+    end
 
     def_delegator :@content, :path, :content_path
     def_delegator :@content, :entry_type, :content_entry_type
@@ -48,6 +51,8 @@ module Controllers
       return halt(400, 'Invalid location') if location&.include?('..')
 
       @current_location = location.nil? || location.empty? ? '/' : location
+      self.title = current_location unless current_location == '/'
+      @current_location
     end
 
     # before {all routes}

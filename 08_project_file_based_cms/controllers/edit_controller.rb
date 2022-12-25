@@ -13,6 +13,10 @@ module Controllers
       end
     end
 
+    def title
+      "Edit #{super}"
+    end
+
     # before 'app_route(:edit)/'
     before '/' do
       validate_edit_path(current_location)

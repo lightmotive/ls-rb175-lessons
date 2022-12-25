@@ -13,6 +13,10 @@ module Controllers
 
     attr_reader :new_directory_href, :new_file_href
 
+    def title
+      "Browse #{super}"
+    end
+
     helpers ViewHelpers::Browse
 
     # get 'app_route(:browse)/'
