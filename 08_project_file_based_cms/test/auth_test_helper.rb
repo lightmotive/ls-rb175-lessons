@@ -6,6 +6,6 @@
 ENV['RACK_ENV'] = 'test'
 
 def test_user(username)
-  test_users = YAML.load_file('./auth/test_users.yaml')
+  test_users = YAML.load_file('./auth/test_users.yml')
   test_users.fetch(username, nil)
 end
