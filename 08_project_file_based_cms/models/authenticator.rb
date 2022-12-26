@@ -40,7 +40,7 @@ module Models
       return false unless %w[test development].include?(ENV.fetch('RACK_ENV', nil))
 
       user = test_user(credentials[:username])
-      return true if user&.[]('pw') == credentials[:password]
+      return true if user&.[]('password') == credentials[:password]
     end
   end
 end

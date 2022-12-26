@@ -20,7 +20,7 @@ class URLUtilsTest < MiniTest::Test
 
   def test_file_based_test_users
     user = test_user('admin')
-    auth = Models::Authenticator.new({ username: 'admin', password: user['pw'] })
+    auth = Models::Authenticator.new({ username: 'admin', password: user['password'] })
     assert_equal true, auth.valid?
   end
 end
