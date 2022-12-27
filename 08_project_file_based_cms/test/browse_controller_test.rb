@@ -3,8 +3,6 @@
 require_relative 'controller_test_base'
 require './controllers/browse_controller'
 
-require 'pry'
-
 # Test 'app_route(:browse)' routes.
 class BrowseControllerTest < ControllerTestBase
   def test_get
