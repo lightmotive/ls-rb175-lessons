@@ -19,7 +19,7 @@ class TestUsers
     end
 
     def save(users)
-      File.write(TEST_DATA_PATH, users.to_yaml)
+      File.write(TEST_DATA_PATH, users.empty? ? '' : users.to_yaml)
     end
 
     def secure_and_save(users)
@@ -90,8 +90,8 @@ class TemporaryTestUsers
     end
 
     def destroy
-      FileUtils.rm(TestUsers::TEST_DATA_PATH)
-      puts "\nTemporary credential file destroyed." if development?
+      TestUsers.save({})
+      puts "\nTemporary credential file cleared." if development?
     end
   end
 end
