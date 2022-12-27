@@ -15,9 +15,9 @@ Dir.glob('./controllers/*.rb').each { |file| require file }
 # - For production, use host framework's secure environment management system.
 if development?
   # :nocov:
-  require './test/auth_test_helper'
+  require './auth/test_helpers'
 
-  TemporaryTestUsers.create
+  Auth::TestHelpers::TempUsers.create
   # :nocov:
 end
 
@@ -57,7 +57,7 @@ end
 if development?
   # :nocov:
   at_exit do
-    TemporaryTestUsers.destroy
+    Auth::TestHelpers::TempUsers.destroy
   end
   # :nocov:
 end

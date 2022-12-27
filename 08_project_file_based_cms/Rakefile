@@ -12,6 +12,6 @@ Rake::TestTask.new(:test) do |t|
 end
 
 Rake::Task[:test].enhance do
-  require './test/auth_test_helper'
-  TemporaryTestUsers.destroy
+  require './auth/test_helpers'
+  Auth::TestHelpers::TempUsers.destroy
 end

@@ -2,34 +2,38 @@
 
 require './auth/test_or_dev'
 
-SUPPORTED_AUTH_SYSTEMS = [Auth::TestOrDev].freeze
-# System must be a class with the following interface:
-# - `::accept_credentials?(credentials)` - Return boolean indicating whether
-#   system can determine if `credentials` are `valid?`.
-# - `::new(credentials)` - Accept from this class without changes.
-# - `#valid?` - Return boolean indicating whether `credentials` are valid.
-
 module Models
   # Select and use `AuthWith...` class based on `credentials` keys.
   class Authenticator
-    def initialize(credentials)
+    DEFAULT_SUPPORTED_SYSTEMS = [Auth::TestOrDev].freeze
+
+    # `supported_systems:` - Each system must be a class with the following
+    # interface:
+    #   - `::accept_credentials?(credentials)` - Return boolean indicating
+    #     whether system can determine if `credentials` are `valid?`.
+    #   - `::new(credentials)` - Accept from this class without changes.
+    #   - `#valid?` - Return boolean indicating whether `credentials` are valid.
+    def initialize(credentials, supported_systems: DEFAULT_SUPPORTED_SYSTEMS)
       @credentials = credentials
-      @type = determine_type
+      @supported_systems = supported_systems
+      @system = determine_system
     end
 
-    attr_reader :credentials, :type
+    attr_reader :credentials, :system
 
     # TODO: implement secure credential management system...
     def valid?
-      return false if type.nil?
+      return false if system.nil?
 
-      type.new(credentials).valid?
+      system.new(credentials).valid?
     end
 
     private
 
-    def determine_type
-      SUPPORTED_AUTH_SYSTEMS.each do |system|
+    attr_reader :supported_systems
+
+    def determine_system
+      supported_systems.each do |system|
         return system if system.accept_credentials?(credentials)
       end
 

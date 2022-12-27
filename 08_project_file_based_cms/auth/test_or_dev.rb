@@ -21,9 +21,9 @@ module Auth
     end
 
     def valid?
-      user = TestUsers[credentials[:username]]
+      user = TestHelpers::Users[credentials[:username]]
       return false if user.nil?
-      return true if Auth::PasswordDigester.match?(
+      return true if PasswordDigester.match?(
         user[:password], credentials[:password]
       )
 
