@@ -3,6 +3,14 @@
 require 'uri'
 require './url_utils'
 
+def test?
+  ENV['RACK_ENV'] == 'test'
+end
+
+def development?
+  ENV['RACK_ENV'] == 'development'
+end
+
 # App-level helper methods
 module CMSAppHelper
   APP_ROUTES = {

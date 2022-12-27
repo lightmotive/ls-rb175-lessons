@@ -1,7 +1,0 @@
----
-admin:
-  :type: admin
-  :password: super-secret
-user1:
-  :type: user
-  :password: secret
