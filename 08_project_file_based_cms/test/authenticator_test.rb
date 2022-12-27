@@ -13,14 +13,19 @@ class URLUtilsTest < MiniTest::Test
     ENV['RACK_ENV'] = rack_env
   end
 
-  def test_unauthorized
+  def test_empty_password_unauthorized
+    auth = Models::Authenticator.new({ username: 'admin', password: '' })
+    assert_equal false, auth.valid?
+  end
+
+  def test_user_not_found_unauthorized
     auth = Models::Authenticator.new({ username: 'nobody!', password: '' })
     assert_equal false, auth.valid?
   end
 
   def test_file_based_test_users
-    user = test_user('admin')
-    auth = Models::Authenticator.new({ username: 'admin', password: user['password'] })
+    user = TestUsers['admin']
+    auth = Models::Authenticator.new({ username: 'admin', password: user[:password] })
     assert_equal true, auth.valid?
   end
 end

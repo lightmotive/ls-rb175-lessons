@@ -1,6 +1,7 @@
-# Placeholder/mock - this file won't be used in a production app for
-# authentication purposes!
-{
-  "admin": { type: admin, password: "super-secret" },
-  "user1": { type: user, password: "secret1" }
-}
+---
+admin:
+  :type: admin
+  :password: super-secret
+user1:
+  :type: user
+  :password: secret
