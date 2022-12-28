@@ -5,8 +5,6 @@ require_relative 'content_entry'
 module Models
   # Content access
   class Content
-    attr_reader :app_root_path
-
     def initialize
       # rubocop:disable Style/ExpandPathArguments
       # - Reason: `File.expand_path(__dir__)` translates symbolic links to real
@@ -14,6 +12,8 @@ module Models
       @app_root_path = File.expand_path('../../', __FILE__)
       # rubocop:enable Style/ExpandPathArguments
     end
+
+    attr_reader :app_root_path
 
     # => Absolute path
     def path(path_relative = '/')
@@ -25,6 +25,14 @@ module Models
 
     def entry_type(path_relative)
       ContentEntry.type(path(path_relative))
+    end
+
+    def file?(path_relative)
+      entry_type(path_relative) == :file
+    end
+
+    def directory?(path_relative)
+      entry_type(path_relative) == :directory
     end
 
     def entries(dir_relative = '/')
@@ -50,6 +58,11 @@ module Models
         file.close
         file
       end
+    end
+
+    # Copy existing file (can be any path) to the specified relative path
+    def copy_external_file(from_path:, to_path_relative:)
+      FileUtils.cp(from_path, path(to_path_relative))
     end
 
     # Create directory with parents as needed
