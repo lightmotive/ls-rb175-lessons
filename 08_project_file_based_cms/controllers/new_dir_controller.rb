@@ -22,12 +22,6 @@ module Controllers
       end
     end
 
-    # Customize `new_entry` template to create directory in current location
-    # get 'app_route(:new_dir)/'
-    get '/' do
-      erb :new_entry
-    end
-
     # Validate and save submitted dir name, then redirect to current location.
     # post 'app_route(:new_dir)/'
     post '/' do

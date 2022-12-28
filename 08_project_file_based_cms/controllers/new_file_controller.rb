@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'new_base_controller'
-require './models/content_entry'
+require './models/content'
 
 module Controllers
   # Create new file
@@ -14,12 +14,6 @@ module Controllers
 
     def title
       "Create File in #{super}"
-    end
-
-    # Customize `new_entry` template to create directory in current location
-    # get 'app_route(:new_dir)/'
-    get '/' do
-      erb :new_entry
     end
 
     # Validate and save submitted file name, then redirect to file's directory.

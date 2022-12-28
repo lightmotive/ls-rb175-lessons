@@ -32,5 +32,11 @@ module Controllers
         Models::ContentEntry.entry_name_chars_allowed_message
       end
     end
+
+    # Customize `new_entry` template to create {type} in current location
+    # get 'app_route(:new_{*})/'
+    get '/' do
+      erb :new_entry
+    end
   end
 end
