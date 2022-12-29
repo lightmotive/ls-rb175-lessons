@@ -7,14 +7,52 @@ Auth::TestHelpers::TempUsers.create
 require_relative 'test_helper'
 require './models/authenticator'
 
+class MockValidateUnAndPw
+  UN_VALID = 'mock'
+  PW_VALID = 'abc123'
+
+  class << self
+    def accept_credentials?(credentials)
+      credentials.fetch(:username, false) &&
+        credentials.fetch(:password, false)
+    end
+  end
+
+  def initialize(credentials)
+    @credentials = credentials
+  end
+
+  def valid?
+    credentials[:username] == UN_VALID && credentials[:password] == PW_VALID
+  end
+
+  private
+
+  attr_reader :credentials
+end
+
 class URLUtilsTest < MiniTest::Test
-  def test_production_environment_not_valid
-    rack_env = ENV.fetch('RACK_ENV', nil)
-    ENV['RACK_ENV'] = 'production'
-    user = Auth::TestHelpers::TempUsers['admin']
-    auth = Models::Authenticator.new({ username: 'admin', password: user[:password] })
+  def test_mock_validator_with_valid_credentials
+    auth = Models::Authenticator.new(
+      { username: MockValidateUnAndPw::UN_VALID,
+        password: MockValidateUnAndPw::PW_VALID },
+      validation_systems: [MockValidateUnAndPw]
+    )
+    assert_equal true, auth.valid?
+  end
+
+  def test_mock_validator_with_invalid_credentials
+    auth = Models::Authenticator.new(
+      { username: 'anybody',
+        password: '123abc' },
+      validation_systems: [MockValidateUnAndPw]
+    )
     assert_equal false, auth.valid?
-    ENV['RACK_ENV'] = rack_env
+  end
+
+  def test_not_valid_when_no_validation_systems
+    auth = Models::Authenticator.new({}, validation_systems: [])
+    assert_equal false, auth.valid?
   end
 
   def test_empty_password_unauthorized
