@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require './auth/test_helpers'
-Auth::TestHelpers::TempUsers.create
-# Rakefile invokes `Auth::TestHelpers::TempUsers.destroy` after :test task
+require './test/auth/helpers'
+Test::Auth::Helpers::TempUsers.create
+# Rakefile invokes `Test::Auth::Helpers::TempUsers.destroy` after :test task
 
 require_relative 'test_helper'
 require './models/authenticator'
@@ -31,7 +31,7 @@ class MockValidateUnAndPw
   attr_reader :credentials
 end
 
-class URLUtilsTest < MiniTest::Test
+class AuthenticatorTest < MiniTest::Test
   def test_mock_validator_with_valid_credentials
     auth = Models::Authenticator.new(
       { username: MockValidateUnAndPw::UN_VALID,
@@ -66,7 +66,7 @@ class URLUtilsTest < MiniTest::Test
   end
 
   def test_file_based_test_users
-    user = Auth::TestHelpers::TempUsers['admin']
+    user = Test::Auth::Helpers::TempUsers['admin']
     auth = Models::Authenticator.new({ username: 'admin', password: user[:password] })
     assert_equal true, auth.valid?
   end

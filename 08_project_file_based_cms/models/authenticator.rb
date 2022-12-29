@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require './auth/validate_test_or_dev'
+require './test/auth/validate_test_or_dev'
 
 module Models
   # Select and use `AuthWith...` class based on `credentials` keys.
   class Authenticator
-    DEFAULT_VALIDATION_SYSTEMS = [Auth::ValidateTestOrDev].freeze
+    DEFAULT_VALIDATION_SYSTEMS = [::Test::Auth::ValidateTestOrDev].freeze
 
     # `validation_systems:` - Each system must be a class with the following
     # interface:

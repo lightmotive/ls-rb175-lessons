@@ -2,7 +2,7 @@
 
 # require 'fileutils'
 require 'forwardable'
-require_relative 'rack_test_helper'
+require_relative 'test_helper_rack'
 require './cms_app_helper'
 
 # All Controller tests should inherit this.
