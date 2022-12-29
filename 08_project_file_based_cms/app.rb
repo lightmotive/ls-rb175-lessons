@@ -49,6 +49,7 @@ class App
       map(APP_ROUTES[:browse]) { run Controllers::BrowseController.new }
       map(APP_ROUTES[:new_dir]) { run Controllers::NewDirController.new }
       map(APP_ROUTES[:new_file]) { run Controllers::NewFileController.new }
+      map(APP_ROUTES[:upload]) { run Controllers::UploadController.new }
     end
   end
   # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize

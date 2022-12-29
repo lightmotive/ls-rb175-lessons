@@ -60,9 +60,10 @@ module Models
       end
     end
 
-    # Copy existing file (can be any path) to the specified relative path
-    def copy_external_file(from_path:, to_path_relative:)
-      FileUtils.cp(from_path, path(to_path_relative))
+    # Copy existing file from an absolute path (can be external) to the
+    # specified relative path.
+    def copy_external(from_absolute, to_relative)
+      FileUtils.cp(from_absolute, path(to_relative))
     end
 
     # Create directory with parents as needed

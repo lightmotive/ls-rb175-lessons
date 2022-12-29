@@ -17,7 +17,7 @@ class ControllerTestBase < Minitest::Test
     @content = Models::Content.new
   end
 
-  def_delegators :@content, :create_file, :create_directory
+  def_delegators :@content, :app_root_path, :create_file, :create_directory
   def_delegator :@content, :path, :content_path
   def_delegator :@content, :entry_type, :content_entry_type
 
@@ -27,7 +27,7 @@ class ControllerTestBase < Minitest::Test
 
   def setup
     FileUtils.mkdir_p(@content.path)
-    simulate_authenticated_user
+    simulate_authenticated_user(username: 'admin')
   end
 
   def session
@@ -52,7 +52,10 @@ class ControllerTestBase < Minitest::Test
   end
 
   def assert_flash_message(flash_key, expected_message, session: self.session)
-    assert_includes session[flash_key],
+    failure_msgs = session[flash_key]
+    return assert_equal(expected_message, failure_msgs) if failure_msgs.nil?
+
+    assert_includes failure_msgs,
                     expected_message,
                     'The last request should have added the expected message to ' \
                     "to an array stored in `session[:#{flash_key}]`"

@@ -21,7 +21,7 @@ module Controllers
     post '/' do
       input_name = params['entry_name']
 
-      if Models::ContentEntry.file_name_valid?(input_name)
+      if Models::ContentEntry.file_name_allowed?(input_name)
         content = Models::Content.new
         content.create_file(File.join(current_location, input_name))
         flash_message :success, "'#{input_name}' created successfully."

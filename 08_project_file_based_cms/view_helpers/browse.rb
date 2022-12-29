@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require './url_utils'
+require './models/content_entry'
 
 module ViewHelpers
   # Global app helpers
@@ -49,6 +50,16 @@ module ViewHelpers
       when :directory, :file
         app_route(:delete, loc: entry.path_relative)
       end
+    end
+
+    def upload_href(current_location)
+      app_route(:upload, loc: current_location)
+    end
+
+    def uploads_input_accept
+      file_types = Models::ContentEntry.file_types_allowed
+      mime_types = file_types.values.map { |data| data[:content_type] }
+      mime_types.join(', ')
     end
   end
 end

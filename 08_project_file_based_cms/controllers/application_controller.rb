@@ -69,8 +69,7 @@ module Controllers
     end
 
     not_found do
-      return redirect app_route(:browse) if authenticated?
-
+      redirect app_route(:browse) if authenticated?
       redirect app_route(:index)
     end
 
@@ -118,13 +117,11 @@ module Controllers
 
     # Redirect if location doesn't exist.
     def verify_location_exists(location)
-      type = content_entry_type(location)
-      if %i[file directory].include?(type)
-        self.current_location_entry_type = type
-      else
-        flash_message :error, 'Entry not found.'
-        redirect app_route(:browse)
-      end
+      self.current_location_entry_type = content_entry_type(location)
+      return unless current_location_entry_type == :unknown
+
+      flash_message :error, 'That location does not exist. Please browse and try again.'
+      not_found
     end
   end
 end

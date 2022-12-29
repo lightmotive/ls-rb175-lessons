@@ -28,11 +28,12 @@ class ApplicationControllerTest < ControllerTestBase
     first_response_location = last_response['Location']
     assert_equal app_route_for_assert(:browse), first_response_location
     assert_empty last_response.body
-    assert_flash_message :error, 'Entry not found.'
+    expected_error_message = 'That location does not exist. Please browse and try again.'
+    assert_flash_message :error, expected_error_message
     # Assert flash error message:
     get first_response_location
     assert_equal 200, last_response.status
-    assert_flash_message_rendering :error, 'Entry not found.', last_response.body
+    assert_flash_message_rendering :error, expected_error_message, last_response.body
     # Assert flash error was deleted from session:
     assert_nil last_request.session[:error]
   end

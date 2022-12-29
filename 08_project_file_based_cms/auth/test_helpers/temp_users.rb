@@ -20,8 +20,8 @@ module Auth
           return unless development?
 
           # :nocov:
-          puts '** Temporary user data created ("username" => { user data }) **'
-          puts 'Use one of the following temporary credentials during this dev session:'
+          puts '** Temporary credentials created ("username" => { user data }) **'
+          puts 'Use one of the following during this dev session:'
           pp TempUsers.all_unencrypted
           puts
           # :nocov:
@@ -39,7 +39,7 @@ module Auth
 
         def destroy
           Users.save({})
-          puts "\nTemporary credential file cleared." if development?
+          puts "\nTemporary credentials cleared." if development?
         end
       end
     end

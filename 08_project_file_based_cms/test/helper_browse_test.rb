@@ -29,4 +29,15 @@ class HelperBrowseTest < MiniTest::Test
     assert_equal %(<a href="#{browse_route}">home</a>/<a href="#{browse_route}?loc=%2Fdir1">dir1</a>/dir1.1),
                  @view.navigation_path('/dir1/dir1.1')
   end
+
+  def test_upload_href
+    assert_equal @view.app_route(:upload), @view.upload_href('/')
+  end
+
+  def test_uploads_input_accept
+    mime_types = Models::ContentEntry.file_types_allowed.values.map do |data|
+      data[:content_type]
+    end
+    assert_equal mime_types.join(', '), @view.uploads_input_accept
+  end
 end

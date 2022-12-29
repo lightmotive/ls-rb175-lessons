@@ -22,7 +22,8 @@ module CMSAppHelper
     delete: '/delete',
     browse: '/browse',
     new_dir: '/new/dir',
-    new_file: '/new/file'
+    new_file: '/new/file',
+    upload: '/upload'
   }.freeze
 
   def self.location_query_param(loc)
@@ -55,9 +56,7 @@ module CMSAppHelper
 
   # Get a standardized app route path
   def app_route(route, path: '', loc: nil, other_query_params: {})
-    CMSAppHelper.app_route(
-      route, path:, loc:, other_query_params:
-    )
+    CMSAppHelper.app_route(route, path:, loc:, other_query_params:)
   end
 
   # Current request's Rack App-mapped route
