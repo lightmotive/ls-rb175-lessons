@@ -5,11 +5,11 @@ source 'https://rubygems.org'
 ruby '3.1.3'
 
 gem 'bcrypt', '~> 3.1', '>= 3.1.12'
-gem 'erubis'
-gem 'puma'
+gem 'erubis', '~> 2.7'
+gem 'puma', '~> 6.0', '>= 6.0.1'
 gem 'redcarpet', '~> 3.5', '>= 3.5.1'
 gem 'sinatra', '~> 3.0', '>= 3.0.3'
-gem 'sinatra-contrib'
+gem 'sinatra-contrib', '~> 3.0', '>= 3.0.5'
 
 group :development do
   gem 'rake', '~> 13.0'
