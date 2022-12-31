@@ -8,6 +8,7 @@ class BrowseControllerTest < ControllerTestBase
   def test_get
     create_file('about.md')
     create_file('changes.txt')
+    create_file('beautiful.png')
     create_directory('dir1')
 
     get app_route(:browse)

@@ -13,6 +13,17 @@ module Models
 
     attr_reader :directory, :name, :path_relative, :type
 
+    def actions
+      case type
+      when :file
+        ContentEntry.file_types_allowed.dig(File.extname(path_relative), :actions) || []
+      when :directory
+        %i[delete]
+      else
+        []
+      end
+    end
+
     class << self
       # Ensure relative directory starts with '/'
       def standardize_dir_relative(dir_relative)

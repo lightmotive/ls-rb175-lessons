@@ -16,12 +16,12 @@ module ViewHelpers
       generate_hrefs
     end
 
-    attr_reader :entry, :view_href, :edit_href, :delete_href
+    attr_reader :entry, :view_href, :edit_href, :delete_action
 
     def generate_hrefs
       @view_href = generate_view_href
       @edit_href = generate_edit_href
-      @delete_href = generate_delete_href
+      @delete_action = generate_delete_action
     end
 
     def render
@@ -41,26 +41,20 @@ module ViewHelpers
         end
     end
 
-    # Build "edit" `href` attribute value based on entry type:
+    # Build "edit" `href` attribute value based on entry's actions.
     # - Use `app_route(:edit)` route for files.
-    # - Disable for directories (assign `nil`).
     def generate_edit_href
-      @edit_href =
-        case entry.type
-        when :directory then nil
-        when :file then app_route(:edit, loc: entry.path_relative)
-        end
+      return unless entry.actions.include?(:edit)
+
+      @edit_href = app_route(:edit, loc: entry.path_relative)
     end
 
-    # Build "edit" `href` attribute value based on entry type:
+    # Build "delete" `action` attribute value based on entry's actions.
     # - Use `app_route(:edit)` route for files.
-    # - Disable for directories (assign `nil`).
-    def generate_delete_href
-      @delete_href =
-        case entry.type
-        when :directory, :file
-          app_route(:delete, loc: entry.path_relative)
-        end
+    def generate_delete_action
+      return unless entry.actions.include?(:delete)
+
+      @delete_action = app_route(:delete, loc: entry.path_relative)
     end
   end
 end

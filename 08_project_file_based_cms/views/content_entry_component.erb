@@ -2,8 +2,8 @@
 <% if edit_href %>
 <a class="edit" href="<%= edit_href %>"></a>
 <% end %>
-<% if delete_href %>
-<form class="inline delete" action="<%= delete_href %>" method="post">
+<% if delete_action %>
+<form class="inline delete" action="<%= delete_action %>" method="post">
   <button class="delete" type="submit"></button>
 </form>
 <% end %>
