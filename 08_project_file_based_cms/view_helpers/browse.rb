@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require './url_utils'
-require_relative 'content_entry_renderer'
+require_relative 'content_entry_component'
 
 module ViewHelpers
   # Global app helpers
@@ -23,7 +23,7 @@ module ViewHelpers
     end
 
     def render_content_entry(entry)
-      ContentEntryRenderer.new(entry).render.chomp
+      ContentEntryComponent.new(entry).render.chomp
     end
 
     def upload_href(current_location)

@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require './view_helpers/renderer'
+require './view_helpers/component'
 
 module ViewHelpers
   # Global app helpers
   module App
     # Render messages.
-    class MessageRenderer < Renderer
+    class MessageComponent < Component
       def initialize(messages, css_class:)
         super()
 

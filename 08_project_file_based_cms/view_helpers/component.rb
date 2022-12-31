@@ -5,7 +5,7 @@ require 'tilt/erubis'
 
 module ViewHelpers
   # Render template using Tilt::ErubisTemplate.
-  class Renderer
+  class Component
     VIEWS_DIR_DEFAULT = 'views'
     OPTIONS_DEFAULT = { escape_html: true, trim: true }.freeze
 

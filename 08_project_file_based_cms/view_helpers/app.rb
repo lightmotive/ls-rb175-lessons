@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require './models/message_store'
-require './view_helpers/app/message_renderer'
+require './view_helpers/app/message_component'
 
 module ViewHelpers
   # Global app helpers
@@ -23,10 +23,10 @@ module ViewHelpers
       rendered.compact.join("\n")
     end
 
-    # Render flash message content using `MessageRenderer`.
+    # Render flash message content using `MessageComponent`.
     def render_flash_message(key, store: session, delete_after_rendering: true)
       store = ::Models::MessageStore.new(store, key)
-      rendered = MessageRenderer.new(store.content, css_class: key.to_s).render
+      rendered = MessageComponent.new(store.content, css_class: key.to_s).render
       store.clear if delete_after_rendering
       rendered
     end
