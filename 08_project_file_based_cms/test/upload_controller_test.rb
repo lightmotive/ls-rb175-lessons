@@ -3,8 +3,6 @@
 require_relative 'controller_test_base'
 require './controllers/upload_controller'
 
-require 'pry'
-
 # Test 'app_route([:edit])' routes.
 class UploadControllerTest < ControllerTestBase
   def setup
