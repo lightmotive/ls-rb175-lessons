@@ -16,10 +16,10 @@ module ViewHelpers
 
       attr_reader :messages, :css_class
 
-      def render
+      def render(template: :flash_message_component)
         return nil if messages.empty?
 
-        super(:flash_message_component)
+        super(template)
       end
     end
   end
