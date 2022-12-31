@@ -1,22 +1,37 @@
 # frozen_string_literal: true
 
+require 'erubis'
+require 'tilt/erubis'
+
 module ViewHelpers
   # Global app helpers
   module App
-    # Output flash message content
-    def render_flash_messages(flash_key, store: session, delete_after_rendering: true)
-      store = MessageStore.new(store, flash_key)
-      rendered = MessageRenderer.new(store.content).html
+    FLASH_MESSAGE_KEYS = %i[success error info].freeze
+
+    # Append content to the `key`-specified message store.
+    def self.flash_message(key, content, store:)
+      MessageStore.new(store, key) << content
+    end
+
+    # Render all possible flash messages.
+    def render_flash_messages(store: session, delete_after_rendering: true)
+      rendered = FLASH_MESSAGE_KEYS.map do |key|
+        render_flash_message(key, store:, delete_after_rendering:)
+      end
+      return nil if rendered.empty?
+
+      rendered.compact.join("\n")
+    end
+
+    # Render flash message content using `MessageRenderer`.
+    def render_flash_message(key, store: session, delete_after_rendering: true)
+      store = MessageStore.new(store, key)
+      rendered = MessageRenderer.new(store.content, css_class: key.to_s).erb
       store.clear if delete_after_rendering
       rendered
     end
 
-    # Append content to the `flash_key`-specified message store.
-    def self.flash_message(flash_key, content, store:)
-      MessageStore.new(store, flash_key) << content
-    end
-
-    # Manage and render messages stored in a Hash-like construct.
+    # Manage and render messages stored in a Hash-like construct, e.g., session.
     class MessageStore
       def initialize(store, message_key)
         @store = store
@@ -55,29 +70,29 @@ module ViewHelpers
       attr_reader :store, :message_key
     end
 
-    # Render messages
+    # Render messages using Tilt::ErubisTemplate.
     class MessageRenderer
-      def initialize(messages)
-        @messages = messages
+      def initialize(messages, css_class:)
+        @messages = messages.compact.reject(&:empty?)
+        @css_class = css_class
+        @app_root_path = File.expand_path('..', __dir__)
       end
 
-      attr_reader :messages
+      attr_reader :messages, :css_class
 
-      def erb(template_key)
-        erb template_key
+      def erb
+        return nil if messages.empty?
+
+        template = Tilt::ErubisTemplate.new(
+          File.join(app_root_path, 'views/flash_message.erb'),
+          escape_html: true, trim: true
+        )
+        template.render(self)
       end
 
-      def html
-        messages = self.messages.compact.reject(&:empty?)
-        return '' if messages.empty?
-        return "<p>#{Rack::Utils.escape_html(messages.first)}</p>" if messages.size == 1
+      private
 
-        <<~CONTENT
-          <ul>
-          <li>#{messages.map { |c| Rack::Utils.escape_html(c) }.join("</li>\n<li>")}</li>
-          </ul>
-        CONTENT
-      end
+      attr_reader :app_root_path
     end
   end
 end

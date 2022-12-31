@@ -1,0 +1,11 @@
+<div class="flash <%= css_class %>">
+  <% if messages.size == 1 %>
+  <p><%= messages.first %></p>
+  <% else %>
+  <ul>
+  <% messages.each do |message| %>
+    <li><%= message %></li>
+  <% end %>
+  </ul>
+  <% end %>
+</div>
