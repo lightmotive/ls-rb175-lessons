@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: set the following env vars using environment management systems:
-# - For dev and test: https://github.com/bkeepers/dotenv
-# - For production, use host framework's secure environment management system.
-ENV['RACK_ENV'] = 'test'
-
 require 'forwardable'
 
 # Include to support Content access within tests.
@@ -19,6 +14,7 @@ module ContentTestMod
 
   def_delegators :@content, :app_root_path, :create_file, :create_directory
   def_delegator :@content, :path, :content_path
+  def_delegator :@content, :entries, :content_entries
   def_delegator :@content, :entry_type, :content_entry_type
 
   def setup

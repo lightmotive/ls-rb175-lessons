@@ -18,7 +18,7 @@ module Models
       when :file
         ContentEntry.file_types_allowed.dig(File.extname(path_relative), :actions) || []
       when :directory
-        %i[delete]
+        %i[view delete]
       else
         []
       end
@@ -63,11 +63,11 @@ module Models
 
       def file_types_allowed
         {
-          '.txt' => { content_type: 'text/plain', actions: %i[copy edit delete] },
-          '.md' => { content_type: 'text/markdown', actions: %i[copy edit delete] },
-          '.png' => { content_type: 'image/png', actions: %i[copy delete] },
-          '.jpeg' => { content_type: 'image/jpeg', actions: %i[copy delete] },
-          '.jpg' => { content_type: 'image/jpg', actions: %i[copy delete] }
+          '.txt' => { content_type: 'text/plain', actions: %i[view copy edit delete] },
+          '.md' => { content_type: 'text/markdown', actions: %i[view copy edit delete] },
+          '.png' => { content_type: 'image/png', actions: %i[view copy delete] },
+          '.jpeg' => { content_type: 'image/jpeg', actions: %i[view copy delete] },
+          '.jpg' => { content_type: 'image/jpg', actions: %i[view copy delete] }
         }
       end
 

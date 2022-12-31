@@ -5,6 +5,7 @@ require 'random/formatter'
 require 'securerandom'
 require_relative 'users'
 
+# :nocov:
 module Test
   module Auth
     module Helpers
@@ -20,12 +21,10 @@ module Test
             Users.secure_and_save(@unencrypted_data)
             return unless development?
 
-            # :nocov:
             puts '** Temporary credentials created ("username" => { user data }) **'
             puts 'Use one of the following during this dev session:'
             pp TempUsers.all_unencrypted
             puts
-            # :nocov:
 
             nil
           end
@@ -47,3 +46,4 @@ module Test
     end
   end
 end
+# :nocov:

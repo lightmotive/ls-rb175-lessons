@@ -24,8 +24,8 @@ module ViewHelpers
       @delete_action = generate_delete_action
     end
 
-    def render
-      super(:content_entry_component)
+    def render(template: :content_entry_component)
+      super(template)
     end
 
     private
@@ -34,6 +34,8 @@ module ViewHelpers
     # - Use `app_route(:browse)` route for directories.
     # - Use `app_route(:view)` route for files.
     def generate_view_href
+      return unless entry.actions.include?(:view)
+
       @view_href =
         case entry.type
         when :directory then app_route(:browse, loc: entry.path_relative)

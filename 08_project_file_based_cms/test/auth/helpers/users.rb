@@ -3,6 +3,7 @@
 require 'yaml'
 require './auth/password_digester'
 
+# :nocov:
 module Test
   module Auth
     module Helpers
@@ -62,3 +63,4 @@ module Test
     end
   end
 end
+# :nocov:

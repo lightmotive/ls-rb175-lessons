@@ -14,8 +14,9 @@ class BrowseControllerTest < ControllerTestBase
     get app_route(:browse)
     assert_equal 200, last_response.status
     assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
-    expected_body = File.read('./test/expected_body/browse.html')
-    assert_equal expected_body, last_response.body
+    assert_includes last_response.body, %(<title>Browse Neato CMS</title>)
+    assert_includes last_response.body, %(<script src="/javascripts/browse_controller.js"></script>)
+    assert_action_links(last_response.body)
   end
 
   def test_get_subdirectory_without_files
@@ -24,9 +25,7 @@ class BrowseControllerTest < ControllerTestBase
 
     get app_route(:browse, loc: dir)
     assert_equal 200, last_response.status
-    new_dir_link = %(<a href="#{app_route(:new_dir, loc: dir)}">[New Directory]</a>)
-    new_file_link = %(<a href="#{app_route(:new_file, loc: dir)}">[New File]</a>)
-    assert_includes last_response.body, %(#{new_dir_link} #{new_file_link})
+    assert_action_links(last_response.body, route_loc: dir)
   end
 
   def test_get_first_subdirectory
@@ -38,6 +37,7 @@ class BrowseControllerTest < ControllerTestBase
     assert_equal 200, last_response.status
     file_link = %(<a href="#{app_route(:view, loc: "#{dir}/#{file_name}")}">f1.txt</a>)
     assert_includes last_response.body, file_link
+    assert_action_links(last_response.body, route_loc: dir)
   end
 
   def test_get_subdirectory_second_level
@@ -47,14 +47,10 @@ class BrowseControllerTest < ControllerTestBase
 
     get app_route(:browse, loc: location)
     assert_equal 200, last_response.status
-    home_link = %(<a href="#{app_route(:browse)}">home</a>)
-    dir1_link = %(<a href="#{app_route(:browse, loc: 'dir1')}">dir1</a>)
-    assert_includes last_response.body, %(<h2>#{home_link}/#{dir1_link}/dir1.1</h2>)
-    file_link = %(<a href="#{app_route(:view, loc: "#{location}/#{file_name}")}">#{file_name}</a>)
+    file_link = %(<a href="#{
+      app_route(:view, loc: "#{location}/#{file_name}")}">#{file_name}</a>)
     assert_includes last_response.body, file_link
-    new_dir_link = %(<a href="#{app_route(:new_dir, loc: location)}">[New Directory]</a>)
-    new_file_link = %(<a href="#{app_route(:new_file, loc: location)}">[New File]</a>)
-    assert_includes last_response.body, %(#{new_dir_link} #{new_file_link})
+    assert_action_links(last_response.body, route_loc: location)
   end
 
   def test_get_file
@@ -68,5 +64,17 @@ class BrowseControllerTest < ControllerTestBase
   def test_get_missing_content
     get app_route(:browse, loc: 'nada')
     assert_equal 302, last_response.status
+  end
+
+  private
+
+  def assert_action_links(in_content, route_loc: '/')
+    new_dir_link = %(<a href="#{app_route(:new_dir, loc: route_loc)}">[New Directory]</a>)
+    new_file_link = %(<a href="#{app_route(:new_file, loc: route_loc)}">[New File]</a>)
+    assert_includes in_content, %(#{new_dir_link} #{new_file_link})
+
+    upload_form_content = String.new(%(<form action="#{app_route(:upload, loc: route_loc)}" ))
+    upload_form_content += %(enctype="multipart/form-data" method="post">)
+    assert_includes in_content, upload_form_content
   end
 end

@@ -9,9 +9,9 @@
 </ul>
 <% content_for :footer do %>
 <a href="<%= new_directory_href %>">[New Directory]</a> <a href="<%= new_file_href %>">[New File]</a>
-<form action="<%= upload_href(current_location) %>" enctype="multipart/form-data" method="post">
+<form action="<%= upload_action(current_location) %>" enctype="multipart/form-data" method="post">
   <label for="uploads[]">Upload:</label>
-  <input name="uploads[]" type="file" multiple accept="<%= uploads_input_accept %>">
+  <input name="uploads[]" type="file" multiple accept="<%= upload_input_accept %>">
   <input type="submit" value="Upload">
 </form>
 <% end %>

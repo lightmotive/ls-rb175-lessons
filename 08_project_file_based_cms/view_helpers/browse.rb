@@ -26,11 +26,11 @@ module ViewHelpers
       ContentEntryComponent.new(entry).render.chomp
     end
 
-    def upload_href(current_location)
+    def upload_action(current_location)
       app_route(:upload, loc: current_location)
     end
 
-    def uploads_input_accept
+    def upload_input_accept
       file_types = Models::ContentEntry.file_types_allowed
       mime_types = file_types.values.map { |data| data[:content_type] }
       mime_types.join(', ')
