@@ -19,7 +19,7 @@ module ViewHelpers
       def render
         return nil if messages.empty?
 
-        super(:flash_message)
+        super(:flash_message_component)
       end
     end
   end

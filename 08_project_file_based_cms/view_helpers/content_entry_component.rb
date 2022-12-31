@@ -25,7 +25,7 @@ module ViewHelpers
     end
 
     def render
-      super(:content_entry)
+      super(:content_entry_component)
     end
 
     private
