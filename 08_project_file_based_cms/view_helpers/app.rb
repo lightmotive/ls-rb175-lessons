@@ -26,7 +26,7 @@ module ViewHelpers
     # Render flash message content using `MessageRenderer`.
     def render_flash_message(key, store: session, delete_after_rendering: true)
       store = ::Models::MessageStore.new(store, key)
-      rendered = MessageRenderer.new(store.content, css_class: key.to_s).erb
+      rendered = MessageRenderer.new(store.content, css_class: key.to_s).render
       store.clear if delete_after_rendering
       rendered
     end

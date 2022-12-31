@@ -1,0 +1,9 @@
+<a href="<%= view_href %>"><%= entry.name %></a>
+<% if edit_href %>
+<a class="edit" href="<%= edit_href %>"></a>
+<% end %>
+<% if delete_href %>
+<form class="inline delete" action="<%= delete_href %>" method="post">
+  <button class="delete" type="submit"></button>
+</form>
+<% end %>

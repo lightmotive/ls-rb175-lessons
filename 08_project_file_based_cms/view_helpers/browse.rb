@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require './url_utils'
-require './models/content_entry'
+require_relative 'content_entry_renderer'
 
 module ViewHelpers
   # Global app helpers
@@ -22,34 +22,8 @@ module ViewHelpers
       nav_path
     end
 
-    # Build "view" `href` attribute value based on entry type:
-    # - Use `app_route(:browse)` route for directories.
-    # - Use `app_route(:view)` route for files.
-    def entry_view_href(entry)
-      case entry.type
-      when :directory then app_route(:browse, loc: entry.path_relative)
-      when :file then app_route(:view, loc: entry.path_relative)
-      end
-    end
-
-    # Build "edit" `href` attribute value based on entry type:
-    # - Use `app_route(:edit)` route for files.
-    # - Disable for directories (assign `nil`).
-    def entry_edit_href(entry)
-      case entry.type
-      when :directory then nil
-      when :file then app_route(:edit, loc: entry.path_relative)
-      end
-    end
-
-    # Build "edit" `href` attribute value based on entry type:
-    # - Use `app_route(:edit)` route for files.
-    # - Disable for directories (assign `nil`).
-    def entry_delete_href(entry)
-      case entry.type
-      when :directory, :file
-        app_route(:delete, loc: entry.path_relative)
-      end
+    def render_content_entry(entry)
+      ContentEntryRenderer.new(entry).render.chomp
     end
 
     def upload_href(current_location)

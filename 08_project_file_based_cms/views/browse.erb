@@ -3,11 +3,7 @@
 <ul>
 <% @entries.each do |entry| %>
   <li>
-    <a href="<%= entry_view_href(entry) %>"><%= entry.name %></a>
-    <% edit_href = entry_edit_href(entry); if edit_href %><a class="edit" href="<%= edit_href %>"></a><% end %>
-    <% delete_href = entry_delete_href(entry); if delete_href %><form class="inline delete" action="<%= delete_href %>" method="post">
-      <button class="delete" type="submit"></button>
-    </form><% end %>
+    <%== render_content_entry(entry) %>
   </li>
 <% end %>
 </ul>
