@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require './cms_app_helper'
-
 # TODO: set the following env vars using environment management systems:
 # - For dev and test: https://github.com/bkeepers/dotenv
 # - For production, use host framework's secure environment management system.
