@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require './view_helpers/app/renderer'
+require './view_helpers/renderer'
 
 module ViewHelpers
   # Global app helpers

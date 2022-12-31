@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require './view_helpers/app/renderer'
+require './view_helpers/renderer'
 require './cms_app_helper'
 require './models/content_entry'
 
 module ViewHelpers
   # Render content entry components.
-  class ContentEntryRenderer < App::Renderer
+  class ContentEntryRenderer < Renderer
     include CMSAppHelper
 
     def initialize(entry)
