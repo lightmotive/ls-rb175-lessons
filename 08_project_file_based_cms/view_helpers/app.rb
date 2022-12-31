@@ -70,12 +70,42 @@ module ViewHelpers
       attr_reader :store, :message_key
     end
 
-    # Render messages using Tilt::ErubisTemplate.
-    class MessageRenderer
+    # Render template using Tilt::ErubisTemplate.
+    class Renderer
+      VIEWS_DIR_DEFAULT = 'views'
+      OPTIONS_DEFAULT = { escape_html: true, trim: true }.freeze
+
+      def initialize
+        @app_root_path = File.expand_path('..', __dir__)
+      end
+
+      def views_directory
+        File.join(app_root_path, VIEWS_DIR_DEFAULT)
+      end
+
+      def template(template_name, options: OPTIONS_DEFAULT)
+        Tilt::ErubisTemplate.new(
+          File.join(views_directory, "#{template_name}.erb"),
+          options
+        )
+      end
+
+      def render(template_name, options: OPTIONS_DEFAULT)
+        template(template_name, options:).render(self)
+      end
+
+      private
+
+      attr_reader :app_root_path
+    end
+
+    # Render messages.
+    class MessageRenderer < Renderer
       def initialize(messages, css_class:)
+        super()
+
         @messages = messages.compact.reject(&:empty?)
         @css_class = css_class
-        @app_root_path = File.expand_path('..', __dir__)
       end
 
       attr_reader :messages, :css_class
@@ -83,16 +113,8 @@ module ViewHelpers
       def erb
         return nil if messages.empty?
 
-        template = Tilt::ErubisTemplate.new(
-          File.join(app_root_path, 'views/flash_message.erb'),
-          escape_html: true, trim: true
-        )
-        template.render(self)
+        render(:flash_message)
       end
-
-      private
-
-      attr_reader :app_root_path
     end
   end
 end
