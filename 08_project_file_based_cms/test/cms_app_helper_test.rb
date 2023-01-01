@@ -30,10 +30,10 @@ class CMSAppHelperTest < MiniTest::Test
   end
 
   def test_app_route_with_location
-    assert_equal '/new/dir?loc=%2Fdir1%2Ftest.txt', @obj.app_route(:new_dir, loc: 'dir1/test.txt')
+    assert_equal '/new-entry?loc=%2Fdir1%2Ftest.txt', @obj.app_route(:new_entry, loc: 'dir1/test.txt')
   end
 
   def test_app_route_with_path_and_location
-    assert_equal '/new/dir/subpath?loc=%2Ftest.txt', @obj.app_route(:new_dir, path: 'subpath', loc: 'test.txt')
+    assert_equal '/new-entry/subpath?loc=%2Ftest.txt', @obj.app_route(:new_entry, path: 'subpath', loc: 'test.txt')
   end
 end

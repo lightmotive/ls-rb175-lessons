@@ -21,8 +21,7 @@ module CMSAppHelper
     edit: '/edit',
     delete: '/delete',
     browse: '/browse',
-    new_dir: '/new/dir',
-    new_file: '/new/file',
+    new_entry: '/new-entry',
     upload: '/upload'
   }.freeze
 

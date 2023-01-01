@@ -50,6 +50,10 @@ ul li [type="submit"].delete {
   border: none;
 }
 
+form:not(.inline) {
+  padding: .2em 0;
+}
+
 form.inline {
   display: inline;
 }

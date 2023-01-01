@@ -3,10 +3,9 @@
 require_relative 'application_controller'
 
 # TODO:
-# - Convert New Directory and New File links to a single form directly in Browse page.
-#   - Use select element to choose `file` or `directory`.
-#   - On error, remember to retain what the user entered, including the select
-#     element's value.
+# - Extract `browse.erb` dependencies to `Browsable` module for inclusion in
+#   both `BrowseController` and `NewEntryController`. Then, `NewEntryController`
+#   can inherit from `ApplicationController` (shorten inheritance chain).
 # - Enable editing directory names.
 #   - Skip JavaScript enhancement for now.
 #   - Write and edit tests first this time. Make that a habit!
@@ -27,17 +26,19 @@ module Controllers
   class BrowseController < ApplicationController
     def initialize
       super
-      @new_directory_href = nil
-      @new_file_href = nil
     end
 
-    attr_reader :new_directory_href, :new_file_href
+    attr_reader :entries
 
     def title
       "Browse #{super}"
     end
 
-    helpers ViewHelpers::Browse, ViewHelpers::Upload
+    helpers ViewHelpers::Browse, ViewHelpers::Upload, ViewHelpers::NewEntry
+
+    before '*' do
+      @entries = content_entries(current_location) if content_directory?(current_location)
+    end
 
     # get 'app_route(:browse)/'
     # Get public content entries starting at current_location and render :browse if
@@ -45,17 +46,10 @@ module Controllers
     get '/' do
       case current_location_entry_type
       when :directory
-        @entries = content_entries(current_location)
-        enable_new_entries
         erb :browse
       when :file
         redirect app_route(:view, loc: current_location)
       end
-    end
-
-    def enable_new_entries
-      @new_directory_href = app_route(:new_dir, loc: current_location)
-      @new_file_href = app_route(:new_file, loc: current_location)
     end
   end
 end

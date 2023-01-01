@@ -1,14 +1,28 @@
 
 <h2><%== navigation_path(current_location) %></h2>
 <ul>
-<% @entries.each do |entry| %>
+<% entries.each do |entry| %>
   <li>
     <%== render_content_entry(entry) %>
   </li>
 <% end %>
 </ul>
 <% content_for :footer do %>
-<a href="<%= new_directory_href %>">[New Directory]</a> <a href="<%= new_file_href %>">[New File]</a>
+<form action="<%= new_entry_post_route %>" method="post">
+  <div>
+    <p><i><%= allowed_input_message %></i></p>
+  </div>
+  <div>
+    <label for="new-entry-type">New</label>
+    <select name="new_entry_type" id="new-entry-type">
+      <option value="file"<%= params['new_entry_type'] == 'file' ? ' selected' : '' %>>File</option>
+      <option value="directory"<%= params['new_entry_type'] == 'directory' ? ' selected' : '' %>>Directory</option>
+    </select>:
+    <input name="new_entry_name" type="text" placeholder="entry name" style="width: 190px;"
+           value="<%= params['new_entry_name'] || '' %>"<%= (!params['new_entry_name'].nil?) ? ' autofocus' : '' %>>
+    <input type="submit" value="Create">
+  </div>
+</form>
 <form action="<%= upload_action(current_location) %>" enctype="multipart/form-data" method="post">
   <label for="uploads[]">Upload:</label>
   <input name="uploads[]" type="file" multiple accept="<%= upload_input_accept %>">

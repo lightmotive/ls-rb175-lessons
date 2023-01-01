@@ -69,9 +69,8 @@ class BrowseControllerTest < ControllerTestBase
   private
 
   def assert_action_links(in_content, route_loc: '/')
-    new_dir_link = %(<a href="#{app_route(:new_dir, loc: route_loc)}">[New Directory]</a>)
-    new_file_link = %(<a href="#{app_route(:new_file, loc: route_loc)}">[New File]</a>)
-    assert_includes in_content, %(#{new_dir_link} #{new_file_link})
+    new_entry_form_content = %(<form action="#{app_route(:new_entry, loc: route_loc)}" method="post">)
+    assert_includes in_content, new_entry_form_content
 
     upload_form_content = String.new(%(<form action="#{app_route(:upload, loc: route_loc)}" ))
     upload_form_content += %(enctype="multipart/form-data" method="post">)
