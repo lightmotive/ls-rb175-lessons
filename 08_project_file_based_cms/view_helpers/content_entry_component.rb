@@ -2,7 +2,6 @@
 
 require './view_helpers/component'
 require './cms_app_helper'
-require './models/content_entry'
 
 module ViewHelpers
   # Render content entry components.
