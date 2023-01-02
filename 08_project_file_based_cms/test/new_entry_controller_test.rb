@@ -46,7 +46,7 @@ class NewEntryControllerTest < ControllerTestBase
     assert_flash_message_rendering(
       :error,
       ['Please use only numbers, letters, underscores, and periods for names.',
-       "Use '/' to separate entries."],
+       'Use &#39;/&#39; to separate entries.'],
       last_response.body
     )
   end

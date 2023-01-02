@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'erubis'
-require 'tilt/erubis'
+require 'erubi'
+require 'tilt/erubi'
 
 module ViewHelpers
-  # Render template using Tilt::ErubisTemplate.
+  # Render template using Tilt::ErubiTemplate.
   class Component
     VIEWS_DIR_DEFAULT = 'views'
     OPTIONS_DEFAULT = { escape_html: true, trim: true }.freeze
@@ -18,7 +18,7 @@ module ViewHelpers
     end
 
     def template(template_name, options: OPTIONS_DEFAULT)
-      Tilt::ErubisTemplate.new(
+      Tilt::ErubiTemplate.new(
         File.join(views_directory, "#{template_name}.erb"),
         options
       )

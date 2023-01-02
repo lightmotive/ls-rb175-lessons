@@ -36,7 +36,7 @@ module Controllers
     configure do
       enable :sessions
       set :session_secret, 'd81b5e7a139eb9711a15d27c642ebe38e5457d86ad2d4d9c9f5df240e4d3ede8'
-      set :erb, escape_html: true
+      set :erb, escape_html: true, layout_engine: :erubi
       content = Models::Content.new
       set :public_folder, File.join(content.app_root_path, 'public')
       set :views, File.join(content.app_root_path, 'views')

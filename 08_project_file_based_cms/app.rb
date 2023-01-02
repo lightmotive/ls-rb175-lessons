@@ -2,7 +2,7 @@
 
 require 'sinatra/base'
 require 'sinatra/content_for'
-require 'tilt/erubis'
+require 'tilt/erubi'
 
 require './cms_app_helper'
 require './url_utils'
