@@ -6,12 +6,16 @@ require_relative 'content_entry_component'
 module ViewHelpers
   # Browse controller helpers.
   module Browse
-    def navigation_path(current_location = '/')
-      return '' if current_location == '/' || current_location.empty?
+    def location_root?(location)
+      location == '/' || location.empty?
+    end
+
+    def navigation_path(location = '/')
+      return '' if location_root?(location)
 
       nav_path = "<a href=\"#{app_route(:browse)}\">home</a>"
 
-      dir_names = current_location[1..].split('/')
+      dir_names = location[1..].split('/')
       locations = []
       dir_names[0..-2].each do |name|
         locations << name

@@ -1,5 +1,7 @@
 
+<% unless location_root?(current_location) %>
 <h2><%== navigation_path(current_location) %></h2>
+<% end %>
 <ul>
 <% entries.each do |entry| %>
   <li>
