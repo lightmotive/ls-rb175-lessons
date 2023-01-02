@@ -18,7 +18,7 @@
       <option value="file"<%= params['new_entry_type'] == 'file' ? ' selected' : '' %>>File</option>
       <option value="directory"<%= params['new_entry_type'] == 'directory' ? ' selected' : '' %>>Directory</option>
     </select>:
-    <input name="new_entry_name" type="text" placeholder="entry name" style="width: 190px;"
+    <input name="new_entry_name" type="text" placeholder="entry name" style="width: 13.7em;"
            value="<%= params['new_entry_name'] || '' %>"<%= (!params['new_entry_name'].nil?) ? ' autofocus' : '' %>>
     <input type="submit" value="Create">
   </div>
