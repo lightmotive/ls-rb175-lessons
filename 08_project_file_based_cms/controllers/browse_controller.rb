@@ -3,23 +3,29 @@
 require_relative 'application_controller'
 
 # TODO:
-# - Extract `browse.erb` dependencies to `Browsable` module for inclusion in
+# - Extract `browse.erb` dependencies to `Browseable` module for inclusion in
 #   both `BrowseController` and `NewEntryController`. Then, `NewEntryController`
-#   can inherit from `ApplicationController` (shorten inheritance chain).
-# - Enable editing directory names.
+#   can inherit from `ApplicationController`. That clarifies intent and shortens
+#   the inheritance chain.
+# - Enable editing entry names.
 #   - Skip JavaScript enhancement for now.
 #   - Write and edit tests first this time. Make that a habit!
-#   - Probably use the EditController: render `browse.erb`,
-#     ensuring that the entry for the clicked edit button renders as an edit
-#     form. Think about how to handle that before writing tests or logic...
-#     - How about adding an `/rename` route to the `/browse` route (controller)
-#       that posts the name of the entry? Add a new "rename" icon to submit the
-#       `/rename` request. All entries will be renamable.
-#     - To determine which entry to rename, implement a new entry enumerator
-#       that checks the entry name to edit; when it matches, flag the entry
-#       so it renders as an edit form (component).
-#       - autofocus the input
-#     - Reload the page on click. Don't worry about maintaining scroll position for now.
+#   - Use the BrowseController; think about how to handle that before writing
+#     tests or logic...
+#     - Add a `/rename` route to `BrowseController`:
+#       - `get '/'`: Add a new "rename" icon to all entries that will submit the
+#          `/rename` get request. All entries will be renamable.
+#         - Reload the page on click. Don't worry about maintaining scroll
+#           position for now; that won't be an issue when using AJAX to update
+#           the element without reloading the page.
+#         - To determine which entry to rename, implement a new entry enumerator
+#           that checks the entry name to edit, if any; when matched, render
+#           the entry as an edit form (component).
+#           - autofocus the input.
+#       - `get '/rename'`
+#         - Render `browse.erb` with the entry for the clicked edit button
+#           rendered as an edit form.
+#       - `post '/rename'`: apply the submitted form data.
 
 module Controllers
   # Handle browse routes
