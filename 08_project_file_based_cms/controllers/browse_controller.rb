@@ -3,29 +3,18 @@
 require_relative 'application_controller'
 
 # TODO:
-# - Extract `browse.erb` dependencies to `Browseable` module for inclusion in
-#   both `BrowseController` and `NewEntryController`. Then, `NewEntryController`
-#   can inherit from `ApplicationController`. That clarifies intent and shortens
-#   the inheritance chain.
 # - Enable editing entry names.
-#   - Skip JavaScript enhancement for now.
+#   - Use AJAX to get the rename entry form. There's just no better way.
 #   - Write and edit tests first this time. Make that a habit!
-#   - Use the BrowseController; think about how to handle that before writing
-#     tests or logic...
-#     - Add a `/rename` route to `BrowseController`:
-#       - `get '/'`: Add a new "rename" icon to all entries that will submit the
-#          `/rename` get request. All entries will be renamable.
-#         - Reload the page on click. Don't worry about maintaining scroll
-#           position for now; that won't be an issue when using AJAX to update
-#           the element without reloading the page.
-#         - To determine which entry to rename, implement a new entry enumerator
-#           that checks the entry name to edit, if any; when matched, render
-#           the entry as an edit form (component).
-#           - autofocus the input.
-#       - `get '/rename'`
-#         - Render `browse.erb` with the entry for the clicked edit button
-#           rendered as an edit form.
-#       - `post '/rename'`: apply the submitted form data.
+#   - [Test(s) written? Yes] `GET '/browse'`: Add a new "rename" icon to all
+#     entries that will submit the `/rename` get request. All entries will be
+#     renamable.
+#   - Create a new RenameEntryController; think about how to handle that before
+#     writing tests or logic...
+# - Rename routes and associated classes that inherit BrowseController:
+#   - Prefix route name with `:browse` and value with `/browse`.
+#   - Prefix class names with `Browse`.
+#   - Ensure routes are mapped before base `/browse` route.
 
 module Controllers
   # Handle browse routes
