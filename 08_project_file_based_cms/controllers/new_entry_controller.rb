@@ -58,7 +58,7 @@ module Controllers
     def handle_invalid_input(error_messages)
       flash_message :error, error_messages
       status 400
-      erb :browse
+      render_browse_template
     end
   end
 end
