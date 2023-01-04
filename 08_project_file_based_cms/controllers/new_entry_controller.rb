@@ -22,7 +22,7 @@ module Controllers
       @name = params[:new_entry_name]
     end
 
-    # get 'app_route(:new_entry)/'
+    # post 'app_route(:new_entry)/'
     post '/' do
       case type
       when 'directory' then post_directory
