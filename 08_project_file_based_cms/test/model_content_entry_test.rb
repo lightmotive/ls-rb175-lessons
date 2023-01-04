@@ -27,4 +27,14 @@ class ModelContentEntryTest < MiniTest::Test
       assert_equal true, Models::ContentEntry.file_allowed?(path)
     end
   end
+
+  def test_text_file_all_actions_allowed
+    assert_equal Models::ContentEntry.actions,
+                 Models::ContentEntry.file_type('.txt')[:actions]
+  end
+
+  def test_actions_except
+    assert_equal Models::ContentEntry.actions - [:edit],
+                 Models::ContentEntry.actions_except(:edit)
+  end
 end

@@ -27,22 +27,36 @@ module Models
       ContentEntry.type(path(path_relative))
     end
 
-    def file?(path_relative)
-      entry_type(path_relative) == :file
+    def entry_type_supported?(name:, in_loc: '/')
+      entry(name:, in_loc:).type_supported?
     end
 
-    def directory?(path_relative)
-      entry_type(path_relative) == :directory
+    def file?(name:, in_loc: '/')
+      entry(name:, in_loc:).file?
     end
 
-    def entries(dir_relative = '/')
-      Dir.each_child(path(dir_relative)).map do |entry_name|
-        ContentEntry.new(
-          dir_relative:,
-          basename: entry_name,
-          path_absolute: path(File.join(dir_relative, entry_name))
-        )
+    def directory?(name:, in_loc: '/')
+      entry(name:, in_loc:).directory?
+    end
+
+    def entries(in_loc = '/')
+      Dir.each_child(path(in_loc)).map do |name|
+        entry(name:, in_loc:)
       end
+    end
+
+    def entry(name:, in_loc: '/')
+      ContentEntry.new(
+        dir_relative: in_loc, basename: name,
+        path_absolute: path(File.join(in_loc, name))
+      )
+    end
+
+    def entry_from_path(path_relative)
+      in_loc = File.dirname(path_relative)
+      in_loc = '/' if in_loc == '.'
+      name = File.basename(path_relative)
+      entry(name:, in_loc:)
     end
 
     # Create file with optional content.

@@ -5,7 +5,7 @@ module Models
   # `./content` directory.
   class ContentEntry
     def initialize(dir_relative:, basename:, path_absolute:)
-      @directory = ContentEntry.standardize_dir_relative(dir_relative)
+      @directory = ContentEntry.standardize_loc_relative(dir_relative)
       @name = basename
       @type = ContentEntry.type(path_absolute)
       @path_relative = File.join(directory, name)
@@ -13,12 +13,28 @@ module Models
 
     attr_reader :directory, :name, :path_relative, :type
 
-    def actions
+    def type_supported?
+      %i[directory file].include?(@type)
+    end
+
+    def file?
+      type == :file
+    end
+
+    def directory?
+      type == :directory
+    end
+
+    def action_allowed?(action)
+      actions_allowed.include?(action)
+    end
+
+    def actions_allowed
       case type
       when :file
         ContentEntry.file_types_allowed.dig(File.extname(path_relative), :actions) || []
       when :directory
-        %i[view delete]
+        %i[view rename delete]
       else
         []
       end
@@ -26,9 +42,9 @@ module Models
 
     class << self
       # Ensure relative directory starts with '/'
-      def standardize_dir_relative(dir_relative)
-        standardized = dir_relative
-        standardized.prepend('/') unless standardized.start_with?('/')
+      def standardize_loc_relative(loc_relative)
+        standardized = String.new(loc_relative)
+        standardized += '/' unless standardized.start_with?('/')
         standardized
       end
 
@@ -61,14 +77,26 @@ module Models
         input_string.split('/')
       end
 
+      def actions
+        %i[view rename copy edit delete]
+      end
+
+      def actions_except(*exclude)
+        actions - exclude
+      end
+
       def file_types_allowed
         {
-          '.txt' => { content_type: 'text/plain', actions: %i[view copy edit delete] },
-          '.md' => { content_type: 'text/markdown', actions: %i[view copy edit delete] },
-          '.png' => { content_type: 'image/png', actions: %i[view copy delete] },
-          '.jpeg' => { content_type: 'image/jpeg', actions: %i[view copy delete] },
-          '.jpg' => { content_type: 'image/jpg', actions: %i[view copy delete] }
+          '.txt' => { content_type: 'text/plain', actions: },
+          '.md' => { content_type: 'text/markdown', actions: },
+          '.png' => { content_type: 'image/png', actions: actions_except(:edit) },
+          '.jpeg' => { content_type: 'image/jpeg', actions: actions_except(:edit) },
+          '.jpg' => { content_type: 'image/jpg', actions: actions_except(:edit) }
         }
+      end
+
+      def file_type(extname)
+        file_types_allowed.fetch(extname, nil)
       end
 
       def file_extension_allowed?(path)
