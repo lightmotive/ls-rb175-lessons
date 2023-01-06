@@ -11,7 +11,7 @@ module Controllers
       content = Models::Content.new
       content.delete_entry(current_location)
 
-      if env['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'
+      if request.xhr? # env['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'
         status 204
       else
         flash_message :success, "#{File.basename(current_location)} was deleted."

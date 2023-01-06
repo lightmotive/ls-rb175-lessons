@@ -71,6 +71,10 @@ class ControllerTestBase < MiniTest::Test
 
   private
 
+  def env_xhr
+    { 'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest' }
+  end
+
   def assert_flash_message_rendering_one(flash_key, expected_message, in_content)
     assert_includes in_content, %(<div class="flash #{flash_key}">)
     assert_includes in_content, expected_message

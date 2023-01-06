@@ -17,8 +17,7 @@ class DeleteControllerTest < ControllerTestBase
   def test_post_file_xhr
     file_name = 'deletable.txt'
     create_file(file_name)
-    post app_route(:delete, loc: file_name), nil,
-         { 'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest' }
+    post app_route(:delete, loc: file_name), nil, env_xhr
     assert_equal 204, last_response.status
   end
 
@@ -34,8 +33,7 @@ class DeleteControllerTest < ControllerTestBase
   def test_post_directory_xhr
     dir = 'dir1/dir1.1'
     create_directory(dir)
-    post app_route(:delete, loc: dir), nil,
-         { 'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest' }
+    post app_route(:delete, loc: dir), nil, env_xhr
     assert_equal 204, last_response.status
   end
 
