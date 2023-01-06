@@ -92,6 +92,8 @@ module Models
     def copy_external(from_absolute, to_relative)
       raise ContentPathError unless path_input_safe?(from_absolute)
 
+      validate_entry_name(File.basename(to_relative), type: :file)
+
       FileUtils.cp(from_absolute, path(to_relative))
     end
 
