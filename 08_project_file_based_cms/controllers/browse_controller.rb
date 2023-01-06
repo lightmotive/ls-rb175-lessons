@@ -2,12 +2,6 @@
 
 require_relative 'application_controller'
 
-# TODO: remaining tasks
-# - Rename routes and associated classes that inherit BrowseController:
-#   - Prefix route name with `:browse` and value with `/browse`.
-#   - Prefix class names with `Browse`.
-#   - Ensure routes are mapped before base `/browse` route.
-
 module Controllers
   # Handle browse routes
   class BrowseController < ApplicationController
@@ -25,8 +19,6 @@ module Controllers
     end
 
     # get 'app_route(:browse)/'
-    # Get public content entries starting at current_location and render :browse if
-    # :directory or redirect to view file if :file
     get '/' do
       case current_location_entry_type
       when :directory
