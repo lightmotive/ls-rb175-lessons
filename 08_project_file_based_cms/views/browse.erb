@@ -10,10 +10,12 @@
 <% end %>
 </ul>
 <% content_for :footer do %>
+<hr>
+<h2>Add...</h2>
+<div>
+  <p><i><%= allowed_input_message %></i></p>
+</div>
 <form action="<%= new_entry_post_route %>" method="post">
-  <div>
-    <p><i><%= allowed_input_message %></i></p>
-  </div>
   <div>
     <label for="new-entry-type">New</label>
     <select name="new_entry_type" id="new-entry-type">
