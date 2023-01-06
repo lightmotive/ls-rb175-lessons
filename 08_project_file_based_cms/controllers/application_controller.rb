@@ -24,12 +24,13 @@ module Controllers
       @title = "#{value.empty? ? '' : "#{value} - "}Neato CMS"
     end
 
-    def_delegators :@content, :create_file, :create_directory, :entry
+    def_delegators :@content, :create_file, :create_directory, :rename_entry
     def_delegator :@content, :path, :content_path
     def_delegator :@content, :entry_type, :content_entry_type
     def_delegator :@content, :entry_type_supported?, :content_entry_type_supported?
     def_delegator :@content, :directory?, :content_directory?
     def_delegator :@content, :file?, :content_file?
+    def_delegator :@content, :entry, :content_entry
     def_delegator :@content, :entries, :content_entries
 
     helpers Sinatra::ContentFor, ViewHelpers::App
@@ -52,7 +53,7 @@ module Controllers
     def validate_and_set_location
       location = params[:loc]
       params.delete(:loc)
-      return halt(400, 'Invalid location') if location&.include?('..')
+      return halt(400, 'Invalid location') unless @content.path_input_safe?(location)
 
       @current_location = location.nil? || location.empty? ? '/' : location
       self.title = current_location unless current_location == '/'

@@ -10,8 +10,8 @@ module ViewHelpers
     end
 
     def allowed_input_message
-      chars_allowed_msg = Models::ContentEntry.entry_name_chars_allowed_message
-      "#{chars_allowed_msg} Use '/' to separate entries."
+      "#{Models::ContentEntry.entry_name_chars_allowed_message} #{
+       Models::ContentEntry.separate_entries_message}"
     end
   end
 end

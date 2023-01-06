@@ -59,6 +59,10 @@ module Models
         'Please use only numbers, letters, underscores, and periods for names.'
       end
 
+      def separate_entries_message
+        "Use '/' to separate entries."
+      end
+
       def dir_name_valid?(dir_name)
         !(dir_name =~ /\A[\w.]+\z/).nil?
       end

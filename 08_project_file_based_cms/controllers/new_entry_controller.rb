@@ -34,25 +34,20 @@ module Controllers
 
     # Validate and save submitted dir name, then redirect to current location.
     def post_directory
-      if Models::ContentEntry.dir_names_valid?(name)
-        create_directory(File.join(current_location, name))
-        flash_message :success, "'#{name}' created successfully."
-        redirect app_route(:browse, loc: current_location), 303
-      else
-        handle_invalid_input [Models::ContentEntry.entry_name_chars_allowed_message,
-                              "Use '/' to separate entries."]
-      end
+      create_directory(File.join(current_location, name))
+      flash_message :success, "'#{name}' created successfully."
+      redirect app_route(:browse, loc: current_location), 303
+    rescue InvalidPathError => e
+      handle_invalid_input e.message
     end
 
     # Validate and save submitted file name, then redirect to file's directory.
     def post_file
-      if Models::ContentEntry.file_name_allowed?(name)
-        create_file(File.join(current_location, name))
-        flash_message :success, "'#{name}' created successfully."
-        redirect app_route(:browse, loc: current_location), 303
-      else
-        handle_invalid_input Models::ContentEntry.entry_name_chars_allowed_message
-      end
+      create_file(File.join(current_location, name))
+      flash_message :success, "'#{name}' created successfully."
+      redirect app_route(:browse, loc: current_location), 303
+    rescue InvalidPathError => e
+      handle_invalid_input e.message
     end
 
     def handle_invalid_input(error_messages)

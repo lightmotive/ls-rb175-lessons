@@ -43,12 +43,10 @@ class NewEntryControllerTest < ControllerTestBase
                                   'new_entry_name' => 'dir+3' }
     assert_equal :unknown, content_entry_type('dir+3')
     assert_equal 400, last_response.status
-    assert_flash_message_rendering(
-      :error,
-      ['Please use only numbers, letters, underscores, and periods for names.',
-       'Use &#39;/&#39; to separate entries.'],
-      last_response.body
-    )
+    expected_error_message =
+      "#{Models::ContentEntry.entry_name_chars_allowed_message} " \
+      'Use &#39;/&#39; to separate entries.'
+    assert_flash_message_rendering(:error, expected_error_message, last_response.body)
   end
 
   def test_post_invalid_file_name
@@ -58,7 +56,7 @@ class NewEntryControllerTest < ControllerTestBase
     assert_equal 400, last_response.status
     assert_flash_message_rendering(
       :error,
-      'Please use only numbers, letters, underscores, and periods for names.',
+      Models::ContentEntry.entry_name_chars_allowed_message,
       last_response.body
     )
   end
