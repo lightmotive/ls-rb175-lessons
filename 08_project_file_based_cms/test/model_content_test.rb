@@ -7,7 +7,7 @@ require './models/content'
 class ModelContentTest < MiniTest::Test
   def setup
     @content = Models::Content.new
-    FileUtils.mkdir_p(@content.path)
+    FileUtils.mkdir_p(@content.absolute_path)
   end
 
   def test_path_input_safe?
@@ -56,6 +56,6 @@ class ModelContentTest < MiniTest::Test
   end
 
   def teardown
-    FileUtils.rm_rf(@content.path)
+    FileUtils.rm_rf(@content.absolute_path)
   end
 end

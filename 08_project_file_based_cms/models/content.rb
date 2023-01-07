@@ -24,21 +24,20 @@ module Models
     end
 
     def exist?(path_relative, in_loc: '/')
-      FileTest.exist?(path(path_relative, in_loc:))
+      FileTest.exist?(absolute_path(path_relative, in_loc:))
     end
 
-    # => Absolute path
-    def path(path_relative = '', in_loc: '/')
+    def absolute_path(path_relative = '', in_loc: '/')
       validate_path_input(File.join(in_loc, path_relative))
 
-      content_path = 'content'
-      content_path = File.join('test', content_path) if ENV['RACK_ENV'] == 'test'
+      content_root = 'content'
+      content_root = File.join('test', content_root) if ENV['RACK_ENV'] == 'test'
 
-      File.join(app_root_path, content_path, in_loc, path_relative)
+      File.join(app_root_path, content_root, in_loc, path_relative)
     end
 
     def entry_type(path_relative, in_loc: '/')
-      ContentEntry.type(path(path_relative, in_loc:))
+      ContentEntry.type(absolute_path(path_relative, in_loc:))
     end
 
     def entry_type_supported?(name:, in_loc: '/')
@@ -54,7 +53,7 @@ module Models
     end
 
     def entries(in_loc = '/')
-      Dir.each_child(path(in_loc)).map do |name|
+      Dir.each_child(absolute_path(in_loc)).map do |name|
         entry(name:, in_loc:)
       end
     end
@@ -62,7 +61,7 @@ module Models
     def entry(name:, in_loc: '/')
       ContentEntry.new(
         dir_relative: in_loc, basename: name,
-        path_absolute: path(name, in_loc:)
+        path_absolute: absolute_path(name, in_loc:)
       )
     end
 
@@ -71,7 +70,7 @@ module Models
     def create_file(name, content = '', in_loc: '/')
       ContentEntry.validate_names(name, type: :file)
 
-      File.open(path(name, in_loc:), 'w') do |file|
+      File.open(absolute_path(name, in_loc:), 'w') do |file|
         file.write(content)
         file.close
         file
@@ -84,18 +83,18 @@ module Models
       validate_path_input(from_absolute)
       ContentEntry.validate_names(to_relative, type: :file)
 
-      FileUtils.cp(from_absolute, path(to_relative, in_loc:))
+      FileUtils.cp(from_absolute, absolute_path(to_relative, in_loc:))
     end
 
     # Create directory with parents as needed
     def create_directory(path_relative, in_loc: '/')
       ContentEntry.validate_names(path_relative, type: :directory)
 
-      FileUtils.mkdir_p(path(path_relative, in_loc:))
+      FileUtils.mkdir_p(absolute_path(path_relative, in_loc:))
     end
 
     def edit_file(path_relative, content, in_loc: '/')
-      File.write(path(path_relative, in_loc:), content)
+      File.write(absolute_path(path_relative, in_loc:), content)
     end
 
     def rename_entry(name, new_name, in_loc: '/')
@@ -103,15 +102,15 @@ module Models
       ContentEntry.validate_names(new_name, type: current_entry.type)
 
       File.rename(
-        path(current_entry.path_relative),
-        path(new_name, in_loc:)
+        absolute_path(current_entry.path_relative),
+        absolute_path(new_name, in_loc:)
       )
     end
 
     def delete_entry(path_relative)
       case entry_type(path_relative)
-      when :file then FileUtils.rm(path(path_relative))
-      when :directory then FileUtils.remove_dir(path(path_relative))
+      when :file then FileUtils.rm(absolute_path(path_relative))
+      when :directory then FileUtils.remove_dir(absolute_path(path_relative))
       end
     end
 

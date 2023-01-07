@@ -25,7 +25,7 @@ module Controllers
     end
 
     def_delegators :@content, :create_file, :create_directory, :rename_entry
-    def_delegator :@content, :path, :content_path
+    def_delegator :@content, :absolute_path, :content_absolute_path
     def_delegator :@content, :entry_type, :content_entry_type
     def_delegator :@content, :entry_type_supported?, :content_entry_type_supported?
     def_delegator :@content, :directory?, :content_directory?

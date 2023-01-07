@@ -25,7 +25,7 @@ module Controllers
     # Edit files
     # get 'app_route(:edit)/'
     get '/' do
-      file_path = content_path(current_location)
+      file_path = content_absolute_path(current_location)
       @file_content = File.read(file_path)
       erb :edit
     end

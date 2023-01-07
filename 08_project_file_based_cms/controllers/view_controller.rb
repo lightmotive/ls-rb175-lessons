@@ -31,7 +31,7 @@ module Controllers
     end
 
     def view_file_response(file_path_relative)
-      file_path = content_path(file_path_relative)
+      file_path = content_absolute_path(file_path_relative)
 
       custom_renderer = custom_file_renderers[File.extname(file_path)]
       if custom_renderer

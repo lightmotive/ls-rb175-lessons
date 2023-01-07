@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 # TODO: remaining tasks
-# - Rename `Content#path` to `#absolute_path` for clarity.
 # - Rename routes and associated classes that inherit BrowseController:
 #   - Prefix route name with `:browse` and value with `/browse`.
 #   - Prefix class names with `Browse`.
