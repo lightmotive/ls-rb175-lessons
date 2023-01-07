@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: remaining tasks
-# - Rename routes and associated classes that inherit BrowseController:
-#   - Prefix route name with `:browse` and value with `/browse`.
-#   - Prefix class names with `Browse`.
-#   - Ensure routes are mapped before base `/browse` route.
-
 require 'sinatra/base'
 require 'sinatra/content_for'
 require 'tilt/erubi'
