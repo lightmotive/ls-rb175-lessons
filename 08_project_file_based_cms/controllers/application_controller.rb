@@ -53,11 +53,13 @@ module Controllers
     def validate_and_set_location
       location = params[:loc]
       params.delete(:loc)
-      return halt(400, 'Invalid location') unless @content.path_input_safe?(location)
+      @content.validate_path_input(location)
 
       @current_location = location.nil? || location.empty? ? '/' : location
       self.title = current_location unless current_location == '/'
       @current_location
+    rescue Models::ContentError => e
+      halt(400, e.message)
     end
 
     # before {all routes}

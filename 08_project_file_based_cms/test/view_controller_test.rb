@@ -23,9 +23,10 @@ class ViewControllerTest < ControllerTestBase
   end
 
   def test_get_file_in_subdirectory
-    create_file('dir2/dir2.1/f3.txt', 'Test file in dir2.1.')
+    create_directory(location = 'dir2/dir2.1')
+    create_file(file_name = 'f3.txt', 'Test file in dir2.1.', in_loc: location)
 
-    get app_route(:view, loc: 'dir2/dir2.1/f3.txt')
+    get app_route(:view, loc: "#{location}/#{file_name}")
     assert_equal 200, last_response.status
     assert_equal 'text/plain;charset=utf-8', last_response['Content-Type']
     assert_equal 'Test file in dir2.1.', last_response.body

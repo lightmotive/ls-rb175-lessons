@@ -20,8 +20,7 @@ class BrowseControllerTest < ControllerTestBase
   end
 
   def test_get_subdirectory_without_files
-    dir = 'dir1'
-    create_directory(dir)
+    create_directory(dir = 'dir1')
 
     get app_route(:browse, loc: dir)
     assert_equal 200, last_response.status
@@ -29,9 +28,8 @@ class BrowseControllerTest < ControllerTestBase
   end
 
   def test_get_first_subdirectory
-    dir = 'dir1'
-    file_name = 'f1.txt'
-    create_file("#{dir}/#{file_name}")
+    create_directory(dir = 'dir1')
+    create_file(file_name = 'f1.txt', in_loc: dir)
 
     get app_route(:browse, loc: dir)
     assert_equal 200, last_response.status
@@ -41,9 +39,8 @@ class BrowseControllerTest < ControllerTestBase
   end
 
   def test_get_subdirectory_second_level
-    location = 'dir1/dir1.1'
-    file_name = 'f3.txt'
-    create_file("#{location}/#{file_name}")
+    create_directory(location = 'dir1/dir1.1')
+    create_file(file_name = 'f3.txt', in_loc: location)
 
     get app_route(:browse, loc: location)
     assert_equal 200, last_response.status

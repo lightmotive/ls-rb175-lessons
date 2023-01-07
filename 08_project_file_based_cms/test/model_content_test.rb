@@ -12,6 +12,10 @@ class ModelContentTest < MiniTest::Test
 
   def test_path_input_safe?
     assert_equal false, @content.path_input_safe?('../app.rb')
+    error = assert_raises(Models::ContentError) do
+      @content.validate_path_input('../app.rb')
+    end
+    assert_equal 'Invalid location', error.message
   end
 
   def test_file_check
@@ -31,8 +35,9 @@ class ModelContentTest < MiniTest::Test
   end
 
   def test_entry_with_file_in_loc
-    @content.create_file('dir1/test.txt')
-    entry = @content.entry(name: 'test.txt', in_loc: 'dir1')
+    @content.create_directory(directory = 'dir1')
+    @content.create_file('test.txt', in_loc: directory)
+    entry = @content.entry(name: 'test.txt', in_loc: directory)
     assert_equal true, entry.file?
   end
 

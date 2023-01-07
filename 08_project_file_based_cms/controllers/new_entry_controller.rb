@@ -34,19 +34,19 @@ module Controllers
 
     # Validate and save submitted dir name, then redirect to current location.
     def post_directory
-      create_directory(File.join(current_location, name))
+      create_directory(name, in_loc: current_location)
       flash_message :success, "'#{name}' created successfully."
       redirect app_route(:browse, loc: current_location), 303
-    rescue InvalidPathError => e
+    rescue Models::ContentError => e
       handle_invalid_input e.message
     end
 
     # Validate and save submitted file name, then redirect to file's directory.
     def post_file
-      create_file(File.join(current_location, name))
+      create_file(name, in_loc: current_location)
       flash_message :success, "'#{name}' created successfully."
       redirect app_route(:browse, loc: current_location), 303
-    rescue InvalidPathError => e
+    rescue Models::ContentError => e
       handle_invalid_input e.message
     end
 

@@ -18,34 +18,13 @@ module Controllers
     def validate_and_save_uploads(uploads)
       saved_filenames = []
       uploads.each do |upload|
-        error = upload_error(upload)
-        next flash_message(:error, error) unless error.nil?
-
+        Models::ContentEntry.validate_names(upload[:filename], type: :file)
         save_upload(upload)
         saved_filenames << upload[:filename]
+      rescue Models::ContentError => e
+        flash_message(:error, "'#{upload[:filename]}' was not allowed. #{e.messages.join(' ')}")
       end
-
-      flash_saved_filenames(saved_filenames)
-    end
-
-    def upload_error(upload)
-      # TODO: consider implementing polymorphic sequence processing here to
-      # iterate through validation steps defined in separate classes.
-      # Recommended only if file validation becomes complex enough to warrant
-      # step and step iteration encapsulation.
-      errors = []
-
-      unless Models::ContentEntry.file_name_allowed?(upload[:filename])
-        errors << Models::ContentEntry.entry_name_chars_allowed_message
-      end
-
-      unless Models::ContentEntry.content_type_allowed?(upload[:type])
-        errors << Models::ContentEntry.file_types_allowed_message
-      end
-
-      return "'#{upload[:filename]}' was not allowed. #{errors.join(' ')}" unless errors.empty?
-
-      nil
+      flash_saved_filenames(saved_filenames) unless saved_filenames.empty?
     end
 
     def save_upload(upload)

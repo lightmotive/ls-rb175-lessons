@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'content_error'
+
 module Models
   # Content Entry (file system) model with paths relative to application's
   # `./content` directory.
@@ -72,6 +74,11 @@ module Models
         names.all?(&method(:dir_name_valid?))
       end
 
+      def dir_names_allowed_message
+        "#{ContentEntry.entry_name_chars_allowed_message} #{
+         ContentEntry.separate_entries_message}"
+      end
+
       def file_name_allowed?(path)
         name = File.basename(path)
         !(name =~ /\A[\w.]+\z/).nil?
@@ -120,12 +127,32 @@ module Models
 
       def file_allowed?(path)
         # TODO: implement a more robust and secure file management system that:
-        # - Securely verifies actual file content.
+        # - Securely verifies that file content matches extension.
         # - Renames files and stores references in a database instead of storing
-        #   with provided names in file system.
+        #   with provided names in file system. That would also loosen name
+        #   restrictions.
         # - One library to consider: https://github.com/shrinerb/shrine
-        # For now, simply validate file type and name:
+        # - ** For now, simply validate file type and name: **
         file_extension_allowed?(path) && file_name_allowed?(path)
+      end
+
+      def validate_names(name, type:)
+        # TODO: consider implementing polymorphic sequence processing here to
+        # iterate through validation steps defined in separate classes.
+        # Recommended only if content validation becomes complex enough to
+        # warrant that abstraction.
+
+        error = ContentError.new
+
+        case type
+        when :directory
+          error << dir_names_allowed_message unless dir_names_valid?(name)
+        when :file
+          error << entry_name_chars_allowed_message unless file_name_allowed?(name)
+          error << file_types_allowed_message unless file_extension_allowed?(name)
+        end
+
+        raise error if error.any?
       end
     end
   end

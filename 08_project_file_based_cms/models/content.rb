@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'content_entry'
-require_relative 'content_path_error'
+require_relative 'content_error'
 
 module Models
   # Content access
@@ -23,22 +23,22 @@ module Models
       true
     end
 
-    def exist?(path_relative)
-      FileTest.exist?(path(path_relative))
+    def exist?(path_relative, in_loc: '/')
+      FileTest.exist?(path(path_relative, in_loc:))
     end
 
     # => Absolute path
-    def path(path_relative = '/')
-      raise ContentPathError, 'Invalid location' unless path_input_safe?(path_relative)
+    def path(path_relative = '', in_loc: '/')
+      validate_path_input(File.join(in_loc, path_relative))
 
       content_path = 'content'
       content_path = File.join('test', content_path) if ENV['RACK_ENV'] == 'test'
 
-      File.join(app_root_path, content_path, path_relative)
+      File.join(app_root_path, content_path, in_loc, path_relative)
     end
 
-    def entry_type(path_relative)
-      ContentEntry.type(path(path_relative))
+    def entry_type(path_relative, in_loc: '/')
+      ContentEntry.type(path(path_relative, in_loc:))
     end
 
     def entry_type_supported?(name:, in_loc: '/')
@@ -62,7 +62,7 @@ module Models
     def entry(name:, in_loc: '/')
       ContentEntry.new(
         dir_relative: in_loc, basename: name,
-        path_absolute: path(File.join(in_loc, name))
+        path_absolute: path(name, in_loc:)
       )
     end
 
@@ -75,12 +75,10 @@ module Models
 
     # Create file with optional content.
     # Automatically create directories if included.
-    def create_file(path_relative, content = '')
-      validate_entry_name(File.basename(path_relative), type: :file)
+    def create_file(name, content = '', in_loc: '/')
+      ContentEntry.validate_names(name, type: :file)
 
-      create_directory(File.dirname(path_relative)) if path_relative =~ %r{\w+/\w+}
-
-      File.open(path(path_relative), 'w') do |file|
+      File.open(path(name, in_loc:), 'w') do |file|
         file.write(content)
         file.close
         file
@@ -89,33 +87,31 @@ module Models
 
     # Copy existing file from an absolute path (can be external) to the
     # specified relative path.
-    def copy_external(from_absolute, to_relative)
-      raise ContentPathError unless path_input_safe?(from_absolute)
+    def copy_external(from_absolute, to_relative, in_loc: '/')
+      validate_path_input(from_absolute)
+      ContentEntry.validate_names(to_relative, type: :file)
 
-      validate_entry_name(File.basename(to_relative), type: :file)
-
-      FileUtils.cp(from_absolute, path(to_relative))
+      FileUtils.cp(from_absolute, path(to_relative, in_loc:))
     end
 
     # Create directory with parents as needed
-    def create_directory(path_relative)
-      validate_entry_name(path_relative, type: :directory)
+    def create_directory(path_relative, in_loc: '/')
+      ContentEntry.validate_names(path_relative, type: :directory)
 
-      FileUtils.mkdir_p(path(path_relative))
+      FileUtils.mkdir_p(path(path_relative, in_loc:))
     end
 
-    def edit_file(path_relative, content)
-      File.write(path(path_relative), content)
+    def edit_file(path_relative, content, in_loc: '/')
+      File.write(path(path_relative, in_loc:), content)
     end
 
-    def rename_entry(name:, new_name:, in_loc: '/')
+    def rename_entry(name, new_name, in_loc: '/')
       current_entry = entry(name:, in_loc:)
-
-      validate_entry_name(new_name, type: current_entry.type)
+      ContentEntry.validate_names(new_name, type: current_entry.type)
 
       File.rename(
         path(current_entry.path_relative),
-        path(File.join(current_entry.directory, new_name))
+        path(new_name, in_loc:)
       )
     end
 
@@ -126,22 +122,8 @@ module Models
       end
     end
 
-    private
-
-    def validate_entry_name(name, type:)
-      case type
-      when :directory
-        raise ContentPathError, dir_names_invalid_message unless ContentEntry.dir_names_valid?(name)
-      when :file
-        unless ContentEntry.file_name_allowed?(name)
-          raise ContentPathError, ContentEntry.entry_name_chars_allowed_message
-        end
-      end
-    end
-
-    def dir_names_invalid_message
-      "#{ContentEntry.entry_name_chars_allowed_message} #{
-       ContentEntry.separate_entries_message}"
+    def validate_path_input(path)
+      raise ContentError, 'Invalid location' unless path_input_safe?(path)
     end
   end
 end

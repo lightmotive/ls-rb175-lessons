@@ -6,18 +6,17 @@ require './controllers/edit_controller'
 # Test 'app_route([:edit])' routes.
 class EditControllerTest < ControllerTestBase
   def test_get
-    create_file('about.md')
+    create_file(file_name = 'about.md')
 
-    get app_route(:edit, loc: 'about.md')
+    get app_route(:edit, loc: file_name)
     assert_equal 200, last_response.status
     assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
   end
 
   def test_post_success
-    file_dir_relative = 'dir1'
-    file_name = 'f1.txt'
+    create_directory(file_dir_relative = 'dir1')
+    file = create_file(file_name = 'f1.txt', 'About to be updated...', in_loc: file_dir_relative)
     file_path_relative = "#{file_dir_relative}/#{file_name}"
-    file = create_file(file_path_relative, 'About to be updated...')
 
     post app_route(:edit, loc: file_path_relative), 'file_content' => 'Updated'
     assert_equal 'Updated', File.read(file.path)
@@ -29,12 +28,12 @@ class EditControllerTest < ControllerTestBase
   end
 
   def test_get_subdirectory
-    create_directory('dir1')
+    create_directory(location = 'dir1')
 
-    get app_route(:edit, loc: 'dir1')
+    get app_route(:edit, loc: location)
     assert_equal 302, last_response.status
     first_response_location = last_response['Location']
-    assert_equal app_route_for_assert(:browse, loc: 'dir1'), first_response_location
+    assert_equal app_route_for_assert(:browse, loc: location), first_response_location
     # Assert flash error message
     assert_flash_message :error, 'Editing not allowed.'
   end
