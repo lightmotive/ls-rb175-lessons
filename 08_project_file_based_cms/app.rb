@@ -10,9 +10,6 @@ Dir.glob('./models/*.rb').each { |file| require file }
 Dir.glob('./view_helpers/**/*.rb').each { |file| require file }
 Dir.glob('./controllers/*.rb').each { |file| require file }
 
-# TODO: set the following env vars using environment management systems:
-# - For dev and test: https://github.com/bkeepers/dotenv
-# - For production, use host framework's secure environment management system.
 if development?
   # :nocov:
   require './test/auth/helpers'
