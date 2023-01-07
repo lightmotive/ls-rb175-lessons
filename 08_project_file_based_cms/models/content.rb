@@ -66,13 +66,6 @@ module Models
       )
     end
 
-    def entry_from_path(path_relative)
-      in_loc = File.dirname(path_relative)
-      in_loc = '/' if in_loc == '.'
-      name = File.basename(path_relative)
-      entry(name:, in_loc:)
-    end
-
     # Create file with optional content.
     # Automatically create directories if included.
     def create_file(name, content = '', in_loc: '/')
