@@ -37,4 +37,12 @@ class ModelContentEntryTest < MiniTest::Test
     assert_equal Models::ContentEntry.actions - [:edit],
                  Models::ContentEntry.actions_except(:edit)
   end
+
+  def test_content_type_allowed?
+    assert_equal true, Models::ContentEntry.content_type_allowed?('text/plain')
+    assert_equal true, Models::ContentEntry.content_type_allowed?('image/png')
+    assert_equal false, Models::ContentEntry.content_type_allowed?(
+      'application/vnd.microsoft.portable-executable'
+    )
+  end
 end
