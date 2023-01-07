@@ -1,0 +1,5 @@
+<% unless location_root?(current_location) %>
+<h2><%== navigation_path(current_location) %></h2>
+<% end %>
+<%== render_content_entry_rename_component %>
+<script src="/javascripts/browse_controller.js"></script>

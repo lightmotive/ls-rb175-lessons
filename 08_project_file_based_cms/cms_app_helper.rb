@@ -21,6 +21,7 @@ module CMSAppHelper
     edit: '/edit',
     delete: '/delete',
     browse: '/browse',
+    rename_entry: '/rename-entry',
     new_entry: '/new-entry',
     upload: '/upload'
   }.freeze

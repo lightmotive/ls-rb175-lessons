@@ -31,6 +31,14 @@ body {
   background: #ffffad;
 }
 
+.hidden {
+  display: none;
+}
+
+a.rename:before {
+  content: '\1F524'
+}
+
 a.edit:before {
   content: '\270E';
 }
@@ -39,7 +47,7 @@ button.delete:before {
   content: '\1F5D1';
 }
 
-ul li a.edit {
+a.link-icon {
   text-decoration: none;
   color: black;
 }

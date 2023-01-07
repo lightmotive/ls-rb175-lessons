@@ -6,25 +6,74 @@ require './models/content_entry'
 module Controllers
   # Create new file system entries.
   class RenameEntryController < BrowseController
-    # - IN-PROGRESS: Write tests for the following:
-    # *********************************************
-    #   - Upon clicking 'rename':
-    #     - [Test(s) written? No] `get app_route(:rename_entry, loc: current_location)`
-    #       - [Test(s) written? No] If request is not XHR, flash error indicating that
-    #         "Please enable JavaScript to rename entries."
-    #       - [Test(s) written? need to check...] Request query string:
-    #         `loc=current_location` & `rename_entry=relative_path_to_entry`
-    #       - [Test(s) written? No] If entry found, return the HTML for the entry
-    #         rendered as a form using new method in `ContentEntryComponent` class.
-    #       - [Test(s) written? No] If entry not found, flash error and redirect
-    #         to browse current location.
-    #   - `post app_route(:rename_entry, loc: current_location)`: apply the
-    #      submitted form data.
-    #     - [Test(s) written? No] Request query string: `loc=current_location`;
-    #       POST form data: `rename_entry=relative_path_to_entry` &
-    #       `new_entry_name=new_relative_path_to_entry`.
-    #     - [Test(s) written? No] On success, flash success.
-    #     - [Test(s) written? No] On failure, flash error.
-    #     - [Test(s) written? No] On success or failure, redirect to current location.
+    attr_reader :entry_name, :entry
+
+    before '*' do
+      @entry_name = params[:entry_name]
+
+      if @entry_name.nil?
+        flash_message :error, 'The request requires an `entry_name` param.'
+        halt 400, render_browse_template
+      end
+
+      unless content_entry_type_supported?(name: @entry_name, in_loc: current_location)
+        flash_message :error, "That entry wasn't found. Please check and try again."
+        halt 400, render_browse_template
+      end
+
+      @entry = content_entry(name: entry_name, in_loc: current_location)
+    end
+
+    helpers do
+      def render_content_entry_rename_component
+        ViewHelpers::ContentEntryRenameComponent.new(
+          entry, loc: current_location, params:
+        ).render
+      end
+    end
+
+    # get 'app_route(:rename_entry)/'
+    get '/' do
+      if request.xhr?
+        render_content_entry_rename_component
+      else
+        erb :content_entry_rename_page
+      end
+    end
+
+    # post 'app_route(:rename_entry)/'
+    post '/' do
+      entry_name_new = params[:entry_name_new]
+
+      if entry_name_new.nil?
+        flash_message :error, 'The request requires an `entry_name_new` param.'
+        halt 400, post_error_body
+      end
+
+      begin
+        rename_entry(entry.name, entry_name_new, in_loc: current_location)
+        flash_message :success, "'#{entry.name}' renamed to '#{entry_name_new}'."
+        redirect_url = app_route(:browse, loc: current_location)
+        if request.xhr?
+          redirect_url
+        else
+          redirect redirect_url, 303
+        end
+      rescue Models::ContentError => e
+        flash_message :error, e.messages
+        post_error_body
+      end
+    end
+
+    private
+
+    def post_error_body
+      status 400
+      if request.xhr?
+        render_flash_messages
+      else
+        erb :content_entry_rename_page
+      end
+    end
   end
 end

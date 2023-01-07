@@ -1,11 +1,14 @@
 <% if view_href %>
-<a href="<%= view_href %>"><%= entry.name %></a>
+<a href="<%== view_href %>"><%= entry.name %></a>
+<% end %>
+<% if rename_href %>
+<a class="rename link-icon" href="<%== rename_href %>"></a>
 <% end %>
 <% if edit_href %>
-<a class="edit" href="<%= edit_href %>"></a>
+<a class="edit link-icon" href="<%== edit_href %>"></a>
 <% end %>
 <% if delete_action %>
-<form class="inline delete" action="<%= delete_action %>" method="post">
+<form class="inline delete" action="<%== delete_action %>" method="post">
   <button class="delete" type="submit"></button>
 </form>
 <% end %>

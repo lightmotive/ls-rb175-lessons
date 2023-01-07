@@ -25,8 +25,9 @@ class HelperContentEntryComponentTest < MiniTest::Test
   end
 
   def test_image_file_render
-    create_file('dir1/test.jpg')
-    entry = content_entries('/dir1').first
+    create_directory(directory = 'dir1')
+    create_file('test.jpg', in_loc: directory)
+    entry = content_entries(directory).first
     component = ViewHelpers::ContentEntryComponent.new(entry)
     assert_equal expected_content(entry, component, edit: false), component.render
   end
@@ -39,13 +40,23 @@ class HelperContentEntryComponentTest < MiniTest::Test
     assert_empty component.render
   end
 
-  def expected_content(entry, component, view: true, edit: true, delete: true)
+  private
+
+  EXPECTED_CONTENT_OPTIONS_DEFAULT = {
+    view: true, rename: true, edit: true, delete: true
+  }.freeze
+
+  # rubocop:disable Metrics/MethodLength
+  def expected_content(entry, component,
+                       options = EXPECTED_CONTENT_OPTIONS_DEFAULT)
+    options = EXPECTED_CONTENT_OPTIONS_DEFAULT.merge(options)
     content = String.new
 
-    content = %(<a href="#{component.view_href}">#{entry.name}</a>) if view
-    content << %(\n<a class="edit" href="#{component.edit_href}"></a>) if edit
+    content = %(<a href="#{component.view_href}">#{entry.name}</a>) if options[:view]
+    content << %(\n<a class="rename link-icon" href="#{component.rename_href}"></a>) if options[:rename]
+    content << %(\n<a class="edit link-icon" href="#{component.edit_href}"></a>) if options[:edit]
 
-    if delete
+    if options[:delete]
       content << <<~CONTENT
         \n<form class="inline delete" action="#{component.delete_action}" method="post">
           <button class="delete" type="submit"></button>
@@ -55,4 +66,5 @@ class HelperContentEntryComponentTest < MiniTest::Test
 
     content
   end
+  # rubocop:enable Metrics/MethodLength
 end

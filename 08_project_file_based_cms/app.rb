@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+# TODO: remaining tasks
+# - Rename `Content#path` to `#absolute_path` for clarity.
+# - Rename routes and associated classes that inherit BrowseController:
+#   - Prefix route name with `:browse` and value with `/browse`.
+#   - Prefix class names with `Browse`.
+#   - Ensure routes are mapped before base `/browse` route.
+
 require 'sinatra/base'
 require 'sinatra/content_for'
 require 'tilt/erubi'
@@ -7,7 +14,7 @@ require 'tilt/erubi'
 require './cms_app_helper'
 require './url_utils'
 Dir.glob('./models/*.rb').each { |file| require file }
-Dir.glob('./view_helpers/*.rb').each { |file| require file }
+Dir.glob('./view_helpers/**/*.rb').each { |file| require file }
 Dir.glob('./controllers/*.rb').each { |file| require file }
 
 # TODO: set the following env vars using environment management systems:
@@ -47,6 +54,7 @@ class App
       map(APP_ROUTES[:edit]) { run Controllers::EditController.new }
       map(APP_ROUTES[:delete]) { run Controllers::DeleteController.new }
       map(APP_ROUTES[:browse]) { run Controllers::BrowseController.new }
+      map(APP_ROUTES[:rename_entry]) { run Controllers::RenameEntryController.new }
       map(APP_ROUTES[:new_entry]) { run Controllers::NewEntryController.new }
       map(APP_ROUTES[:upload]) { run Controllers::UploadController.new }
     end

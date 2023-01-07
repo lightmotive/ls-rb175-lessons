@@ -1,0 +1,7 @@
+<form class="inline rename" action="<%== rename_action %>" method="post">
+  <label for="entry_name_new">Rename:</label>
+  <input name="entry_name_new" type="text" placeholder="<%= entry.name %>"
+         value="<%= params[:entry_name_new] || entry.name %>" autofocus>
+  <button class="rename" type="submit">Save</button>
+  <a class="cancel link-icon" href="<%== cancel_href %>">Cancel</a>
+</form>
