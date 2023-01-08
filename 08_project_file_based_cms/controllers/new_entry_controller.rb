@@ -6,6 +6,9 @@ require './models/content_entry'
 module Controllers
   # Create new file system entries.
   class NewEntryController < BrowseController
+    # TODO: This controller would benefit from XHR, which would obviate the need
+    # for inheriting BrowseController. See RenameEntryController as an example.
+
     def initialize
       super
 
@@ -52,8 +55,7 @@ module Controllers
 
     def handle_invalid_input(error_messages)
       flash_message :error, error_messages
-      status 400
-      render_browse_template
+      halt 400, render_browse_template
     end
   end
 end
