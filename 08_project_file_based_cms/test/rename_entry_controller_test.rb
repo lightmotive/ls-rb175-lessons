@@ -7,25 +7,23 @@ require './controllers/rename_entry_controller'
 class RenameEntryControllerTest < ControllerTestBase
   def test_get_entry_name_param_not_provided
     get app_route(:rename_entry)
-    assert_equal 400, last_response.status
-    assert_flash_message_rendering :error,
-                                   'The request requires an `entry_name` param.',
-                                   last_response.body
+    assert_equal 302, last_response.status
+    assert_equal app_route_for_assert(:browse), last_response['Location']
+    assert_flash_message :error, 'The request requires an `entry_name` param.'
   end
 
   def test_post_entry_name_new_param_not_provided
     create_file(file_name = 'test.txt')
-    post app_route(:rename_entry), { entry_name: file_name }
+    post app_route(:rename_entry), { entry_name: file_name }, env_xhr
     assert_equal 400, last_response.status
     assert_flash_message_rendering :error,
                                    'The request requires an `entry_name_new` param.',
                                    last_response.body
   end
 
-  def test_get_entry_not_found_in_location
+  def test_get_entry_not_found_in_location_with_xhr
     create_file(file_name = 'test.txt')
-    location = 'dir1'
-    create_directory(location)
+    create_directory(location = 'dir1')
     get app_route(:rename_entry, loc: location), { entry_name: file_name }, env_xhr
     assert_equal 400, last_response.status
     expected_error_msg = 'That entry wasn&#39;t found. Please check and try again.'
