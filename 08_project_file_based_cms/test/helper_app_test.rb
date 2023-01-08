@@ -104,4 +104,19 @@ class HelperAppTest < MiniTest::Test
     CONTENT
     assert_equal expected_content, @view.render_flash_messages
   end
+
+  def test_navigation_path_root
+    assert_equal '', @view.navigation_path('/')
+  end
+
+  def test_navigation_path_subdir1
+    assert_equal %(<a href="#{@view.app_route(:browse)}">home</a>/dir1),
+                 @view.navigation_path('/dir1')
+  end
+
+  def test_navigation_path_subdir2
+    browse_route = @view.app_route(:browse)
+    assert_equal %(<a href="#{browse_route}">home</a>/<a href="#{browse_route}?loc=%2Fdir1">dir1</a>/dir1.1),
+                 @view.navigation_path('/dir1/dir1.1')
+  end
 end
