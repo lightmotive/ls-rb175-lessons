@@ -36,6 +36,7 @@ class ControllerTestBase < MiniTest::Test
     configure_session({ username: nil })
   end
 
+  # :nocov:
   def app_route_for_assert(...)
     "http://example.org#{app_route(...)}"
   end
@@ -68,6 +69,7 @@ class ControllerTestBase < MiniTest::Test
       raise '`expected_messages` must be a String or an Array.'
     end
   end
+  # :nocov:
 
   private
 
