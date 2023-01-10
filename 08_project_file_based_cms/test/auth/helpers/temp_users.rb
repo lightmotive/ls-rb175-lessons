@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require './cms_app_helper'
+require './app/core'
 require 'random/formatter'
 require 'securerandom'
 require_relative 'users'

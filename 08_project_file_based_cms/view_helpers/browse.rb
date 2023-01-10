@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require './url_utils'
+require './app/url_utils'
 require_relative 'content_entry_component'
 
 module ViewHelpers

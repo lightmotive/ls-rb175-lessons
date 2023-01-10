@@ -4,8 +4,7 @@ require 'sinatra/base'
 require 'sinatra/content_for'
 require 'tilt/erubi'
 
-require './cms_app_helper'
-require './url_utils'
+require './app/core'
 Dir.glob('./models/*.rb').each { |file| require file }
 Dir.glob('./view_helpers/**/*.rb').each { |file| require file }
 Dir.glob('./controllers/*.rb').each { |file| require file }
@@ -20,7 +19,7 @@ end
 
 # Rack-compliant app
 class App
-  include CMSAppHelper
+  include AppRoutes
   attr_reader :app
 
   def initialize

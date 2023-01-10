@@ -1,10 +1,10 @@
-require './cms_app_helper'
+require './app/core'
 require './view_helpers/app'
 
 # Base mock for view-related unit tests.
 class ViewMock
   include ViewHelpers::App
-  include CMSAppHelper
+  include AppRoutes
 
   def initialize
     @session = {}

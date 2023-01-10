@@ -1,21 +1,23 @@
-require_relative 'test_helper'
-require './cms_app_helper'
+# frozen_string_literal: true
 
-class CMSAppHelperTest < MiniTest::Test
+require_relative 'test_helper'
+require './app/app_routes'
+
+class AppRoutesTest < MiniTest::Test
   def setup
     @obj = Object.new
-    @obj.extend(CMSAppHelper)
+    @obj.extend(AppRoutes)
   end
 
   def test_location_query_param_is_standardized
-    assert_equal({}, CMSAppHelper.location_query_param('/'))
-    assert_equal({}, CMSAppHelper.location_query_param(''))
-    assert_equal({ loc: '/dir' }, CMSAppHelper.location_query_param('dir'))
-    assert_equal({ loc: '/dir' }, CMSAppHelper.location_query_param('/dir'))
+    assert_equal({}, AppRoutes.location_query_param('/'))
+    assert_equal({}, AppRoutes.location_query_param(''))
+    assert_equal({ loc: '/dir' }, AppRoutes.location_query_param('dir'))
+    assert_equal({ loc: '/dir' }, AppRoutes.location_query_param('/dir'))
   end
 
   def test_public_routes
-    CMSAppHelper::PUBLIC_ROUTES.each do |route|
+    AppRoutes::PUBLIC_ROUTES.each do |route|
       assert_equal true, @obj.route_public?(route)
     end
   end

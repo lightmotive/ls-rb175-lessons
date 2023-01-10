@@ -2,13 +2,13 @@
 
 require_relative 'test_helper_rack'
 require_relative 'content_test_mod'
-require './cms_app_helper'
+require './app/core'
 
 # All Controller tests should inherit this.
 class ControllerTestBase < MiniTest::Test
   include Rack::Test::Methods
   include ContentTestMod
-  include CMSAppHelper
+  include AppRoutes
 
   def app
     OUTER_APP

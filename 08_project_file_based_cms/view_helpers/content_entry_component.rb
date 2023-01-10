@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 require './view_helpers/component'
-require './cms_app_helper'
+require './app/core'
 
 module ViewHelpers
   # Render content entry components.
   class ContentEntryComponent < Component
-    include CMSAppHelper
+    include AppRoutes
 
     def initialize(entry)
       super()

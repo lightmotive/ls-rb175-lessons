@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 require './view_helpers/component'
-require './cms_app_helper'
+require './app/core'
 
 module ViewHelpers
   # Render form for renaming a content entry.
   class ContentEntryRenameComponent < Component
-    include CMSAppHelper
+    include AppRoutes
 
     def initialize(entry, loc:, params:)
       super()

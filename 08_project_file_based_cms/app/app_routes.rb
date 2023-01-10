@@ -1,18 +1,9 @@
 # frozen_string_literal: true
 
-require 'uri'
-require './url_utils'
-
-def test?
-  ENV['RACK_ENV'] == 'test'
-end
-
-def development?
-  ENV['RACK_ENV'] == 'development'
-end
+require_relative 'url_utils'
 
 # App-level helper methods
-module CMSAppHelper
+module AppRoutes
   APP_ROUTES = {
     logout: '/logout',
     index: '/',
@@ -56,7 +47,7 @@ module CMSAppHelper
 
   # Get a standardized app route path
   def app_route(route, path: '', loc: nil, other_query_params: {})
-    CMSAppHelper.app_route(route, path:, loc:, other_query_params:)
+    AppRoutes.app_route(route, path:, loc:, other_query_params:)
   end
 
   # Current request's Rack App-mapped route

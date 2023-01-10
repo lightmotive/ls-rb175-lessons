@@ -2,14 +2,13 @@
 
 require 'sinatra/base'
 require 'forwardable'
-require 'uri'
-require './cms_app_helper'
+require './app/core'
 
 module Controllers
   # Handle '/' route. All other controllers inherit this.
   class ApplicationController < Sinatra::Base
     extend Forwardable
-    include CMSAppHelper
+    include AppRoutes
 
     def initialize
       super

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'test_helper'
-require './url_utils'
+require './app/url_utils'
 
 class URLUtilsTest < MiniTest::Test
   def test_join_components_empty

@@ -3,12 +3,12 @@
 require_relative 'test_helper'
 require_relative 'content_test_mod'
 require './view_helpers/content_entry_component'
-require './cms_app_helper'
+require './app/core'
 
 # Application view helpers
 class HelperContentEntryComponentTest < MiniTest::Test
   include ContentTestMod
-  include CMSAppHelper
+  include AppRoutes
 
   def test_text_file_render
     create_file('test.txt')
