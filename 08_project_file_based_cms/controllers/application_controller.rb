@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
 require 'sinatra/base'
-require 'forwardable'
 require './app/core'
+require './app/content_accessor'
 
 module Controllers
   # Handle '/' route. All other controllers inherit this.
   class ApplicationController < Sinatra::Base
-    extend Forwardable
     include AppRoutes
+    include ContentAccessor
 
     def initialize
       super
-      @content = Models::Content.new
       self.title = ''
       @current_location = nil
+      initialize_content_accessor
     end
 
     attr_reader :title, :current_location, :current_location_entry_type
@@ -22,15 +22,6 @@ module Controllers
     def title=(value)
       @title = "#{value.empty? ? '' : "#{value} - "}Neato CMS"
     end
-
-    def_delegators :@content, :create_file, :create_directory, :rename_entry
-    def_delegator :@content, :absolute_path, :content_absolute_path
-    def_delegator :@content, :entry_type, :content_entry_type
-    def_delegator :@content, :entry_type_supported?, :content_entry_type_supported?
-    def_delegator :@content, :directory?, :content_directory?
-    def_delegator :@content, :file?, :content_file?
-    def_delegator :@content, :entry, :content_entry
-    def_delegator :@content, :entries, :content_entries
 
     helpers Sinatra::ContentFor, ViewHelpers::App
 
